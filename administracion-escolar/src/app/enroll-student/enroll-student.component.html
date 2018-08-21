@@ -1,3 +1,74 @@
-<p>
-  enroll-student works!
-</p>
+<!-- main app container -->
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+          <div class="com-md-12">
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                  <div class="row">
+                      <div class="col-sm-3">
+                          <div class="form-group">
+                              <label>Clave</label>
+                              <input type="text" [disabled]="true" formControlName="password" class="form-control" [ngClass]="{'is-invalid': submitted && f.password.errors}">
+                              <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                  <div *ngIf="f.password.errors.required">La clave es requerida.</div>
+                              </div>
+                            </div>
+                      </div>
+                      <div class="col-sm-6">
+                          <div class="form-group">
+                              <label>Nombre</label>
+                              <input type="text" formControlName="firstName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" />
+                              <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                                  <div *ngIf="f.firstName.errors.required">Nombre requerido</div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-3">
+                          <div class="form-group">
+                              <label>Fecha de nacimiento</label>
+                              <input type="text" formControlName="birthDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.birthDate.errors }" />
+                              <div *ngIf="submitted && f.birthDate.errors" class="invalid-feedback">
+                                  <div *ngIf="f.birthDate.errors.required">Fecha de nacimiento requerida</div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label>Fecha de registro</label>
+                              <input type="text" formControlName="enrollDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.enrollDate.errors }" />
+                              <div *ngIf="submitted && f.enrollDate.errors" class="invalid-feedback">
+                                  <div *ngIf="f.enrollDate.errors.required">Fecha de registro requerida</div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label>Fecha de registro</label>
+                              <input type="text" formControlName="entryDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.entryDate.errors }" />
+                              <div *ngIf="submitted && f.entryDate.errors" class="invalid-feedback">
+                                  <div *ngIf="f.entryDate.errors.required">Fecha de ingreso requerida</div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="for-group">
+                          <label>Sexo</label>
+                          <select formControlName="sexControl" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.sexControl.errors }">
+                              <option [value]="sex" *ngFor="let sex of sexs">{{sex}}</option>
+                          </select>
+                          <div *ngIf="submitted && f.sexControl.errors" class="invalid-feedback">
+                              <div *ngIf="f.sexControl.errors.required">Sexo requerido</div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                    <div class="form-group">
+                        <button [disabled]="submitted" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+              </div>
+        </div>
+    </div>
+</div>
