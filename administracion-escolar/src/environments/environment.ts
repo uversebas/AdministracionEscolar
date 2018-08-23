@@ -5,7 +5,13 @@
 export const environment = {
   production: false,
   web:'https://vincicloud.sharepoint.com/sites/SistemadeAdministracionEscolardev',
-  menuList:'MenuAdministracionEscolar'
+  menuList:'MenuAdministracionEscolar',
+  sexList:'Sexo',
+  studentStatusList:'EstatusAlumno',
+  schoolStatusList:'EstatusEscolar',
+  stageSchoolList:'Division',
+  studentList:'Alumnos'
+
 
 };
 

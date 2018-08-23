@@ -19,7 +19,7 @@ export class MainMenuComponent implements OnInit {
     this.spService.getMenu().subscribe(
       (Response)=>{
         Response.forEach(element => {
-          this.menu.push(new MenuAdministracionEscolar(element.Title,element.Descripcion,element.NombreRouter,element.ID));
+          this.menu.push(new MenuAdministracionEscolar(element.Title,element.Descripcion,element.NombreRouter,element.ImagenMenu.Url,element.ID));
         });
       }, 
       err=>{

@@ -5,6 +5,15 @@ import {FormsModule} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import {RouterModule} from '@angular/router';
 
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatNativeDateModule } from '@angular/material';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material';
+import {MatSelectModule} from '@angular/material/select';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+
 import { AppComponent } from './app.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { EnrollStudentComponent } from './enroll-student/enroll-student.component';
@@ -36,6 +45,12 @@ import { BoxModule, BoxSmallModule as MkBoxSmallModule } from 'angular-admin-lte
     HttpModule,
     BoxModule,
     MkBoxSmallModule,
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatSelectModule,
     LayoutModule.forRoot(adminLteConf),
     RouterModule.forRoot([
       {path:'',redirectTo:'/menu',pathMatch:'full'},
@@ -48,7 +63,7 @@ import { BoxModule, BoxSmallModule as MkBoxSmallModule } from 'angular-admin-lte
       {path:'buscar-alumno', component:SearchStudentComponent}
     ])
   ],
-  providers: [SPService],
+  providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'es-US'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
