@@ -1,17 +1,28 @@
-
 <div class="row">
-    <div class="col-xs-12 header">Bienvenido {{userName}}</div>
- </div>
- <div class="row">
-     <div class="col-xs-4 menu">menu</div>
-     <div class="col-xs-8 content">
-        <router-outlet></router-outlet>
-     </div>
- </div>
- <div class="row">
-    <div class="col-xs-12 footer">foooter</div>
- </div>
-        
-
-
-
+    <div class="col-md-12 header">
+        <div class="row">
+            <div class="col-md-2 logo">
+                <a class="navbar-brand" href="#">
+                    <img class="img-logo" src="/resources/images/logo.jpg" alt="Bootstrap Logo" height="25px">
+                </a>
+            </div>
+            <div class="col-md-10 welcome">
+                <span class="welcome-user">Bienvenido {{userName}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 content">
+        <div class="container">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <footer class="footer">
+        <div class="container">
+            <span class="text-footer">© 2018 ITProve - Todos los derechos reservados.</span>
+        </div>
+    </footer>
+</div>
