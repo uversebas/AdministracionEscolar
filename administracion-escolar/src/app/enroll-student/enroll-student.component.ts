@@ -20,7 +20,6 @@ export class EnrollStudentComponent implements OnInit {
 
     registerForm: FormGroup;
     submitted = false;
-    selectedSex:string;
     sexs:Sex[] = [];
     studentStatus:StudentStatus[]=[];
     schoolStatus:SchoolStatus[]=[];
