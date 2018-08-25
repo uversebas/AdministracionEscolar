@@ -24,7 +24,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'Authorization':'Bearer 0x3A05CD57AACFAA528202F4C35558C74F7B84D581A33DE53DA8DEDE034B9FC05C7A89264B2CBCDBDCD5D1212E9CCE2FE01ED0054FE723B373C04672D5945851AD,24 Aug 2018 13:42:52 -0000'
+            'Authorization':'Bearer 0x5FD65B5961253326E13E60F10458FB10B95B9B8F117ADD6E322EFA7110C70E636AE4F274AEFEEA2BDEE8F3009D2784350028B5BF4CBDA3563AA875AF9D40EFD7,25 Aug 2018 02:04:36 -0000'
         }
     },environment.web);
 
@@ -72,7 +72,7 @@ export class SPService {
   }
 
   addStudent(student:Student, abbreviationStage:string){
-    return this.getConfig().web.lists.getByTitle(environment.studentList).items.add({
+    return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.add({
         Title:student.name,
         FechaNacimiento:student.birthDate,
         SexoId:student.sexId,
