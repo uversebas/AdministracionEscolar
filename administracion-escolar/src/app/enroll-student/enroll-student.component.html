@@ -3,20 +3,9 @@
     <div class="container">
         <div class="row">
           <div class="com-md-12">
-                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit(templatesuccessCreateStudent)">
                   <div class="row">
-                      <div class="col-md-4">
-                          <div class="form-group">
-                              <mat-form-field>
-                                <label>Clave</label>
-                                <input matInput formControlName="password" class="form-control" [ngClass]="{'is-invalid': submitted && f.password.errors}">
-                                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-                                    <div *ngIf="f.password.errors.required">La clave es requerida.</div>
-                                </div>
-                            </mat-form-field>
-                            </div>
-                      </div>
-                      <div class="col-md-4">
+                      <div class="col-md-8">
                           <div class="form-group">
                               <mat-form-field>
                                 <label>Nombre</label>
@@ -25,7 +14,6 @@
                                         <div *ngIf="f.firstName.errors.required">Nombre requerido</div>
                                     </div>  
                             </mat-form-field>
-                              
                           </div>
                       </div>
                       <div class="col-md-4">
@@ -58,7 +46,6 @@
                               
                           </div>
                       </div>
-
                       <div class="col-md-4">
                         <div class="form-group">
                           <mat-form-field>
@@ -91,7 +78,7 @@
                       </div>
                   </div>
                   <div class="row">
-                      <div class="col-md-4">
+                      <div class="col-md-3">
                         <div class="form-group">
                             <mat-form-field>
                               <label>Nombre del padre o tutor</label>
@@ -102,15 +89,15 @@
                           </mat-form-field>
                           </div>
                       </div>
-                      <div class="col-md-4">
+                      <div class="col-md-3">
                         <div class="form-group">
                             <mat-form-field>
                               <label>Nombre de la madre</label>
                               <input matInput formControlName="motherName" class="form-control">
-                          </mat-form-field>
+                            </mat-form-field>
                           </div>
                       </div>
-                      <div class="col-md-4">
+                      <div class="col-md-6">
                             <div class="form-group">
                                     <mat-form-field>
                                       <label>Ocupación del padre o tutor</label>
@@ -241,5 +228,25 @@
                 </form>
               </div>
         </div>
+        <ng-template #templatesuccessCreateStudent>
+            <div class="modal-header">
+              <button type="button" class="close pull-right" 
+                        aria-label="Close" (click)="closeSuccessCreateStudentModal()">
+              <span aria-hidden="true">&times;</span>
+            </button>           
+            <h4 class="modal-title"> Registro exitoso </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        El alumno {{studentName}} fue registrado con exito. <br>
+                        Se le asigno la clave {{studentKey}}.
+                    </div>																		
+                  </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="closeSuccessCreateStudentModal()">Ok</button>
+            </div>
+        </ng-template>
     </div>
 </div>

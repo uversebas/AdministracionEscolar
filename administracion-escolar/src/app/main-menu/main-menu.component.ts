@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SPService }  from '../services/sp.service';
 import { MenuAdministracionEscolar } from '../dtos/menu';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-menu',
@@ -9,7 +10,7 @@ import { MenuAdministracionEscolar } from '../dtos/menu';
 })
 export class MainMenuComponent implements OnInit {
   menu:MenuAdministracionEscolar[]=[];
-  constructor(private spService: SPService) { }
+  constructor(private spService: SPService, private router: Router) { }
 
   ngOnInit() {
     this.getMenu();
@@ -18,14 +19,19 @@ export class MainMenuComponent implements OnInit {
   getMenu(){
     this.spService.getMenu().subscribe(
       (Response)=>{
-        Response.forEach(element => {
-          this.menu.push(new MenuAdministracionEscolar(element.Title,element.Descripcion,element.NombreRouter,element.ImagenMenu.Url,element.ID));
-        });
+        this.menu = MenuAdministracionEscolar.fromJsonList(Response);
       }, 
       err=>{
         console.log('err: '+err);
       }
     );
+  }
+
+  menuOptionClick(item){
+    if (item.RouterFinal) {
+      sessionStorage.setItem('routerFinal',item.RouterFinal);
+    }
+    this.router.navigate([item.NombreRouter]);
   }
 
 }

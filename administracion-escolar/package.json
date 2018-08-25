@@ -34,6 +34,7 @@
     "core-js": "^2.5.4",
     "gd-sprest": "^4.1.9",
     "jquery": "^3.3.1",
+    "ngx-bootstrap": "^3.0.1",
     "popper.js": "^1.14.4",
     "rxjs": "^6.0.0",
     "sp-pnp-js": "^3.0.10",

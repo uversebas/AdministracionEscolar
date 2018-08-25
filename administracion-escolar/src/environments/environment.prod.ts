@@ -5,6 +5,6 @@ export const environment = {
   sexList:'Sexo',
   studentStatusList:'EstatusAlumno',
   schoolStatusList:'EstatusEscolar',
-  stageSchoolList:'División',
+  stageSchoolList:'Division',
   studentList:'Alumnos'
 };

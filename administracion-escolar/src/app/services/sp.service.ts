@@ -24,7 +24,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'X-RequestDigest':'0x3B88850A98EE1E792EB33887C8296D672F9E90E255205410799E31450A51D4DFCB796937C03788380D20D279B6CE6C84E3248B5872FDA32CBE0687FB28D0DCE3,23 Aug 2018 03:11:54 -0000'
+            'Authorization':'Bearer 0x3A05CD57AACFAA528202F4C35558C74F7B84D581A33DE53DA8DEDE034B9FC05C7A89264B2CBCDBDCD5D1212E9CCE2FE01ED0054FE723B373C04672D5945851AD,24 Aug 2018 13:42:52 -0000'
         }
     },environment.web);
 
@@ -66,17 +66,43 @@ export class SPService {
     return data;
   }
 
+  getStudentList(){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.studentList).items.getAll());
+      return data;
+  }
+
   addStudent(student:Student, abbreviationStage:string){
-    return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.add({
+    return this.getConfig().web.lists.getByTitle(environment.studentList).items.add({
         Title:student.name,
         FechaNacimiento:student.birthDate,
-        Sexo:student.sexId,
+        SexoId:student.sexId,
         NombrePadre:student.parentName,
-        EstatusAlumno:student.studentStatusId,
-        EstatusEscolar:student.schoolStatusId,
-        Division:student.stageSchoolId,
-        Abreviatura:abbreviationStage,
-        FechaRegistro:student.enrollDate
+        EstatusAlumnoId:student.studentStatusId,
+        EstatusEscolarId:student.schoolStatusId,
+        DivisionId:student.stageSchoolId,
+        FechaRegistro:student.enrollDate,
+        FechaIngreso:student.entryDate,
+        NombreMadre:student.motherName,
+        LugarNacimiento:student.birthPlace,
+        Telefono:student.phoneNumber,
+        DomicilioParticular:student.address,
+        CelularTutor:student.parentsPhoneNumber,
+        Celular:student.movilNumber,
+        OcupacionTutor:student.parentJob,
+        Observaciones:student.observations,
+        EscuelaOrigen:student.originSchool
     });
+  }
+
+  updateStudent(student:Student, id:number){
+      return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(id).update({
+        Title:student.name
+      });
+  }
+
+  assignStudentKey(password:string, id:number){
+    return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(id).update({
+        ClaveAlumno:password
+      });
   }
 }

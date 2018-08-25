@@ -1,2 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.mat-form-field{
+    width: 100% !important;
+}
+
+.card-header{
+    text-align: center;
+}
+
+.card-block{
+    text-align: center;
+}
+
+.card-footer{
+    text-align: center;
+}
+
+.card-default{
+    cursor: pointer;
+}

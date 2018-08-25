@@ -12,7 +12,10 @@ import { MatNativeDateModule } from '@angular/material';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material';
 import {MatSelectModule} from '@angular/material/select';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { AppComponent } from './app.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
@@ -24,9 +27,6 @@ import { SearchStudentComponent } from './search-student/search-student.componen
 import { AssingScholarshipComponent } from './assing-scholarship/assing-scholarship.component';
 
 import { SPService } from '../app/services/sp.service';
-import { adminLteConf } from './admin-lte.conf';
-import { LayoutModule } from 'angular-admin-lte';
-import { BoxModule, BoxSmallModule as MkBoxSmallModule } from 'angular-admin-lte'; 
 
 @NgModule({
   declarations: [
@@ -41,17 +41,17 @@ import { BoxModule, BoxSmallModule as MkBoxSmallModule } from 'angular-admin-lte
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    BoxModule,
-    MkBoxSmallModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatNativeDateModule,
     MatDatepickerModule,
     MatInputModule,
     MatSelectModule,
-    LayoutModule.forRoot(adminLteConf),
+    MatAutocompleteModule,
+    ModalModule.forRoot(),
     RouterModule.forRoot([
       {path:'',redirectTo:'/menu',pathMatch:'full'},
       {path:'menu',component:MainMenuComponent},
