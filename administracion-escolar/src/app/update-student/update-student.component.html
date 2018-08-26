@@ -240,6 +240,51 @@
       </div>
     </fieldset>
     <div class="row">
+      <div class="col-md-6">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border">Documentos recibidos</legend>
+              <div class="control-group">
+                  <input type="file" name="file" multiple (change)="onFileChange($event)" accept="application/pdf, image/*" required>
+                  <div class="table-responsive-sm">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Descargar</th>
+                          <th>Eliminar</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor='let document of savedStudentDocuments'>
+                          <td>{{document.name}}</td>
+                          <td> <a href="{{document.url}}" download="{{document.name}}"><img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/download.png" alt="Descargar"></a></td>
+                          <td><img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/delete.png" alt="Eliminar" (click)="deleteSavedDocument(document)"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+              </div>
+        </fieldset>
+      </div>
+      <div class="col-md-4">
+          <fieldset class="scheduler-border">
+              <legend class="scheduler-border">Datos adicionales de registro</legend>
+                <div class="control-group">
+                  
+                </div>
+          </fieldset>
+      </div>
+      <div class="col-md-2">
+          <fieldset class="scheduler-border">
+              <legend class="scheduler-border">Beca</legend>
+                <div class="control-group">
+  
+                </div>
+          </fieldset>
+      </div>
+    </div>
+    <div class="row">
       <div class="form-group">
         <div class="buttons-app">
           <button class="btn btn-default">Salir</button>

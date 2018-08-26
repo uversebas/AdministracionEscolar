@@ -1,11 +1,9 @@
 export class StudentDocument{
     name:string;
-    type:string;
-    value:string|any;
+    content:string|any;
 
-    constructor(name:string, type:string, value: string|any){
+    constructor(name:string, content: string|any){
         this.name = name;
-        this.type = type;
-        this.value = value;
+        this.content = content;
     }
 }

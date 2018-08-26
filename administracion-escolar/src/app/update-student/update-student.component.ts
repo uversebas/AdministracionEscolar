@@ -6,6 +6,9 @@ import { SchoolStatus } from '../dtos/schoolStatus';
 import { StageSchool } from '../dtos/stageSchool';
 import { SPService } from '../services/sp.service';
 import { Student } from '../dtos/student';
+import { StudentDocument } from '../dtos/studentDocument';
+import { Alert } from 'selenium-webdriver';
+import { SavedStudentDocument } from '../dtos/savedStudentDocument';
 
 @Component({
   selector: 'app-update-student',
@@ -26,8 +29,12 @@ export class UpdateStudentComponent implements OnInit {
   selectedStudentStatus:StudentStatus;
   selectedSchoolStatus:SchoolStatus;
   selectedStageSchool:StageSchool;
+  savedStudentDocuments:SavedStudentDocument[]=[];
+  deleteSavedStudentDocuments:SavedStudentDocument[]=[];
 
   student:Student;
+
+  studentDocuments:StudentDocument[]=[];
 
 
   constructor(private formBuilder: FormBuilder, private spService: SPService) { }
@@ -40,6 +47,7 @@ export class UpdateStudentComponent implements OnInit {
 
   getStudent(){
     this.student = JSON.parse(sessionStorage.getItem('student'));
+    this.getAllStudentDocuments();
     this.getSexList();
     
   }
@@ -72,6 +80,24 @@ export class UpdateStudentComponent implements OnInit {
         this.getStageStatus();
       }
     )
+  }
+
+  getAllStudentDocuments(){
+    this.spService.getAllStudentDocuments(this.student.id).then(
+      (Response)=>{
+        this.savedStudentDocuments = SavedStudentDocument.fromJsonList(Response);
+      },err=>{
+        alert('Error Obteniendo')
+      }
+    )
+  }
+
+  deleteSavedDocument(document){
+    let index = this.savedStudentDocuments.findIndex(d => d.name === document.name);
+    if (index > -1) {
+     this.savedStudentDocuments.splice(index,1);
+     this.deleteSavedStudentDocuments.push(document);
+    }
   }
 
   getStageStatus(){
@@ -107,6 +133,18 @@ export class UpdateStudentComponent implements OnInit {
     });
   }
 
+  onFileChange(event) {
+    let reader = new FileReader();
+    if(event.target.files && event.target.files.length > 0) {
+      for (let index = 0; index < event.target.files.length; index++) {
+        const file = event.target.files[index];
+        this.studentDocuments.push(new StudentDocument(file.name,file));
+      }
+      
+    }else {
+  }
+}
+
   get f(){return this.updateStudentForm.controls}
 
 
@@ -134,7 +172,46 @@ export class UpdateStudentComponent implements OnInit {
   }
 
   onSubmit(){
+    if (this.updateStudentForm.invalid) {
+      return;
+    }
+    let enrollDate = new Date(this.updateStudentForm.controls.enrollDate.value);
+    let birthDate = new Date(this.updateStudentForm.controls.birthDate.value);
+    let entryDate = new Date(this.updateStudentForm.controls.entryDate.value);
 
+    this.student.name= this.updateStudentForm.controls.firstName.value;
+    this.student.birthDate = birthDate.toISOString();
+    this.student.sexId = this.updateStudentForm.controls.sexControl.value.Id;
+    this.student.parentName = this.updateStudentForm.controls.parentName.value;
+    this.student.studentStatusId = this.updateStudentForm.controls.studentStatus.value.Id;
+    this.student.schoolStatusId = this.updateStudentForm.controls.schoolStatus.value.Id;
+    this.student.stageSchoolId=this.updateStudentForm.controls.stageSchool.value.Id;
+    this.student.enrollDate = enrollDate.toISOString();
+    this.student.entryDate = entryDate.toISOString();
+    this.student.motherName = this.updateStudentForm.controls.motherName.value;
+    this.student.birthPlace = this.updateStudentForm.controls.birthPlace.value;
+    this.student.address = this.updateStudentForm.controls.address.value;
+    this.student.phoneNumber = this.updateStudentForm.controls.phoneNumber.value;
+    this.student.movilNumber = this.updateStudentForm.controls.movilNumber.value;
+    this.student.parentsPhoneNumber = this.updateStudentForm.controls.parentsPhoneNumber.value;
+    this.student.parentJob = this.updateStudentForm.controls.parentJob.value;
+    this.student.originSchool = this.updateStudentForm.controls.originSchool.value;
+    this.student.observations = this.updateStudentForm.controls.observations.value;
+
+    this.spService.updateStudent(this.student, this.student.id).then(
+      (Response)=>{
+        this.spService.addStudentDocuments(this.student.id, this.studentDocuments).then(
+          (response)=>{
+            sessionStorage.setItem('student',JSON.stringify(this.student));
+            alert('Actualizo');
+          },err=>{
+            alert('no actulizo');
+          }
+        );
+      },err=>{
+        alert('No actualizo');
+      }
+    )
   }
 
 }

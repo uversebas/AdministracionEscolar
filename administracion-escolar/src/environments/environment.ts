@@ -10,7 +10,8 @@ export const environment = {
   studentStatusList:'EstatusAlumno',
   schoolStatusList:'EstatusEscolar',
   stageSchoolList:'Division',
-  studentList:'Alumnos'
+  studentList:'Alumnos',
+  baseUrl:'https://vincicloud.sharepoint.com'
 
 
 };
