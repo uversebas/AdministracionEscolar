@@ -6,8 +6,10 @@
         <div class="row">
           <div class="col-md-2">
             <div class="form-group">
-              <label>Clave</label>
-              <span>{{student.key}}</span>
+                <label class="title-student-key">Clave</label>
+                <div class="place-student-key">
+                  <label class="student-key">{{student.key}}</label>
+                </div>
             </div>
           </div>
           <div class="col-md-8">
@@ -64,7 +66,6 @@
                   <div *ngIf="f.entryDate.errors.required">Fecha de ingreso requerida</div>
                 </div>
               </mat-form-field>
-
             </div>
           </div>
           <div class="col-md-4">
@@ -103,8 +104,7 @@
         </div>
       </div>
     </fieldset>
-
-    <fieldset>
+    <fieldset class="scheduler-border">
       <legend class="scheduler-border">Datos del tutor</legend>
       <div class="control-group">
         <div class="row">
@@ -138,9 +138,8 @@
         </div>
       </div>
     </fieldset>
-
-    <fieldset>
-      <legend class="scheduler-border">Teléfono</legend>
+    <fieldset class="scheduler-border">
+      <legend class="scheduler-border">Datos de Teléfono</legend>
       <div class="control-group">
         <div class="row">
           <div class="col-md-4">
@@ -170,8 +169,7 @@
         </div>
       </div>
     </fieldset>
-
-    <fieldset>
+    <fieldset class="scheduler-border">
       <legend class="scheduler-border">Datos escolares</legend>
       <div class="control-group">
         <div class="row">
@@ -241,11 +239,12 @@
         </div>
       </div>
     </fieldset>
-    
-    <div class="form-group">
-      <div class="buttons-app">
-        <button class="btn btn-default">Salir</button>
-        <button [disabled]="submitted" class="btn btn-primary">Guardar</button>
+    <div class="row">
+      <div class="form-group">
+        <div class="buttons-app">
+          <button class="btn btn-default">Salir</button>
+          <button [disabled]="submitted" class="btn btn-primary">Guardar</button>
+        </div>
       </div>
     </div>
   </form>

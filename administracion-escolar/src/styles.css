@@ -61,4 +61,12 @@ fieldset.scheduler-border {
     .img-logo{
         margin-left: 20px;
     }
+
+    .title-student-key{
+        margin-top: 17px;
+    }
+    .student-key{
+        font-size: 25px;
+        font-weight: 400;
+    }
    
