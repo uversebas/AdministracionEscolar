@@ -1,10 +1,8 @@
 <div class="container">
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit(templatesuccessCreateStudent)">
-
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">Datos Generales</legend>
             <div class="control-group">
-
                 <div class="row">
                     <div class="col-md-8">
                         <div class="form-group">
@@ -30,7 +28,6 @@
                                     <div *ngIf="f.birthDate.errors.required">Fecha de nacimiento requerida</div>
                                 </div>
                             </mat-form-field>
-
                         </div>
                     </div>
                 </div>
@@ -63,7 +60,6 @@
                             </mat-form-field>
                         </div>
                     </div>
-
                     <div class="col-md-4">
                         <div class="for-group">
                             <mat-form-field>
@@ -80,7 +76,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
@@ -99,10 +94,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </fieldset>
-
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">Datos del tutor</legend>
             <div class="control-group">
@@ -137,7 +130,6 @@
                 </div>
             </div>
         </fieldset>
-
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">Datos de Teléfono</legend>
             <div class="control-group">
@@ -169,7 +161,6 @@
                 </div>
             </div>
         </fieldset>
-
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">Datos escolares</legend>
             <div class="control-group">
@@ -240,13 +231,13 @@
                 </div>
             </div>
         </fieldset>
-
-        <div class="form-group">
-            <div class="buttons-app">
-                <button class="btn btn-default">Salir</button>
-                <button [disabled]="submitted" class="btn btn-primary">Guardar</button>
+        <div class="row">
+            <div class="form-group">
+                <div class="buttons-app">
+                    <button class="btn btn-default">Salir</button>
+                    <button [disabled]="submitted" class="btn btn-primary">Guardar</button>
+                </div>
             </div>
-            
         </div>
     </form>
     <ng-template #templatesuccessCreateStudent>
