@@ -72,7 +72,7 @@ export class SPService {
   }
 
   addStudent(student:Student, abbreviationStage:string){
-    return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.add({
+    return this.getConfig().web.lists.getByTitle(environment.studentList).items.add({
         Title:student.name,
         FechaNacimiento:student.birthDate,
         SexoId:student.sexId,
@@ -95,13 +95,13 @@ export class SPService {
   }
 
   updateStudent(student:Student, id:number){
-      return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(id).update({
+      return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(id).update({
         Title:student.name
       });
   }
 
   assignStudentKey(password:string, id:number){
-    return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(id).update({
+    return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(id).update({
         ClaveAlumno:password
       });
   }
