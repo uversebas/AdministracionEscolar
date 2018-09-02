@@ -1,5 +1,5 @@
 <div class="container">
-  <form [formGroup]="updateStudentForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="updateStudentForm" (ngSubmit)="onSubmit(templatesuccessUpdateStudent)">
     <fieldset class="scheduler-border">
       <legend class="scheduler-border">Datos Generales</legend>
       <div class="control-group">
@@ -239,6 +239,61 @@
         </div>
       </div>
     </fieldset>
+    <fieldset class="scheduler-border">
+      <div class="control-group">
+        <div class="row">
+          <div class="col-md-4">
+            <mat-form-field>
+              <label>Ciclo escolar</label>
+              <mat-select formControlName="cycleSchoolControl" [(value)]='selectedCycleSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+                <mat-option *ngFor="let cycle of cycles" [value]="cycle">
+                  {{cycle.Title}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="submitted && f.cycleSchool.errors" class="invalid-feedback">
+                <div *ngIf="f.cycleSchool.errors.required">Ciclo escolar requerido</div>
+              </div>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <label>Turno</label>
+              <mat-select formControlName="turnSchoolControl" [(value)]='selectedTurnSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+                <mat-option *ngFor="let turn of turns" [value]="turn">
+                  {{turn.Title}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="submitted && f.turnSchool.errors" class="invalid-feedback">
+                <div *ngIf="f.turnSchool.errors.required">Turno requerido</div>
+              </div>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field>
+              <label>Grado y grupo</label>
+              <mat-select formControlName="gradeSchoolControl" [(value)]='selectedGradeSchool' class="form-control" (selectionChange)='selectGrade()' [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+                <mat-option *ngFor="let grade of grades" [value]="grade">
+                  {{grade.Title}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="submitted && f.gradeSchool.errors" class="invalid-feedback">
+                <div *ngIf="f.gradeSchool.errors.required">Grado requerido</div>
+              </div>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="groupSchoolControl" [(value)]='selectedGroupSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+                <mat-option *ngFor="let group of groups" [value]="group">
+                  {{group.Title}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="submitted && f.selectedGroupSchool.errors" class="invalid-feedback">
+                <div *ngIf="f.selectedGroupSchool.errors.required">Grupo requerido</div>
+              </div>
+            </mat-form-field>
+          </div>
+      </div>
+        </div>
+    </fieldset>
     <div class="row">
       <div class="col-md-6">
         <fieldset class="scheduler-border">
@@ -262,6 +317,7 @@
                         </tr>
                       </tbody>
                     </table>
+                    <a href="https://vincicloud.sharepoint.com/:b:/r/sites/SistemadeAdministracionEscolardev/_layouts/15/WopiFrame.aspx?sourcedoc={005a6637-89d6-4cb2-9ba7-699983e4bf04}&action=interactivepreview" target="_blank">Documento Genial</a>
                   </div>
 
               </div>
@@ -293,4 +349,22 @@
       </div>
     </div>
   </form>
+  <ng-template #templatesuccessUpdateStudent>
+    <div class="modal-header">
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeSuccessUpdateStudentModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title"> Actualización exitosa </h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+              La información del alumno se actualizo exitosamente.
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="closeSuccessUpdateStudentModal()">Ok</button>
+    </div>
+</ng-template>
 </div>

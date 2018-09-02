@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Sex } from '../dtos/sex';
 import { StudentStatus } from '../dtos/studentStatus';
@@ -9,6 +9,12 @@ import { Student } from '../dtos/student';
 import { StudentDocument } from '../dtos/studentDocument';
 import { Alert } from 'selenium-webdriver';
 import { SavedStudentDocument } from '../dtos/savedStudentDocument';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Router } from '@angular/router';
+import { Cycle } from '../dtos/cycle';
+import { Turn } from '../dtos/turn';
+import { Grade } from '../dtos/grade';
+import { Group } from '../dtos/group';
 
 @Component({
   selector: 'app-update-student',
@@ -23,12 +29,21 @@ export class UpdateStudentComponent implements OnInit {
   studentStatus:StudentStatus[]=[];
   schoolStatus:SchoolStatus[]=[];
   stagesSchool:StageSchool[]=[];
+  cycles:Cycle[]=[];
+  turns:Turn[]=[];
+  grades:Grade[]=[];
+  groups:Group[]=[];
   studentName:string;
   studentKey:string;
   selectedSex:Sex;
   selectedStudentStatus:StudentStatus;
   selectedSchoolStatus:SchoolStatus;
   selectedStageSchool:StageSchool;
+  selectedCycleSchool:Cycle;
+  selectedTurnSchool:Turn;
+  selectedGradeSchool:Grade;
+  selectedGroupSchool:Group;
+  
   savedStudentDocuments:SavedStudentDocument[]=[];
   deleteSavedStudentDocuments:SavedStudentDocument[]=[];
 
@@ -36,14 +51,50 @@ export class UpdateStudentComponent implements OnInit {
 
   studentDocuments:StudentDocument[]=[];
 
+  public successUpdateStudentModal:BsModalRef;
 
-  constructor(private formBuilder: FormBuilder, private spService: SPService) { }
+
+  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
 
   ngOnInit() {
     this.registerControlsForm();
     this.getStudent();
+    this.getActiveCycleList();
+    this.getTurnsList();
+    this.getGradeList();
   }
 
+  getActiveCycleList(){
+    this.spService.getActiveCycle().subscribe(
+      (Response)=>{
+        this.cycles= Cycle.fromJsonList(Response);
+      }
+    )
+  }
+
+  getTurnsList(){
+    this.spService.getTurnList().subscribe(
+      (Response)=>{
+        this.turns=Turn.fromJsonList(Response);
+      }
+    )
+  }
+
+  getGradeList(){
+    this.spService.getGradeList().subscribe(
+      (Response)=>{
+        this.grades=Grade.fromJsonList(Response);
+      }
+    )
+  }
+
+  getGruopList(){
+    this.spService.getGroupByGradeId(this.selectedGradeSchool.Id).subscribe(
+      (Response)=>{
+        this.groups=Group.fromJsonList(Response);
+      }
+    )
+  }
 
   getStudent(){
     this.student = JSON.parse(sessionStorage.getItem('student'));
@@ -110,6 +161,10 @@ export class UpdateStudentComponent implements OnInit {
     )
   }
 
+  selectGrade(){
+    this.getGruopList();
+  }
+
   updateValues() {
     this.updateStudentForm.setValue({
       firstName: this.student.name,
@@ -129,7 +184,11 @@ export class UpdateStudentComponent implements OnInit {
       parentJob:this.student.parentJob,
       stageSchool:this.selectedStageSchool,
       originSchool:this.student.originSchool,
-      observations:this.student.observations
+      observations:this.student.observations,
+      cycleSchoolControl:'',
+      turnSchoolControl:'',
+      gradeSchoolControl:'',
+      groupSchoolControl:''
     });
   }
 
@@ -167,11 +226,19 @@ export class UpdateStudentComponent implements OnInit {
       parentJob:[''],
       stageSchool:['',Validators.required],
       originSchool:[''],
-      observations:['']
+      observations:[''],
+      cycleSchoolControl:['',Validators.required],
+      turnSchoolControl:['',Validators.required],
+      gradeSchoolControl:['',Validators.required],
+      groupSchoolControl:['',Validators.required]
     });
   }
 
-  onSubmit(){
+  closeSuccessUpdateStudentModal(){
+    this.successUpdateStudentModal.hide();
+  }
+
+  onSubmit(template:TemplateRef<any>){
     if (this.updateStudentForm.invalid) {
       return;
     }
@@ -203,7 +270,8 @@ export class UpdateStudentComponent implements OnInit {
         this.spService.addStudentDocuments(this.student.id, this.studentDocuments).then(
           (response)=>{
             sessionStorage.setItem('student',JSON.stringify(this.student));
-            alert('Actualizo');
+            this.successUpdateStudentModal = this.modalService.show(template);
+            this.router.navigate(['/menu']);
           },err=>{
             alert('no actulizo');
           }

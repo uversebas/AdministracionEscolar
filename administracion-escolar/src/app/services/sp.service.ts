@@ -43,8 +43,33 @@ export class SPService {
       return data;
   }
 
+  getActiveCycle(){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.cycleList).items.filter("Estado eq 'Activo'").get());
+    return data;
+  }
+
   getMenu(){
       let data = from(this.getConfig().web.lists.getByTitle(environment.menuList).items.getAll());
+      return data;
+  }
+
+  getCyclesList(){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.cycleList).items.filter("Estado eq 'Activo'").get());
+      return data;
+  }
+
+  getTurnList(){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.turnList).items.getAll());
+      return data;
+  }
+
+  getGradeList(){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.gradeList).items.getAll());
+      return data;
+  }
+
+  getGroupByGradeId(gradeId:number){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.groupList).items.filter("GradoId eq "+ gradeId).get());
       return data;
   }
 
@@ -72,6 +97,11 @@ export class SPService {
       let data = from(this.getConfig().web.lists.getByTitle(environment.studentList).items.getAll());
       return data;
   }
+
+getPaymentModalityList(){
+    let data =from(this.getConfig().web.lists.getByTitle(environment.paymentModality).items.getAll());
+    return data;
+}
 
   addStudent(student:Student, abbreviationStage:string){
     return this.getConfig().web.lists.getByTitle(environment.studentList).items.add({

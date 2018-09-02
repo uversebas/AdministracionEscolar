@@ -7,5 +7,12 @@ export const environment = {
   schoolStatusList:'EstatusEscolar',
   stageSchoolList:'Division',
   studentList:'Alumnos',
-  baseUrl:'https://vincicloud.sharepoint.com'
+  baseUrl:'https://vincicloud.sharepoint.com',
+  cycleList:'CicloEscolar',
+  paymentModality:'ModalidadPago',
+  paymentConcept:'ConceptosPagos',
+  turnList: 'Turno',
+  gradeList: 'Grado',
+  groupList: 'Grupo',
+  documentStudentList:'BibliotecaDocumentosAlumnos'
 };
