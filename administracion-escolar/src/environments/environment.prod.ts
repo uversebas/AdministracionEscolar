@@ -14,5 +14,9 @@ export const environment = {
   turnList: 'Turno',
   gradeList: 'Grado',
   groupList: 'Grupo',
-  documentStudentList:'BibliotecaDocumentosAlumnos'
+  documentStudentList:'BibliotecaDocumentosAlumnos',
+  monthList:'Meses',
+  receivedPersonList:'PersonasAutorizadasCobro',
+  paymentWayList:'MetodosPago',
+  studentPaymentList:'PagosAlumnos'
 };

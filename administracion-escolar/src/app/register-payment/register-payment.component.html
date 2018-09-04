@@ -1,1 +1,248 @@
-
+<div class="container">
+        <form [formGroup]='registerPaymentForm' (ngSubmit)='onSubmit()'>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Alumno</legend>
+                <div class="control-group">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="title-student-key">Clave</label>
+                                <div class="place-student-key">
+                                    <label  class="student-key">{{student.key}}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="title-student-key">Nombre</label>
+                                <div class="place-student-key">
+                                    <label class="student-name">{{student.name}}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cil-md-3">
+                            <div class="form-group">
+                                <label class="title-student-key">División</label>
+                                <div class="place-student-key">
+                                    <label class="student-name">{{stageSchool.title}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="title-student-key">Ciclo escolar</label>
+                                <div class="place-student-key">
+                                    <label class="student-name">{{cycle.title}}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="title-student-key">Grado y grupo</label>
+                                <div class="place-student-key">
+                                    <label class="student-name">{{grade.title}}</label>
+                                    <label class="student-name">{{group.title}}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Beca</legend>
+    
+            </fieldset>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Información del pago</legend>
+                <div class="control-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <mat-form-field>
+                                    <label>Fecha de pago</label>
+                                    <input matInput [matDatepicker]="picker1" formControlName="paymentDateControl" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentDateControl.errors }"/>
+                                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker1></mat-datepicker>
+                                    <div *ngIf="submitted && f.paymentDateControl.errors" class="invalid-feedback">
+                                        <div *ngIf="f.paymentDateControl.errors.required">Fecha de pago requerida</div>
+                                    </div>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <mat-form-field>
+                                    <label>Fecha de registro</label>
+                                    <input matInput [matDatepicker]="picker2" formControlName="entryDateControl" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.entryDateControl.errors }"
+                                    />
+                                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker2></mat-datepicker>
+                                    <div *ngIf="submitted && f.entryDateControl.errors" class="invalid-feedback">
+                                        <div *ngIf="f.entryDateControl.errors.required">Fecha de registro requerida</div>
+                                    </div>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="title-student-key">Responsable del registro</label>
+                            <div class="place-student-key">
+                                <label class="student-name">{{currentUser}}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <mat-form-field>
+                                    <label>Persona que recibió el pago</label>
+                                    <mat-select formControlName="receivedPersonControl" [(value)]='selectedReceivedPerson' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.receivedPersonControl.errors }">
+                                        <mat-option *ngFor="let person of receivedPersons" [value]="person">
+                                            {{person.title}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <div *ngIf="submitted && f.receivedPersonControl.errors" class="invalid-feedback">
+                                        <div *ngIf="f.receivedPersonControl.errors.required">Persona que recibió es requerida</div>
+                                    </div>
+                                </mat-form-field>
+                            </div>
+    
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <mat-form-field>
+                                            <label>Concepto de pago</label>
+                                            <mat-select formControlName="paymentConceptControl" [(value)]='selectedPaymentConcept' (selectionChange)='selectecPaymentConcept()' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentConceptControl.errors }">
+                                                <mat-option *ngFor="let concept of paymentConceptsStudent" [value]="concept">
+                                                    {{concept.title}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <div *ngIf="submitted && f.paymentConceptControl.errors" class="invalid-feedback">
+                                                <div *ngIf="f.paymentConceptControl.errors.required">Persona que recibió es requerida</div>
+                                            </div>
+                                        </mat-form-field>
+                                    </div>
+    
+                                </div>
+                                <div class="col-md-6">
+                                        <label class="title-student-key">Monto definido del pago</label>
+                                        <div class="place-student-key">
+                                            <label class="student-name">{{selectedPaymentConcept.amount | currency}}</label>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf='selectedPaymentConcept.dues'>
+                                <div class="col-md-6">
+                                        <label class="title-student-key">Modalidad de pago</label>
+                                        <div class="place-student-key">
+                                            <label class="student-name">{{paymentModality.title}}</label>
+                                        </div> 
+                                </div>
+                                <div class="col-md-6">
+                                        <mat-form-field>
+                                                <label>Mes que paga</label>
+                                                <mat-select formControlName="paymentMonthControl" [(value)]='selectedPaymentMonth' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentMonthControl.errors }">
+                                                    <mat-option *ngFor="let month of monthsPaymentModality" [value]="month">
+                                                        {{month.title}}
+                                                    </mat-option>
+                                                </mat-select>
+                                                <div *ngIf="submitted && f.paymentMonthControl.errors" class="invalid-feedback">
+                                                    <div *ngIf="f.paymentMonthControl.errors.required">Mes de pago requerido</div>
+                                                </div>
+                                            </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                        <mat-form-field>
+                                                <label>Método de pago</label>
+                                                <mat-select formControlName="paymentWayControl" [(value)]='selectedPaymentWay' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentWayControl.errors }">
+                                                    <mat-option *ngFor="let paymentWay of paymentWays" [value]="paymentWay">
+                                                        {{paymentWay.title}}
+                                                    </mat-option>
+                                                </mat-select>
+                                                <div *ngIf="submitted && f.paymentWayControl.errors" class="invalid-feedback">
+                                                    <div *ngIf="f.paymentWayControl.errors.required">Método de pago requerido</div>
+                                                </div>
+                                            </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                            <div class="form-group">
+                                                    <mat-form-field>
+                                                        <label>Referencia o folio</label>
+                                                        <input matInput formControlName="referenceControl" class="form-control" />
+                                                    </mat-form-field>
+                                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                        <mat-form-field>
+                                                <label>Acuerdos de pago</label>
+                                                <textarea matInput formControlName="paymentAgreementControl" class="form-control" rows="6"></textarea>
+                                            </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                        <mat-form-field>
+                                                <label>Observaciones</label>
+                                                <textarea matInput formControlName="observationControl" class="form-control" rows="6"></textarea>
+                                            </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                                <div class="form-group">
+                                    <mat-form-field>
+                                        <label>Cantidad a pagar</label>
+                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="quantityToPayControl" class="form-control" (keyup)="calculatePayment()"  [ngClass]="{ 'is-invalid': submitted && f.quantityToPayControl.errors }"/>
+                                        <div *ngIf="submitted && f.quantityToPayControl.errors" class="invalid-feedback">
+                                            <div *ngIf="f.quantityToPayControl.errors.required">Cantidad a pagar requerida</div>
+                                        </div>
+                                    </mat-form-field>
+                                </div>
+                                <div class="form-group">
+                                    <mat-form-field>
+                                        <label>Adeudo anterior</label>
+                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="debtAmountControl" class="form-control" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="form-group">
+                                    <mat-form-field>
+                                        <label>Cantidad total a pagar</label>
+                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="totalAmountToPayControl" class="form-control" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="form-group">
+                                    <mat-form-field>
+                                        <label>Monto del pago</label>
+                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="amountToPayControl" class="form-control" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="form-group">
+                                    <mat-form-field>
+                                        <label>Nuevo saldo</label>
+                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="newBalanceControl" class="form-control" />
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="row">
+                    <div class="form-group">
+                        <div class="buttons-app">
+                            <button class="btn btn-default">Salir</button>
+                            <button [disabled]="submitted" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+        </form>
+    </div>

@@ -74,7 +74,7 @@
                 <label>Sexo</label>
                 <mat-select formControlName="sexControl" [(value)]='selectedSex' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.sexControl.errors }">
                   <mat-option *ngFor="let sex of sexs" [value]="sex">
-                    {{sex.Title}}
+                    {{sex.title}}
                   </mat-option>
                 </mat-select>
                 <div *ngIf="submitted && f.sexControl.errors" class="invalid-feedback">
@@ -179,7 +179,7 @@
                 <label>Estatus del alumno</label>
                 <mat-select formControlName="studentStatus" [(value)]='selectedStudentStatus' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.studentStatus.errors }">
                   <mat-option *ngFor="let status of studentStatus" [value]="status">
-                    {{status.Title}}
+                    {{status.title}}
                   </mat-option>
                 </mat-select>
                 <div *ngIf="submitted && f.studentStatus.errors" class="invalid-feedback">
@@ -194,7 +194,7 @@
                 <label>Estatus escolar</label>
                 <mat-select formControlName="schoolStatus" [(value)]='selectedSchoolStatus' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.schoolStatus.errors }">
                   <mat-option *ngFor="let status of schoolStatus" [value]="status">
-                    {{status.Title}}
+                    {{status.title}}
                   </mat-option>
                 </mat-select>
                 <div *ngIf="submitted && f.schoolStatus.errors" class="invalid-feedback">
@@ -207,9 +207,9 @@
             <div class="for-group">
               <mat-form-field>
                 <label>División</label>
-                <mat-select formControlName="stageSchool" [(value)]='selectedStageSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+                <mat-select formControlName="stageSchool" [(value)]='selectedStageSchool' (selectionChange)='selectStage()' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
                   <mat-option *ngFor="let stage of stagesSchool" [value]="stage">
-                    {{stage.Title}}
+                    {{stage.title}}
                   </mat-option>
                 </mat-select>
                 <div *ngIf="submitted && f.stageSchool.errors" class="invalid-feedback">
@@ -245,13 +245,13 @@
           <div class="col-md-4">
             <mat-form-field>
               <label>Ciclo escolar</label>
-              <mat-select formControlName="cycleSchoolControl" [(value)]='selectedCycleSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+              <mat-select formControlName="cycleSchoolControl" [(value)]='selectedCycleSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.cycleSchoolControl.errors }">
                 <mat-option *ngFor="let cycle of cycles" [value]="cycle">
-                  {{cycle.Title}}
+                  {{cycle.title}}
                 </mat-option>
               </mat-select>
-              <div *ngIf="submitted && f.cycleSchool.errors" class="invalid-feedback">
-                <div *ngIf="f.cycleSchool.errors.required">Ciclo escolar requerido</div>
+              <div *ngIf="submitted && f.cycleSchoolControl.errors" class="invalid-feedback">
+                <div *ngIf="f.cycleSchoolControl.errors.required">Ciclo escolar requerido</div>
               </div>
             </mat-form-field>
           </div>
@@ -260,34 +260,34 @@
               <label>Turno</label>
               <mat-select formControlName="turnSchoolControl" [(value)]='selectedTurnSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
                 <mat-option *ngFor="let turn of turns" [value]="turn">
-                  {{turn.Title}}
+                  {{turn.title}}
                 </mat-option>
               </mat-select>
-              <div *ngIf="submitted && f.turnSchool.errors" class="invalid-feedback">
-                <div *ngIf="f.turnSchool.errors.required">Turno requerido</div>
+              <div *ngIf="submitted && f.turnSchoolControl.errors" class="invalid-feedback">
+                <div *ngIf="f.turnSchoolControl.errors.required">Turno requerido</div>
               </div>
             </mat-form-field>
           </div>
           <div class="col-md-4">
             <mat-form-field>
               <label>Grado y grupo</label>
-              <mat-select formControlName="gradeSchoolControl" [(value)]='selectedGradeSchool' class="form-control" (selectionChange)='selectGrade()' [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+              <mat-select formControlName="gradeSchoolControl" [(value)]='selectedGradeSchool' class="form-control" (selectionChange)='selectGrade()' [ngClass]="{ 'is-invalid': submitted && f.gradeSchoolControl.errors }">
                 <mat-option *ngFor="let grade of grades" [value]="grade">
-                  {{grade.Title}}
+                  {{grade.title}}
                 </mat-option>
               </mat-select>
-              <div *ngIf="submitted && f.gradeSchool.errors" class="invalid-feedback">
-                <div *ngIf="f.gradeSchool.errors.required">Grado requerido</div>
+              <div *ngIf="submitted && f.gradeSchoolControl.errors" class="invalid-feedback">
+                <div *ngIf="f.gradeSchoolControl.errors.required">Grado requerido</div>
               </div>
             </mat-form-field>
             <mat-form-field>
-              <mat-select formControlName="groupSchoolControl" [(value)]='selectedGroupSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+              <mat-select formControlName="groupSchoolControl" [(value)]='selectedGroupSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.groupSchoolControl.errors }">
                 <mat-option *ngFor="let group of groups" [value]="group">
-                  {{group.Title}}
+                  {{group.title}}
                 </mat-option>
               </mat-select>
-              <div *ngIf="submitted && f.selectedGroupSchool.errors" class="invalid-feedback">
-                <div *ngIf="f.selectedGroupSchool.errors.required">Grupo requerido</div>
+              <div *ngIf="submitted && f.groupSchoolControl.errors" class="invalid-feedback">
+                <div *ngIf="f.groupSchoolControl.errors.required">Grupo requerido</div>
               </div>
             </mat-form-field>
           </div>
@@ -327,7 +327,22 @@
           <fieldset class="scheduler-border">
               <legend class="scheduler-border">Datos adicionales de registro</legend>
                 <div class="control-group">
-                  
+                  <mat-form-field>
+                    <label>Modalidad de pago colegiatura</label>
+                    <mat-select formControlName="paymentModalityControl" [(value)]='selectedPaymentModality' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentModalityControl.errors }">
+                      <mat-option *ngFor="let paymentModality of paymentModalities" [value]="paymentModality">
+                        {{paymentModality.title}}
+                      </mat-option>
+                    </mat-select>
+                    <div *ngIf="submitted && f.paymentModalityControl.errors" class="invalid-feedback">
+                      <div *ngIf="f.paymentModalityControl.errors.required">Modalidad de pago requerida</div>
+                    </div>
+                  </mat-form-field>
+                  <div class="payment-concepts">
+                    <div *ngFor='let concept of opcionalPaymentConcepts'>
+                      <mat-checkbox [checked]="concept.checked" (change)='selectConcept(concept)'>{{concept.title}}</mat-checkbox>
+                    </div>
+                  </div>
                 </div>
           </fieldset>
       </div>

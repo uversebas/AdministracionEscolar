@@ -1,5 +1,5 @@
 export class Cycle{
-    constructor(public Title:string, public startDate:string, public endDate:string, public status:string, public id?:number){
+    constructor(public title:string, public startDate:string, public endDate:string, public status:string, public id?:number){
 
     }
 

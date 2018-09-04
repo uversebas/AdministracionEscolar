@@ -7,7 +7,6 @@ import { StageSchool } from '../dtos/stageSchool';
 import { SPService } from '../services/sp.service';
 import { Student } from '../dtos/student';
 import { StudentDocument } from '../dtos/studentDocument';
-import { Alert } from 'selenium-webdriver';
 import { SavedStudentDocument } from '../dtos/savedStudentDocument';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Router } from '@angular/router';
@@ -15,6 +14,13 @@ import { Cycle } from '../dtos/cycle';
 import { Turn } from '../dtos/turn';
 import { Grade } from '../dtos/grade';
 import { Group } from '../dtos/group';
+import { PaymentModality } from '../dtos/paymentModality';
+import { PaymentConcept } from '../dtos/paymentConcept';
+
+export interface RequestUniform {
+  value: boolean;
+  viewValue: string;
+}
 
 @Component({
   selector: 'app-update-student',
@@ -47,6 +53,17 @@ export class UpdateStudentComponent implements OnInit {
   savedStudentDocuments:SavedStudentDocument[]=[];
   deleteSavedStudentDocuments:SavedStudentDocument[]=[];
 
+  paymentModalities:PaymentModality[]=[];
+  paymentConcepts:PaymentConcept[]=[];
+  opcionalPaymentConcepts:PaymentConcept[]=[];
+
+  requestUniform: RequestUniform[] = [
+    {value: true, viewValue: 'Sí'},
+    {value: false, viewValue: 'No'}
+  ];
+
+
+
   student:Student;
 
   studentDocuments:StudentDocument[]=[];
@@ -62,12 +79,30 @@ export class UpdateStudentComponent implements OnInit {
     this.getActiveCycleList();
     this.getTurnsList();
     this.getGradeList();
+    this.getPaymentModalityList();
   }
 
   getActiveCycleList(){
     this.spService.getActiveCycle().subscribe(
       (Response)=>{
         this.cycles= Cycle.fromJsonList(Response);
+      }
+    )
+  }
+
+  getPaymentModalityList(){
+    this.spService.getPaymentModalityList().subscribe(
+      (Response)=>{
+        this.paymentModalities = PaymentModality.fromJsonList(Response);
+      }
+    )
+  }
+
+  selectStage(){
+    this.spService.getPaymentConceptList(this.selectedStageSchool.id).subscribe(
+      (Response)=>{
+        this.paymentConcepts= PaymentConcept.fromJsonList(Response);
+        this.opcionalPaymentConcepts = this.paymentConcepts.filter(p=>p.isOption);
       }
     )
   }
@@ -89,7 +124,7 @@ export class UpdateStudentComponent implements OnInit {
   }
 
   getGruopList(){
-    this.spService.getGroupByGradeId(this.selectedGradeSchool.Id).subscribe(
+    this.spService.getGroupByGradeId(this.selectedGradeSchool.id).subscribe(
       (Response)=>{
         this.groups=Group.fromJsonList(Response);
       }
@@ -98,7 +133,7 @@ export class UpdateStudentComponent implements OnInit {
 
   getStudent(){
     this.student = JSON.parse(sessionStorage.getItem('student'));
-    this.getAllStudentDocuments();
+    //this.getAllStudentDocuments();
     this.getSexList();
     
   }
@@ -107,7 +142,7 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getSexsList().subscribe(
       (Response)=>{
         this.sexs = Sex.fromJsonList(Response);
-        this.selectedSex=this.sexs.find(s=>s.Id===this.student.sexId);
+        this.selectedSex=this.sexs.find(s=>s.id===this.student.sexId);
         this.getStudentStatus();
       }
     )
@@ -117,7 +152,7 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getStudentStatusList().subscribe(
       (Response)=>{
         this.studentStatus = StudentStatus.fromJsonList(Response);
-        this.selectedStudentStatus = this.studentStatus.find(s=>s.Id===this.student.studentStatusId);
+        this.selectedStudentStatus = this.studentStatus.find(s=>s.id===this.student.studentStatusId);
         this.getSchoolStatus();
       }
     )
@@ -127,7 +162,7 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getSchoolStatusList().subscribe(
       (Response)=>{
         this.schoolStatus = SchoolStatus.fromJsonList(Response);
-        this.selectedSchoolStatus = this.schoolStatus.find(s=>s.Id===this.student.schoolStatusId);
+        this.selectedSchoolStatus = this.schoolStatus.find(s=>s.id===this.student.schoolStatusId);
         this.getStageStatus();
       }
     )
@@ -155,10 +190,15 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getStageShoolList().subscribe(
       (Response)=>{
         this.stagesSchool = StageSchool.fromJsonList(Response);
-        this.selectedStageSchool = this.stagesSchool.find(s=>s.Id===this.student.stageSchoolId);
+        this.selectedStageSchool = this.stagesSchool.find(s=>s.id===this.student.stageSchoolId);
+        this.selectStage();
         this.updateValues();
       }
     )
+  }
+
+  selectConcept(concept:PaymentConcept){
+    concept.checked = !concept.checked;
   }
 
   selectGrade(){
@@ -188,7 +228,8 @@ export class UpdateStudentComponent implements OnInit {
       cycleSchoolControl:'',
       turnSchoolControl:'',
       gradeSchoolControl:'',
-      groupSchoolControl:''
+      groupSchoolControl:'',
+      paymentModalityControl:''
     });
   }
 
@@ -230,12 +271,29 @@ export class UpdateStudentComponent implements OnInit {
       cycleSchoolControl:['',Validators.required],
       turnSchoolControl:['',Validators.required],
       gradeSchoolControl:['',Validators.required],
-      groupSchoolControl:['',Validators.required]
+      groupSchoolControl:['',Validators.required],
+      paymentModalityControl:['',Validators.required]
     });
   }
 
   closeSuccessUpdateStudentModal(){
     this.successUpdateStudentModal.hide();
+  }
+
+  getPaymentConceptIds(){
+    let paymentConceptIdsToSave = this.paymentConcepts;
+    for (let i = 0; i < this.opcionalPaymentConcepts.length; i++) {
+      const op = this.opcionalPaymentConcepts[i];
+      for (let j = 0; j < paymentConceptIdsToSave.length; j++) {
+        const o = paymentConceptIdsToSave[j];
+        if (op.id==o.id) {
+          if (!op.checked) {
+            paymentConceptIdsToSave.splice(j,1);
+          }
+        }
+      }
+    }
+    return paymentConceptIdsToSave.map(obj => obj.id);
   }
 
   onSubmit(template:TemplateRef<any>){
@@ -248,11 +306,11 @@ export class UpdateStudentComponent implements OnInit {
 
     this.student.name= this.updateStudentForm.controls.firstName.value;
     this.student.birthDate = birthDate.toISOString();
-    this.student.sexId = this.updateStudentForm.controls.sexControl.value.Id;
+    this.student.sexId = this.updateStudentForm.controls.sexControl.value.id;
     this.student.parentName = this.updateStudentForm.controls.parentName.value;
-    this.student.studentStatusId = this.updateStudentForm.controls.studentStatus.value.Id;
-    this.student.schoolStatusId = this.updateStudentForm.controls.schoolStatus.value.Id;
-    this.student.stageSchoolId=this.updateStudentForm.controls.stageSchool.value.Id;
+    this.student.studentStatusId = this.updateStudentForm.controls.studentStatus.value.id;
+    this.student.schoolStatusId = this.updateStudentForm.controls.schoolStatus.value.id;
+    this.student.stageSchoolId=this.updateStudentForm.controls.stageSchool.value.id;
     this.student.enrollDate = enrollDate.toISOString();
     this.student.entryDate = entryDate.toISOString();
     this.student.motherName = this.updateStudentForm.controls.motherName.value;
@@ -264,6 +322,12 @@ export class UpdateStudentComponent implements OnInit {
     this.student.parentJob = this.updateStudentForm.controls.parentJob.value;
     this.student.originSchool = this.updateStudentForm.controls.originSchool.value;
     this.student.observations = this.updateStudentForm.controls.observations.value;
+    this.student.cycleId = this.updateStudentForm.controls.cycleSchoolControl.value.id;
+    this.student.turnId = this.updateStudentForm.controls.turnSchoolControl.value.id;
+    this.student.gradeId = this.updateStudentForm.controls.gradeSchoolControl.value.id;
+    this.student.groupId = this.updateStudentForm.controls.groupSchoolControl.value.id;
+    this.student.paymentConceptIds = this.getPaymentConceptIds();
+    this.student.paymentMadalityId = this.updateStudentForm.controls.paymentModalityControl.value.id;
 
     this.spService.updateStudent(this.student, this.student.id).then(
       (Response)=>{

@@ -1,8 +1,8 @@
-export class Group{
-    constructor(public title:string, public gradeId:number, public id?:number){}
+export class PaymentWay{
+    constructor(public title:string, public id:number){}
 
     public static fromJson(element: any){
-        return new Group(element.Title, element.GradoId, element.Id);
+        return new PaymentWay(element.Title, element.Id);
     }
     public static fromJsonList(elements:any){
         var list=[];

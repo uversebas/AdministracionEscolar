@@ -16,6 +16,7 @@ export class AppComponent  implements OnInit{
     this.spService.getSiteInfo().subscribe(
       (Response)=>{
         this.title=Response.Title;
+        
       },err=>{
         console.log('error: '+ err);
       }
@@ -27,6 +28,7 @@ export class AppComponent  implements OnInit{
     this.spService.getCurrentUser().subscribe(
       (Response)=>{
         this.userName=Response.Title;
+        sessionStorage.setItem('currentUserName',this.userName);
       },err=>{
         console.log('Error obteniendo usuario');
       }

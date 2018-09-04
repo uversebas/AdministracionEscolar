@@ -26,7 +26,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'Authorization':'Bearer 0x0AE1824E36D1925064134282E1667FF5F8FF66C5450AD5152BF202B5B262BB3B1316E2F2A70E8252C81A68F2120150D077670B08667A5C01EA6FB3F57F97C582,26 Aug 2018 16:29:36 -0000'
+            'Authorization':'Bearer 0x3C3C422CC9C3A97CDE3B46AF5C6CAF0DDD5B159174D94DEE35C78EA2701ACEA67C23E1A0CC83511569BFDBC721714B13B7B0C15B67A8EE2DA28B8B00C9EDFEC0,03 Sep 2018 19:28:54 -0000'
         }
     },environment.web);
 
@@ -46,6 +46,21 @@ export class SPService {
   getActiveCycle(){
     let data = from(this.getConfig().web.lists.getByTitle(environment.cycleList).items.filter("Estado eq 'Activo'").get());
     return data;
+  }
+
+  getMonthsList(){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.monthList).items.getAll());
+      return data;
+  }
+
+  getReceivedPersonList(){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.receivedPersonList).items.getAll());
+      return data;
+  }
+
+  getPaymentWaysList(){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.paymentWayList).items.getAll());
+      return data;
   }
 
   getMenu(){
@@ -103,8 +118,18 @@ getPaymentModalityList(){
     return data;
 }
 
+getPaymentConceptList(stageSchoolId:number){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.paymentConcept).items.filter("DivisionId eq "+ stageSchoolId+" and Estado eq 'Activo'").get());
+    return data;
+}
+
+getStudentPaymentList(studentId:number){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.filter("AlumnoId eq " + studentId).get());
+    return data;
+}
+
   addStudent(student:Student, abbreviationStage:string){
-    return this.getConfig().web.lists.getByTitle(environment.studentList).items.add({
+    return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.add({
         Title:student.name,
         FechaNacimiento:student.birthDate,
         SexoId:student.sexId,
@@ -127,7 +152,7 @@ getPaymentModalityList(){
   }
 
   updateStudent(student:Student, id:number){
-      return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(id).update({
+      return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(id).update({
         Title:student.name,
         FechaNacimiento:student.birthDate,
         SexoId:student.sexId,
@@ -145,7 +170,13 @@ getPaymentModalityList(){
         Celular:student.movilNumber,
         OcupacionTutor:student.parentJob,
         Observaciones:student.observations,
-        EscuelaOrigen:student.originSchool
+        EscuelaOrigen:student.originSchool,
+        CicloEscolarId:student.cycleId,
+        TurnoId:student.turnId,
+        GradoId:student.gradeId,
+        GrupoId:student.groupId,
+        ConceptosId:{results:student.paymentConceptIds},
+        ModalidadPagoId:student.paymentMadalityId
       });
   }
 
@@ -159,7 +190,7 @@ getPaymentModalityList(){
   }
 
   assignStudentKey(password:string, id:number){
-    return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(id).update({
+    return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(id).update({
         ClaveAlumno:password
       });
   }

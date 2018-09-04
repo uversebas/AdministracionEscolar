@@ -1,5 +1,5 @@
 export class StageSchool{
-    constructor(public Title:string,public Abreviatura:string ,public Id:number){}
+    constructor(public title:string,public Abreviatura:string ,public id:number){}
 
     public static fromJson(element: any){
         return new StageSchool(element.Title, element.Abreviatura, element.ID);

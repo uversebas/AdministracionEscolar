@@ -1,5 +1,5 @@
 export class MenuAdministracionEscolar{
-    constructor(public Title:string, public Descripcion:string, public NombreRouter:string, public Image?:string,public RouterFinal?:string,public Id?:number){}
+    constructor(public title:string, public Descripcion:string, public NombreRouter:string, public Image?:string,public RouterFinal?:string,public id?:number){}
 
     public static fromJson(element: any){
             return new MenuAdministracionEscolar(element.Title,element.Descripcion,element.NombreRouter,element.ImagenMenu.Url,element.RouterFinal,element.ID);

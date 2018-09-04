@@ -1,5 +1,5 @@
 export class Grade{
-    constructor(public Title:string, public abbreviation:string, public Id?:number){}
+    constructor(public title:string, public abbreviation:string, public id?:number){}
 
     public static fromJson(element: any){
         return new Grade(element.Title, element.Abreviatura, element.Id);

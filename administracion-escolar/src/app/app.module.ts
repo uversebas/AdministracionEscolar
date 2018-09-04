@@ -13,7 +13,9 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material';
 import {MatSelectModule} from '@angular/material/select';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import { CurrencyMaskModule } from "ng2-currency-mask";
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 
@@ -51,6 +53,8 @@ import { SPService } from '../app/services/sp.service';
     MatInputModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatCheckboxModule,
+    CurrencyMaskModule,
     ModalModule.forRoot(),
     RouterModule.forRoot([
       {path:'',redirectTo:'/menu',pathMatch:'full'},

@@ -1,8 +1,9 @@
-export class Group{
-    constructor(public title:string, public gradeId:number, public id?:number){}
+export class ReceivedPerson{
+    constructor(public title:string, public id:number){}
 
+    
     public static fromJson(element: any){
-        return new Group(element.Title, element.GradoId, element.Id);
+        return new ReceivedPerson(element.Title, element.ID);
     }
     public static fromJsonList(elements:any){
         var list=[];

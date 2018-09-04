@@ -1,5 +1,5 @@
 export class Turn{
-    constructor(public Title:string, public id?:number){}
+    constructor(public title:string, public id?:number){}
 
     public static fromJson(element: any){
         return new Turn(element.Title, element.Id);

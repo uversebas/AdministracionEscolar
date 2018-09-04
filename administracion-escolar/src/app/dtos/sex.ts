@@ -1,5 +1,5 @@
 export class Sex{
-    constructor(public Title:string, public Id:number){}
+    constructor(public title:string, public id:number){}
 
     public static fromJson(element: any){
         return new Sex(element.Title,element.ID);

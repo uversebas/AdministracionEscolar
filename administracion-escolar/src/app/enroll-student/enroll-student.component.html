@@ -66,7 +66,7 @@
                                 <label>Sexo</label>
                                 <mat-select formControlName="sexControl" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.sexControl.errors }">
                                     <mat-option *ngFor="let sex of sexs" [value]="sex">
-                                        {{sex.Title}}
+                                        {{sex.title}}
                                     </mat-option>
                                 </mat-select>
                                 <div *ngIf="submitted && f.sexControl.errors" class="invalid-feedback">
@@ -171,7 +171,7 @@
                                 <label>Estatus del alumno</label>
                                 <mat-select formControlName="studentStatus" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.studentStatus.errors }">
                                     <mat-option *ngFor="let status of studentStatus" [value]="status">
-                                        {{status.Title}}
+                                        {{status.title}}
                                     </mat-option>
                                 </mat-select>
                                 <div *ngIf="submitted && f.studentStatus.errors" class="invalid-feedback">
@@ -186,7 +186,7 @@
                                 <label>Estatus escolar</label>
                                 <mat-select formControlName="schoolStatus" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.schoolStatus.errors }">
                                     <mat-option *ngFor="let status of schoolStatus" [value]="status">
-                                        {{status.Title}}
+                                        {{status.title}}
                                     </mat-option>
                                 </mat-select>
                                 <div *ngIf="submitted && f.schoolStatus.errors" class="invalid-feedback">
@@ -201,7 +201,7 @@
                                 <label>División</label>
                                 <mat-select formControlName="stageSchool" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
                                     <mat-option *ngFor="let stage of stagesSchool" [value]="stage">
-                                        {{stage.Title}}
+                                        {{stage.title}}
                                     </mat-option>
                                 </mat-select>
                                 <div *ngIf="submitted && f.stageSchool.errors" class="invalid-feedback">
