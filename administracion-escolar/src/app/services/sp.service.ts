@@ -155,7 +155,7 @@ getPaymentModalityList(){
   }
 
   getAllStudentDocuments(studentId:number){
-      return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(studentId).attachmentFiles.get();
+      return this.getConfig().web.lists.getByTitle(environment.documentStudentList).items.filter("IdAlumno eq "+ studentId).get();
   }
 
   assignStudentKey(password:string, id:number){

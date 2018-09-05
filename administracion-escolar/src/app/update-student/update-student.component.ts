@@ -15,6 +15,7 @@ import { Cycle } from '../dtos/cycle';
 import { Turn } from '../dtos/turn';
 import { Grade } from '../dtos/grade';
 import { Group } from '../dtos/group';
+import { PendingStudentDocument } from '../dtos/pendingStudentDocument';
 
 @Component({
   selector: 'app-update-student',
@@ -25,33 +26,35 @@ export class UpdateStudentComponent implements OnInit {
 
   updateStudentForm: FormGroup;
   submitted = false;
-  sexs:Sex[] = [];
-  studentStatus:StudentStatus[]=[];
-  schoolStatus:SchoolStatus[]=[];
-  stagesSchool:StageSchool[]=[];
-  cycles:Cycle[]=[];
-  turns:Turn[]=[];
-  grades:Grade[]=[];
-  groups:Group[]=[];
-  studentName:string;
-  studentKey:string;
-  selectedSex:Sex;
-  selectedStudentStatus:StudentStatus;
-  selectedSchoolStatus:SchoolStatus;
-  selectedStageSchool:StageSchool;
-  selectedCycleSchool:Cycle;
-  selectedTurnSchool:Turn;
-  selectedGradeSchool:Grade;
-  selectedGroupSchool:Group;
-  
-  savedStudentDocuments:SavedStudentDocument[]=[];
-  deleteSavedStudentDocuments:SavedStudentDocument[]=[];
+  sexs: Sex[] = [];
+  studentStatus: StudentStatus[] = [];
+  schoolStatus: SchoolStatus[] = [];
+  stagesSchool: StageSchool[] = [];
+  cycles: Cycle[] = [];
+  turns: Turn[] = [];
+  grades: Grade[] = [];
+  groups: Group[] = [];
+  studentName: string;
+  studentKey: string;
+  selectedSex: Sex;
+  selectedStudentStatus: StudentStatus;
+  selectedSchoolStatus: SchoolStatus;
+  selectedStageSchool: StageSchool;
+  selectedCycleSchool: Cycle;
+  selectedTurnSchool: Turn;
+  selectedGradeSchool: Grade;
+  selectedGroupSchool: Group;
 
-  student:Student;
+  savedStudentDocuments: SavedStudentDocument[] = [];
+  deleteSavedStudentDocuments: SavedStudentDocument[] = [];
+  pendingStudentDocuments: PendingStudentDocument[] = [];
+  deletePendingDocuments: PendingStudentDocument[] = [];
 
-  studentDocuments:StudentDocument[]=[];
+  student: Student;
 
-  public successUpdateStudentModal:BsModalRef;
+  studentDocuments: StudentDocument[] = [];
+
+  public successUpdateStudentModal: BsModalRef;
 
 
   constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
@@ -64,104 +67,105 @@ export class UpdateStudentComponent implements OnInit {
     this.getGradeList();
   }
 
-  getActiveCycleList(){
+  getActiveCycleList() {
     this.spService.getActiveCycle().subscribe(
-      (Response)=>{
-        this.cycles= Cycle.fromJsonList(Response);
+      (Response) => {
+        this.cycles = Cycle.fromJsonList(Response);
       }
     )
   }
 
-  getTurnsList(){
+  getTurnsList() {
     this.spService.getTurnList().subscribe(
-      (Response)=>{
-        this.turns=Turn.fromJsonList(Response);
+      (Response) => {
+        this.turns = Turn.fromJsonList(Response);
       }
     )
   }
 
-  getGradeList(){
+  getGradeList() {
     this.spService.getGradeList().subscribe(
-      (Response)=>{
-        this.grades=Grade.fromJsonList(Response);
+      (Response) => {
+        this.grades = Grade.fromJsonList(Response);
       }
     )
   }
 
-  getGruopList(){
+  getGruopList() {
     this.spService.getGroupByGradeId(this.selectedGradeSchool.Id).subscribe(
-      (Response)=>{
-        this.groups=Group.fromJsonList(Response);
+      (Response) => {
+        this.groups = Group.fromJsonList(Response);
       }
     )
   }
 
-  getStudent(){
+  getStudent() {
     this.student = JSON.parse(sessionStorage.getItem('student'));
     this.getAllStudentDocuments();
     this.getSexList();
-    
+
   }
 
-  getSexList(){
+  getSexList() {
     this.spService.getSexsList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.sexs = Sex.fromJsonList(Response);
-        this.selectedSex=this.sexs.find(s=>s.Id===this.student.sexId);
+        this.selectedSex = this.sexs.find(s => s.Id === this.student.sexId);
         this.getStudentStatus();
       }
     )
   }
 
-  getStudentStatus(){
+  getStudentStatus() {
     this.spService.getStudentStatusList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.studentStatus = StudentStatus.fromJsonList(Response);
-        this.selectedStudentStatus = this.studentStatus.find(s=>s.Id===this.student.studentStatusId);
+        this.selectedStudentStatus = this.studentStatus.find(s => s.Id === this.student.studentStatusId);
         this.getSchoolStatus();
       }
     )
   }
 
-  getSchoolStatus(){
+  getSchoolStatus() {
     this.spService.getSchoolStatusList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.schoolStatus = SchoolStatus.fromJsonList(Response);
-        this.selectedSchoolStatus = this.schoolStatus.find(s=>s.Id===this.student.schoolStatusId);
+        this.selectedSchoolStatus = this.schoolStatus.find(s => s.Id === this.student.schoolStatusId);
         this.getStageStatus();
       }
     )
   }
 
-  getAllStudentDocuments(){
+  getAllStudentDocuments() {
     this.spService.getAllStudentDocuments(this.student.id).then(
-      (Response)=>{
+      (Response) => {
+        console.log(Response);
         this.savedStudentDocuments = SavedStudentDocument.fromJsonList(Response);
-      },err=>{
+      }, err => {
         alert('Error Obteniendo')
       }
     )
   }
 
-  deleteSavedDocument(document){
+  deleteSavedDocument(document) {
     let index = this.savedStudentDocuments.findIndex(d => d.name === document.name);
     if (index > -1) {
-     this.savedStudentDocuments.splice(index,1);
-     this.deleteSavedStudentDocuments.push(document);
+      this.savedStudentDocuments.splice(index, 1);
+      this.deleteSavedStudentDocuments.push(document);
     }
   }
 
-  getStageStatus(){
+  getStageStatus() {
     this.spService.getStageShoolList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.stagesSchool = StageSchool.fromJsonList(Response);
-        this.selectedStageSchool = this.stagesSchool.find(s=>s.Id===this.student.stageSchoolId);
+        this.selectedStageSchool = this.stagesSchool.find(s => s.Id === this.student.stageSchoolId);
         this.updateValues();
       }
     )
   }
 
-  selectGrade(){
+  selectGrade() {
     this.getGruopList();
   }
 
@@ -179,33 +183,46 @@ export class UpdateStudentComponent implements OnInit {
       phoneNumber: this.student.phoneNumber,
       movilNumber: this.student.movilNumber,
       parentsPhoneNumber: this.student.parentsPhoneNumber,
-      studentStatus:this.selectedStudentStatus,
-      schoolStatus:this.selectedSchoolStatus,
-      parentJob:this.student.parentJob,
-      stageSchool:this.selectedStageSchool,
-      originSchool:this.student.originSchool,
-      observations:this.student.observations,
-      cycleSchoolControl:'',
-      turnSchoolControl:'',
-      gradeSchoolControl:'',
-      groupSchoolControl:''
+      studentStatus: this.selectedStudentStatus,
+      schoolStatus: this.selectedSchoolStatus,
+      parentJob: this.student.parentJob,
+      stageSchool: this.selectedStageSchool,
+      originSchool: this.student.originSchool,
+      observations: this.student.observations,
+      cycleSchoolControl: '',
+      turnSchoolControl: '',
+      gradeSchoolControl: '',
+      groupSchoolControl: ''
     });
   }
 
   onFileChange(event) {
-    let reader = new FileReader();
-    if(event.target.files && event.target.files.length > 0) {
-      for (let index = 0; index < event.target.files.length; index++) {
-        const file = event.target.files[index];
-        this.studentDocuments.push(new StudentDocument(file.name,file));
+
+    let attachedDocuments = event.target.files;
+
+    if (this.pendingStudentDocuments.length > 0) {
+      for (let index = 0; index < attachedDocuments.length; index++) {
+        const file = attachedDocuments[index];
+        console.log(file);
+        let existDocumentInList = this.pendingStudentDocuments.some(x => x.file.name === file.name);
+        console.log(existDocumentInList);
+        if(!existDocumentInList){
+          this.pendingStudentDocuments.push(new PendingStudentDocument(index, file));
+        }else{
+          console.log("Este nombre de documento ya existe: " + file.name);
+        }
       }
-      
-    }else {
+    } else {
+      for (let index = 0; index < attachedDocuments.length; index++) {
+        const file = attachedDocuments[index];
+        this.pendingStudentDocuments.push(new PendingStudentDocument(index, file));
+      }
+    }
+
+
   }
-}
 
-  get f(){return this.updateStudentForm.controls}
-
+  get f() { return this.updateStudentForm.controls }
 
   private registerControlsForm() {
     this.updateStudentForm = this.formBuilder.group({
@@ -221,24 +238,24 @@ export class UpdateStudentComponent implements OnInit {
       phoneNumber: [''],
       movilNumber: [''],
       parentsPhoneNumber: [''],
-      studentStatus:['', Validators.required],
-      schoolStatus:['',Validators.required],
-      parentJob:[''],
-      stageSchool:['',Validators.required],
-      originSchool:[''],
-      observations:[''],
-      cycleSchoolControl:['',Validators.required],
-      turnSchoolControl:['',Validators.required],
-      gradeSchoolControl:['',Validators.required],
-      groupSchoolControl:['',Validators.required]
+      studentStatus: ['', Validators.required],
+      schoolStatus: ['', Validators.required],
+      parentJob: [''],
+      stageSchool: ['', Validators.required],
+      originSchool: [''],
+      observations: [''],
+      cycleSchoolControl: ['', Validators.required],
+      turnSchoolControl: ['', Validators.required],
+      gradeSchoolControl: ['', Validators.required],
+      groupSchoolControl: ['', Validators.required]
     });
   }
 
-  closeSuccessUpdateStudentModal(){
+  closeSuccessUpdateStudentModal() {
     this.successUpdateStudentModal.hide();
   }
 
-  onSubmit(template:TemplateRef<any>){
+  onSubmit(template: TemplateRef<any>) {
     if (this.updateStudentForm.invalid) {
       return;
     }
@@ -246,13 +263,13 @@ export class UpdateStudentComponent implements OnInit {
     let birthDate = new Date(this.updateStudentForm.controls.birthDate.value);
     let entryDate = new Date(this.updateStudentForm.controls.entryDate.value);
 
-    this.student.name= this.updateStudentForm.controls.firstName.value;
+    this.student.name = this.updateStudentForm.controls.firstName.value;
     this.student.birthDate = birthDate.toISOString();
     this.student.sexId = this.updateStudentForm.controls.sexControl.value.Id;
     this.student.parentName = this.updateStudentForm.controls.parentName.value;
     this.student.studentStatusId = this.updateStudentForm.controls.studentStatus.value.Id;
     this.student.schoolStatusId = this.updateStudentForm.controls.schoolStatus.value.Id;
-    this.student.stageSchoolId=this.updateStudentForm.controls.stageSchool.value.Id;
+    this.student.stageSchoolId = this.updateStudentForm.controls.stageSchool.value.Id;
     this.student.enrollDate = enrollDate.toISOString();
     this.student.entryDate = entryDate.toISOString();
     this.student.motherName = this.updateStudentForm.controls.motherName.value;
@@ -266,17 +283,17 @@ export class UpdateStudentComponent implements OnInit {
     this.student.observations = this.updateStudentForm.controls.observations.value;
 
     this.spService.updateStudent(this.student, this.student.id).then(
-      (Response)=>{
+      (Response) => {
         this.spService.addStudentDocuments(this.student.id, this.studentDocuments).then(
-          (response)=>{
-            sessionStorage.setItem('student',JSON.stringify(this.student));
+          (response) => {
+            sessionStorage.setItem('student', JSON.stringify(this.student));
             this.successUpdateStudentModal = this.modalService.show(template);
             this.router.navigate(['/menu']);
-          },err=>{
+          }, err => {
             alert('no actulizo');
           }
         );
-      },err=>{
+      }, err => {
         alert('No actualizo');
       }
     )

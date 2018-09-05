@@ -27,6 +27,8 @@ import { SearchStudentComponent } from './search-student/search-student.componen
 import { AssingScholarshipComponent } from './assing-scholarship/assing-scholarship.component';
 
 import { SPService } from '../app/services/sp.service';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { MatTabsModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,7 @@ import { SPService } from '../app/services/sp.service';
     ReEnrollStudentComponent,
     RegisterPaymentComponent,
     SearchStudentComponent,
-    AssingScholarshipComponent
+    AssingScholarshipComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +53,8 @@ import { SPService } from '../app/services/sp.service';
     MatInputModule,
     MatSelectModule,
     MatAutocompleteModule,
+    NgxSpinnerModule,
+    MatTabsModule,
     ModalModule.forRoot(),
     RouterModule.forRoot([
       {path:'',redirectTo:'/menu',pathMatch:'full'},
