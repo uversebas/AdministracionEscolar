@@ -103,6 +103,7 @@ export class EnrollStudentComponent implements OnInit {
   }
 
   onSubmit(template:TemplateRef<any>){
+    this.submitted=true;
     if (this.registerForm.invalid) {
       return;
     }

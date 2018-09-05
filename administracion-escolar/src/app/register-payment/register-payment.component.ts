@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SPService } from '../services/sp.service';
 import { Student } from '../dtos/student';
@@ -22,6 +22,7 @@ import { element } from 'protractor';
 })
 export class RegisterPaymentComponent implements OnInit {
 
+  submitted = false;
   registerPaymentForm: FormGroup;
   student: Student;
   currentUser:string;
@@ -37,15 +38,19 @@ export class RegisterPaymentComponent implements OnInit {
   paymentModality:PaymentModality;
   paymentConcepts:PaymentConcept[]=[];
   paymentConceptsStudent:PaymentConcept[]=[];
-  selectedPaymentConcept:PaymentConcept=new PaymentConcept('',0,0,'',false,false);
+  selectedPaymentConcept:PaymentConcept=new PaymentConcept('',0,0,'',false,false,0,false);
   months:Month[]=[];
   monthsPaymentModality:Month[]=[];
-  selectedPaymentMonth:Month;
+  remainingPaymentMonths:Month[]=[];
+  selectedPaymentMonth:Month= new Month('',0);
   receivedPersons:ReceivedPerson[]=[];
   selectedReceivedPerson:ReceivedPerson;
   paymentWays:PaymentWay[]=[];
   selectedPaymentWay:PaymentWay;
   studentPayments:StudentPayment[]=[];
+  totalDebt:number=0;
+
+  previousBalance='Abono Anterior';
 
   constructor(private formBuilder: FormBuilder, private spService: SPService) { }
 
@@ -77,17 +82,36 @@ export class RegisterPaymentComponent implements OnInit {
     });
   }
   disabledControls(){
-    this.registerPaymentForm.controls['newBalanceControl'].disable();
-    this.registerPaymentForm.controls['totalAmountToPayControl'].disable();
+    this.registerPaymentForm.controls['quantityToPayControl'].disable();
     this.registerPaymentForm.controls['debtAmountControl'].disable();
+    this.registerPaymentForm.controls['totalAmountToPayControl'].disable();
+    this.registerPaymentForm.controls['newBalanceControl'].disable();
+
   }
 
   calculatePayment(){
-    if (this.selectedPaymentConcept.id && this.selectedPaymentConcept.id>0) {
-      let amount = this.registerPaymentForm.controls.quantityToPayControl.value;
-      let debt = this.registerPaymentForm.controls.debtAmountControl.value;
-      this.registerPaymentForm.controls.totalAmountToPayControl.setValue(debt - amount);
+    if (this.selectedPaymentConcept.dues) {
+      let totalAmountToPay = this.registerPaymentForm.controls.totalAmountToPayControl.value;
+      let amountToPay = this.registerPaymentForm.controls.amountToPayControl.value;
+      let newBalance = totalAmountToPay-amountToPay;
+      if (newBalance>this.selectedPaymentConcept.amount) {
+        this.registerPaymentForm.controls.amountToPayControl.setValue(0);
+        this.registerPaymentForm.controls.newBalanceControl.setValue(0);
+      }else{
+        this.registerPaymentForm.controls.newBalanceControl.setValue(newBalance);
+      }
+    }else{
+      let totalAmountToPay = this.registerPaymentForm.controls.totalAmountToPayControl.value;
+      let amountToPay = this.registerPaymentForm.controls.amountToPayControl.value;
+      let newBalance = totalAmountToPay-amountToPay;
+      if (newBalance<0) {
+        this.registerPaymentForm.controls.amountToPayControl.setValue(0);
+        this.registerPaymentForm.controls.newBalanceControl.setValue(0);
+      }else{
+        this.registerPaymentForm.controls.newBalanceControl.setValue(newBalance);
+      }
     }
+    
   }
 
   get f(){return this.registerPaymentForm.controls}
@@ -111,9 +135,40 @@ export class RegisterPaymentComponent implements OnInit {
   }
 
   selectecPaymentConcept(){
-    let paymentUntilNow= this.getPaymentUntilNow(this.selectedPaymentConcept)
-    let debt = this.selectedPaymentConcept.amount - paymentUntilNow;
-    this.registerPaymentForm.controls.debtAmountControl.setValue(debt);
+    this.clearValueControls();
+    if (this.selectedPaymentConcept.dues) {
+      this.previousBalance='Adeudo anterior';
+      this.loadRemainingMonths();
+    }else{
+      this.previousBalance='Abono anterior';
+      this.registerPaymentForm.controls.quantityToPayControl.setValue(this.selectedPaymentConcept.amount);
+      let paymentUntilNow= this.getPaymentUntilNow(this.selectedPaymentConcept);
+      this.registerPaymentForm.controls.debtAmountControl.setValue(paymentUntilNow);
+      this.registerPaymentForm.controls.totalAmountToPayControl.setValue(this.selectedPaymentConcept.amount-paymentUntilNow);
+    }
+  }
+
+  selectecMonth(){
+    this.clearValueControls();
+    if (this.selectedPaymentConcept.id > 0 && this.selectedPaymentConcept.dues) {
+      let amount = this.getAmountFee();
+      this.registerPaymentForm.controls.quantityToPayControl.setValue(amount);
+      let paymentUntilNow = this.getPaymentUntilNowTermsConcepts(this.selectedPaymentMonth);
+      let deb = 0;
+      if (paymentUntilNow>0) {
+        deb = amount-paymentUntilNow;
+      }
+      this.registerPaymentForm.controls.debtAmountControl.setValue(this.totalDebt);
+      this.registerPaymentForm.controls.totalAmountToPayControl.setValue(this.totalDebt+ amount);
+    }
+  }
+
+  clearValueControls(){
+    this.registerPaymentForm.controls.amountToPayControl.setValue('');
+    this.registerPaymentForm.controls.newBalanceControl.setValue('');
+    this.registerPaymentForm.controls.debtAmountControl.setValue('');
+    this.registerPaymentForm.controls.totalAmountToPayControl.setValue('');
+    this.registerPaymentForm.controls.quantityToPayControl.setValue('');
   }
 
   getPaymentWays(){
@@ -187,9 +242,9 @@ export class RegisterPaymentComponent implements OnInit {
     this.paymentConcepts.forEach( pc => {
       this.student.paymentConceptIds.forEach(spc => {
         if (pc.id === spc) {
-          let totalAmoun = 0;
-          totalAmoun = this.getPaymentUntilNow(pc);
-          if (totalAmoun < pc.amount) {
+          let totalAmount = 0;
+          totalAmount = this.getPaymentUntilNow(pc);
+          if (totalAmount < pc.amount) {
             this.paymentConceptsStudent.push(pc);
           }
         }
@@ -198,14 +253,48 @@ export class RegisterPaymentComponent implements OnInit {
   }
 
   private getPaymentUntilNow(concept: PaymentConcept) {
-    let totalAmoun = 0;
+    let totalAmount = 0;
     for (let j = 0; j < this.studentPayments.length; j++) {
       const payment = this.studentPayments[j];
       if (concept.id === payment.conceptId) {
-        totalAmoun += payment.amount;
+        totalAmount += payment.amount;
       }
     }
-    return totalAmoun;
+    return totalAmount;
+  }
+
+  private getPaymentUntilNowTermsConcepts(month: Month){
+    let totalAmount = 0;
+    this.studentPayments.forEach(payment => {
+      if (payment.monthId) {
+        if ((this.selectedPaymentConcept.id === payment.conceptId)&&(payment.monthId === month.id)) {
+          totalAmount += payment.amount;
+        }
+      }
+    });
+    return totalAmount;
+  }
+
+  loadRemainingMonths(){
+    this.totalDebt=0;
+    this.remainingPaymentMonths = new Array();
+    let fee = this.getAmountFee();
+    this.monthsPaymentModality.forEach(month => {
+        let amount = 0;
+        amount = this.getPaymentUntilNowTermsConcepts(month);
+        if (amount===0) {
+          this.remainingPaymentMonths.push(month);
+        }
+        if (amount>0 && amount<fee) {
+          let debt =  fee - amount;
+          this.totalDebt += debt;
+        }
+    });
+  }
+
+  getAmountFee(){
+    let counterFee = this.paymentModality.monthCounter;
+    return this.selectedPaymentConcept.amount/counterFee;
   }
 
   getPaymentModalityList(){
@@ -243,14 +332,21 @@ export class RegisterPaymentComponent implements OnInit {
       paymentMonthControl:['',Validators.required],
       paymentWayControl:['',Validators.required],
       referenceControl:[''],
-      quantityToPayControl:['',Validators.required],
+      quantityToPayControl:[''],
       debtAmountControl:[''],
       totalAmountToPayControl:[''],
-      amountToPayControl:[''],
+      amountToPayControl:['',Validators.required],
       newBalanceControl:[''],
       paymentAgreementControl:[''],
       observationControl:['']
     });
+  }
+
+  onSubmit(template:TemplateRef<any>){
+    this.submitted=true;
+    if (this.registerPaymentForm.invalid) {
+      return;
+    }
   }
 
 }

@@ -147,8 +147,8 @@
                                 <div class="col-md-6">
                                         <mat-form-field>
                                                 <label>Mes que paga</label>
-                                                <mat-select formControlName="paymentMonthControl" [(value)]='selectedPaymentMonth' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentMonthControl.errors }">
-                                                    <mat-option *ngFor="let month of monthsPaymentModality" [value]="month">
+                                                <mat-select formControlName="paymentMonthControl" [(value)]='selectedPaymentMonth' (selectionChange)='selectecMonth()' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentMonthControl.errors }">
+                                                    <mat-option *ngFor="let month of remainingPaymentMonths" [value]="month">
                                                         {{month.title}}
                                                     </mat-option>
                                                 </mat-select>
@@ -198,40 +198,44 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                                <div class="form-group">
-                                    <mat-form-field>
-                                        <label>Cantidad a pagar</label>
-                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="quantityToPayControl" class="form-control" (keyup)="calculatePayment()"  [ngClass]="{ 'is-invalid': submitted && f.quantityToPayControl.errors }"/>
-                                        <div *ngIf="submitted && f.quantityToPayControl.errors" class="invalid-feedback">
-                                            <div *ngIf="f.quantityToPayControl.errors.required">Cantidad a pagar requerida</div>
+                        <div class="col-md-4" >
+                            <div class="values" *ngIf='selectedPaymentConcept.id>0'>
+                                    <div class="form-group">
+                                            <mat-form-field>
+                                                <label>Cantidad a pagar</label>
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="quantityToPayControl" class="form-control" />
+                                               
+                                            </mat-form-field>
                                         </div>
-                                    </mat-form-field>
-                                </div>
-                                <div class="form-group">
-                                    <mat-form-field>
-                                        <label>Adeudo anterior</label>
-                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="debtAmountControl" class="form-control" />
-                                    </mat-form-field>
-                                </div>
-                                <div class="form-group">
-                                    <mat-form-field>
-                                        <label>Cantidad total a pagar</label>
-                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="totalAmountToPayControl" class="form-control" />
-                                    </mat-form-field>
-                                </div>
-                                <div class="form-group">
-                                    <mat-form-field>
-                                        <label>Monto del pago</label>
-                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="amountToPayControl" class="form-control" />
-                                    </mat-form-field>
-                                </div>
-                                <div class="form-group">
-                                    <mat-form-field>
-                                        <label>Nuevo saldo</label>
-                                        <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="newBalanceControl" class="form-control" />
-                                    </mat-form-field>
-                                </div>
+                                        <div class="form-group">
+                                            <mat-form-field>
+                                                <label>{{previousBalance}}</label>
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="debtAmountControl" class="form-control" />
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="form-group">
+                                            <mat-form-field>
+                                                <label>Cantidad total a pagar</label>
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="totalAmountToPayControl" class="form-control" />
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="form-group">
+                                            <mat-form-field>
+                                                <label>Monto del pago</label>
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="amountToPayControl" (keyup)="calculatePayment()" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.amountToPayControl.errors }"/>
+                                                <div *ngIf="submitted && f.amountToPayControl.errors" class="invalid-feedback">
+                                                        <div *ngIf="f.amountToPayControl.errors.required">Monto del pago requerido</div>
+                                                    </div>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="form-group">
+                                            <mat-form-field>
+                                                <label>Nuevo saldo</label>
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="newBalanceControl" class="form-control" />
+                                            </mat-form-field>
+                                        </div>
+                            </div>
+
                             </div>
                     </div>
                 </div>
@@ -240,7 +244,7 @@
                     <div class="form-group">
                         <div class="buttons-app">
                             <button class="btn btn-default">Salir</button>
-                            <button [disabled]="submitted" class="btn btn-primary">Guardar</button>
+                            <button class="btn btn-primary">Guardar</button>
                         </div>
                     </div>
                 </div>

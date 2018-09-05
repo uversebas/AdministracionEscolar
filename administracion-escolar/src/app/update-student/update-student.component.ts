@@ -297,6 +297,7 @@ export class UpdateStudentComponent implements OnInit {
   }
 
   onSubmit(template:TemplateRef<any>){
+    this.submitted=true;
     if (this.updateStudentForm.invalid) {
       return;
     }

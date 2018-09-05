@@ -1,10 +1,10 @@
 export class PaymentModality{
-    constructor(public title:string, public monthsIds:number[], public id?:number){
+    constructor(public title:string, public monthsIds:number[], public monthCounter:number , public id?:number){
 
     }
 
     public static fromJson(element: any){
-        return new PaymentModality(element.Title, element.MesesId, element.Id);
+        return new PaymentModality(element.Title, element.MesesId, element.NumeroMeses , element.Id);
     }
     public static fromJsonList(elements:any){
         var list=[];
