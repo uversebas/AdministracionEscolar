@@ -16,6 +16,7 @@ import { Grade } from '../dtos/grade';
 import { Group } from '../dtos/group';
 import { PaymentModality } from '../dtos/paymentModality';
 import { PaymentConcept } from '../dtos/paymentConcept';
+import { PendingStudentDocument } from '../dtos/pendingStudenDocument';
 
 export interface RequestUniform {
   value: boolean;
@@ -56,6 +57,8 @@ export class UpdateStudentComponent implements OnInit {
   paymentModalities:PaymentModality[]=[];
   paymentConcepts:PaymentConcept[]=[];
   opcionalPaymentConcepts:PaymentConcept[]=[];
+  pendingStudentDocuments: PendingStudentDocument[] = [];
+  deletePendingDocuments: PendingStudentDocument[] = [];
 
   requestUniform: RequestUniform[] = [
     {value: true, viewValue: 'Sí'},
@@ -234,16 +237,30 @@ export class UpdateStudentComponent implements OnInit {
   }
 
   onFileChange(event) {
-    let reader = new FileReader();
-    if(event.target.files && event.target.files.length > 0) {
-      for (let index = 0; index < event.target.files.length; index++) {
-        const file = event.target.files[index];
-        this.studentDocuments.push(new StudentDocument(file.name,file));
+
+    let attachedDocuments = event.target.files;
+
+    if (this.pendingStudentDocuments.length > 0) {
+      for (let index = 0; index < attachedDocuments.length; index++) {
+        const file = attachedDocuments[index];
+        console.log(file);
+        let existDocumentInList = this.pendingStudentDocuments.some(x => x.file.name === file.name);
+        console.log(existDocumentInList);
+        if(!existDocumentInList){
+          this.pendingStudentDocuments.push(new PendingStudentDocument(index, file));
+        }else{
+          console.log("Este nombre de documento ya existe: " + file.name);
+        }
       }
-      
-    }else {
+    } else {
+      for (let index = 0; index < attachedDocuments.length; index++) {
+        const file = attachedDocuments[index];
+        this.pendingStudentDocuments.push(new PendingStudentDocument(index, file));
+      }
+    }
+
+
   }
-}
 
   get f(){return this.updateStudentForm.controls}
 
