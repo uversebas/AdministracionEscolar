@@ -73,6 +73,11 @@ export class SPService {
       return data;
   }
 
+  getscholarshipConfiguration(){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.scholarshipConfigurationList).items.getAll());
+    return data;
+  }
+
   getTurnList(){
       let data = from(this.getConfig().web.lists.getByTitle(environment.turnList).items.getAll());
       return data;
@@ -125,6 +130,11 @@ getPaymentConceptList(stageSchoolId:number){
 
 getStudentPaymentList(studentId:number){
     let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.filter("AlumnoId eq " + studentId).get());
+    return data;
+}
+
+getConceptsByStudent(studentId:number){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.filter("AlumnoId eq "+ studentId).get());
     return data;
 }
 

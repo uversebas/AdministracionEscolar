@@ -1,3 +1,116 @@
-<p>
-  assing-scholarship works!
-</p>
+<div class="container">
+  <form [formGroup]="assingScholarshipForm" (ngSubmit)="onSubmit()">
+    <fieldset class="scheduler-border">
+      <legend class="scheduler-border">Asignación de beca</legend>
+      <div class="control-group">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Clave </label>
+              <span>{{student.key}}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>Nombre </label>
+              <span>{{student.name}}</span>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>Ciclo </label>
+              <span>{{cycle.title}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <label>División </label>
+            <span>{{stageSchool.title}}</span>
+          </div>
+          <div class="col-md-4">
+            <label>Estatus del alumno </label>
+            <span>{{selectedStudentStatus.title}}</span>
+          </div>
+          <div class="col-md-4">
+            <label>Estatus escolar </label>
+            <span>{{selectedSchoolStatus.title}}</span>
+          </div>
+        </div>
+        <fieldset class="scheduler-border">
+          <div class="row">
+            <div class="col-md-12">
+              Indique los montos asignados por beca a cada uno de los conceptos
+            </div>
+          </div>
+          <div class="row" *ngIf='!isPercentage'>
+            <div class="col-md-12">
+                <table class="table-responsive">
+                  <thead>
+                    <th>Concepto</th>
+                    <th>Monto del pago</th>
+                    <th>Monto de la beca</th>
+                    <th>Porcentaje</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor='let concept of paymentConceptsStudent'>
+                      <td>
+                        <label>{{concept.title}}</label>
+                      </td>
+                      <td>
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptValue{{concept.id}}" class="form-control">
+                      </td>
+                      <td>
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptScholarship{{concept.id}}" (keyup)="calculateScholarshipByValue(concept.id)" class="form-control">
+                      </td>
+                      <td>
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',', precision:0, suffix:'%' }" matInput formControlName="conceptPercentage{{concept.id}}" class="form-control">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+          </div>
+
+          <div class="row" *ngIf='isPercentage'>
+              <div class="col-md-12">
+                  <table class="table-responsive">
+                    <thead>
+                      <th>Concepto</th>
+                      <th>Monto del pago</th>
+                      <th>Porcentaje</th>
+                      <th>Monto de la beca</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor='let concept of paymentConceptsStudent'>
+                        <td>
+                          <label>{{concept.title}}</label>
+                        </td>
+                        <td>
+                            <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptValue{{concept.id}}" class="form-control">
+                        </td>
+                        <td>
+                            <input currencyMask autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',', precision:0, suffix:'%' }" matInput formControlName="conceptPercentage{{concept.id}}" (keyup)="calculateScholarshipByPorcentage(concept.id)" class="form-control">
+                        </td>
+                        <td>
+                            <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptScholarship{{concept.id}}" class="form-control">
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+              </div>
+            </div>
+
+        </fieldset>
+      </div>
+    </fieldset>
+    <div class="row">
+        <div class="form-group">
+          <div class="buttons-app">
+            <button class="btn btn-default">Salir</button>
+            <button  class="btn btn-primary">Guardar</button>
+          </div>
+        </div>
+      </div>
+  </form>
+</div>

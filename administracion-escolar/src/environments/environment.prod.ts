@@ -18,5 +18,7 @@ export const environment = {
   monthList:'Meses',
   receivedPersonList:'PersonasAutorizadasCobro',
   paymentWayList:'MetodosPago',
-  studentPaymentList:'PagosAlumnos'
+  studentPaymentList:'PagosAlumnos',
+  conceptStudentList:'ConceptosDelAlumno',
+  scholarshipConfigurationList:'ConfiguracionBeca'
 };
