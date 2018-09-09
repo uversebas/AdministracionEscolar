@@ -14,6 +14,7 @@ import { ReceivedPerson } from '../dtos/receivedPerson';
 import { PaymentWay } from '../dtos/paymentWay';
 import { StudentPayment } from '../dtos/studentPayment';
 import { element } from 'protractor';
+import { ConceptStudent } from '../dtos/conceptStudent';
 
 @Component({
   selector: 'app-register-payment',
@@ -48,6 +49,7 @@ export class RegisterPaymentComponent implements OnInit {
   paymentWays:PaymentWay[]=[];
   selectedPaymentWay:PaymentWay;
   studentPayments:StudentPayment[]=[];
+  conceptsByStudent:ConceptStudent[]=[];
   totalDebt:number=0;
 
   previousBalance='Abono Anterior';
@@ -138,6 +140,9 @@ export class RegisterPaymentComponent implements OnInit {
     this.clearValueControls();
     if (this.selectedPaymentConcept.dues) {
       this.previousBalance='Adeudo anterior';
+      let modalityStudent = this.conceptsByStudent.find(c => c.conceptId === this.selectedPaymentConcept.id);
+      this.paymentModality = this.paymentModalities.find(p => p.id === modalityStudent.paymentModalityId);
+      this.selectedPaymentMonth=new Month('',0);
       this.loadRemainingMonths();
     }else{
       this.previousBalance='Abono anterior';
@@ -232,6 +237,15 @@ export class RegisterPaymentComponent implements OnInit {
     this.spService.getPaymentConceptList(this.stageSchool.id).subscribe(
       (Response)=>{
         this.paymentConcepts= PaymentConcept.fromJsonList(Response);
+        this.getConceptsByStudent();
+      }
+    )
+  }
+
+  getConceptsByStudent(){
+    this.spService.getConceptsByStudent(this.student.id).subscribe(
+      (Response)=>{
+        this.conceptsByStudent = ConceptStudent.fromJsonList(Response);
         this.getRemainingPaymentConcepts();
       }
     )
@@ -240,8 +254,8 @@ export class RegisterPaymentComponent implements OnInit {
   private getRemainingPaymentConcepts() {
     this.paymentConceptsStudent = new Array();
     this.paymentConcepts.forEach( pc => {
-      this.student.paymentConceptIds.forEach(spc => {
-        if (pc.id === spc) {
+      this.conceptsByStudent.forEach(spc => {
+        if (pc.id === spc.conceptId) {
           let totalAmount = 0;
           totalAmount = this.getPaymentUntilNow(pc);
           if (totalAmount < pc.amount) {
