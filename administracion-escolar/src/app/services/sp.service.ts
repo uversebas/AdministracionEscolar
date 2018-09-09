@@ -182,7 +182,6 @@ getStudentPaymentList(studentId:number){
 
   addStudentDocuments(studentId:number, studentDocuments: StudentDocument[]){
     return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(studentId).attachmentFiles.addMultiple(studentDocuments);
-    
   }
 
   getAllStudentDocuments(studentId:number){

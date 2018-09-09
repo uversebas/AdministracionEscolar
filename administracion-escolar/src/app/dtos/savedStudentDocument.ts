@@ -1,15 +1,19 @@
 import { environment } from '../../environments/environment';
-export class SavedStudentDocument{
-    constructor(public name:string,public url:string){}
+export class SavedStudentDocument {
 
-    public static fromJson(element: any){
-        return new SavedStudentDocument(element.FileName,environment.baseUrl+ element.ServerRelativeUrl);
+    constructor(public name: string, public urlDownload: string, public urlPreview: string, public validity: string, public id?: number) {
+
     }
-public static fromJsonList(elements:any){
-    var list=[];
-    for (var i = 0; i < elements.length; i++) {
-        list.push(this.fromJson(elements[i]));
+
+    public static fromJson(element: any) {
+        return new SavedStudentDocument(element.Title, environment.web + element.UrlDescarga, element.ServerRedirectedEmbedUri, element.Vigencia, element.Id);
     }
-    return list;
-}
+
+    public static fromJsonList(elements: any) {
+        var list = [];
+        for (var i = 0; i < elements.length; i++) {
+            list.push(this.fromJson(elements[i]));
+        }
+        return list;
+    }
 }

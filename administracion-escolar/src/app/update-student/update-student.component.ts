@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
 import { Sex } from '../dtos/sex';
 import { StudentStatus } from '../dtos/studentStatus';
 import { SchoolStatus } from '../dtos/schoolStatus';
@@ -29,54 +29,51 @@ export interface RequestUniform {
   styleUrls: ['./update-student.component.css']
 })
 export class UpdateStudentComponent implements OnInit {
-
   updateStudentForm: FormGroup;
   submitted = false;
-  sexs:Sex[] = [];
-  studentStatus:StudentStatus[]=[];
-  schoolStatus:SchoolStatus[]=[];
-  stagesSchool:StageSchool[]=[];
-  cycles:Cycle[]=[];
-  turns:Turn[]=[];
-  grades:Grade[]=[];
-  groups:Group[]=[];
-  studentName:string;
-  studentKey:string;
-  selectedSex:Sex;
-  selectedStudentStatus:StudentStatus;
-  selectedSchoolStatus:SchoolStatus;
-  selectedStageSchool:StageSchool;
-  selectedCycleSchool:Cycle;
-  selectedTurnSchool:Turn;
-  selectedGradeSchool:Grade;
-  selectedGroupSchool:Group;
-  
-  savedStudentDocuments:SavedStudentDocument[]=[];
-  deleteSavedStudentDocuments:SavedStudentDocument[]=[];
-
-  paymentModalities:PaymentModality[]=[];
-  paymentConcepts:PaymentConcept[]=[];
-  opcionalPaymentConcepts:PaymentConcept[]=[];
+  sexs: Sex[] = [];
+  studentStatus: StudentStatus[] = [];
+  schoolStatus: SchoolStatus[] = [];
+  stagesSchool: StageSchool[] = [];
+  cycles: Cycle[] = [];
+  turns: Turn[] = [];
+  grades: Grade[] = [];
+  groups: Group[] = [];
+  studentName: string;
+  studentKey: string;
+  selectedSex: Sex;
+  selectedStudentStatus: StudentStatus;
+  selectedSchoolStatus: SchoolStatus;
+  selectedStageSchool: StageSchool;
+  selectedCycleSchool: Cycle;
+  selectedTurnSchool: Turn;
+  selectedGradeSchool: Grade;
+  selectedGroupSchool: Group;
+  savedStudentDocuments: SavedStudentDocument[] = [];
+  deleteSavedStudentDocuments: SavedStudentDocument[] = [];
+  paymentModalities: PaymentModality[] = [];
+  paymentConcepts: PaymentConcept[] = [];
+  opcionalPaymentConcepts: PaymentConcept[] = [];
   pendingStudentDocuments: PendingStudentDocument[] = [];
   deletePendingDocuments: PendingStudentDocument[] = [];
-
+  displaySavedDocuments: string;
+  displayPendingDocuments: string;
+  selectedTab: number;
   requestUniform: RequestUniform[] = [
-    {value: true, viewValue: 'Sí'},
-    {value: false, viewValue: 'No'}
+    { value: true, viewValue: 'Sí' },
+    { value: false, viewValue: 'No' }
   ];
+  student: Student;
+  studentDocuments: StudentDocument[] = [];
 
+  public successUpdateStudentModal: BsModalRef;
 
-
-  student:Student;
-
-  studentDocuments:StudentDocument[]=[];
-
-  public successUpdateStudentModal:BsModalRef;
-
+  items: FormArray;
 
   constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
 
   ngOnInit() {
+    this.InitializeDocumentstables();
     this.registerControlsForm();
     this.getStudent();
     this.getActiveCycleList();
@@ -85,126 +82,150 @@ export class UpdateStudentComponent implements OnInit {
     this.getPaymentModalityList();
   }
 
-  getActiveCycleList(){
+  InitializeDocumentstables() {
+    this.displaySavedDocuments = "none";
+    this.displayPendingDocuments = "none";
+  }
+
+  getActiveCycleList() {
     this.spService.getActiveCycle().subscribe(
-      (Response)=>{
-        this.cycles= Cycle.fromJsonList(Response);
+      (Response) => {
+        this.cycles = Cycle.fromJsonList(Response);
       }
     )
   }
 
-  getPaymentModalityList(){
+  getPaymentModalityList() {
     this.spService.getPaymentModalityList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.paymentModalities = PaymentModality.fromJsonList(Response);
       }
     )
   }
 
-  selectStage(){
+  selectStage() {
     this.spService.getPaymentConceptList(this.selectedStageSchool.id).subscribe(
-      (Response)=>{
-        this.paymentConcepts= PaymentConcept.fromJsonList(Response);
-        this.opcionalPaymentConcepts = this.paymentConcepts.filter(p=>p.isOption);
+      (Response) => {
+        this.paymentConcepts = PaymentConcept.fromJsonList(Response);
+        this.opcionalPaymentConcepts = this.paymentConcepts.filter(p => p.isOption);
       }
     )
   }
 
-  getTurnsList(){
+  getTurnsList() {
     this.spService.getTurnList().subscribe(
-      (Response)=>{
-        this.turns=Turn.fromJsonList(Response);
+      (Response) => {
+        this.turns = Turn.fromJsonList(Response);
       }
     )
   }
 
-  getGradeList(){
+  getGradeList() {
     this.spService.getGradeList().subscribe(
-      (Response)=>{
-        this.grades=Grade.fromJsonList(Response);
+      (Response) => {
+        this.grades = Grade.fromJsonList(Response);
       }
     )
   }
 
-  getGruopList(){
+  getGruopList() {
     this.spService.getGroupByGradeId(this.selectedGradeSchool.id).subscribe(
-      (Response)=>{
-        this.groups=Group.fromJsonList(Response);
+      (Response) => {
+        this.groups = Group.fromJsonList(Response);
       }
     )
   }
 
-  getStudent(){
+  getStudent() {
     this.student = JSON.parse(sessionStorage.getItem('student'));
-    //this.getAllStudentDocuments();
+    this.getAllStudentDocuments();
     this.getSexList();
-    
+
   }
 
-  getSexList(){
+  getSexList() {
     this.spService.getSexsList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.sexs = Sex.fromJsonList(Response);
-        this.selectedSex=this.sexs.find(s=>s.id===this.student.sexId);
+        this.selectedSex = this.sexs.find(s => s.id === this.student.sexId);
         this.getStudentStatus();
       }
     )
   }
 
-  getStudentStatus(){
+  getStudentStatus() {
     this.spService.getStudentStatusList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.studentStatus = StudentStatus.fromJsonList(Response);
-        this.selectedStudentStatus = this.studentStatus.find(s=>s.id===this.student.studentStatusId);
+        this.selectedStudentStatus = this.studentStatus.find(s => s.id === this.student.studentStatusId);
         this.getSchoolStatus();
       }
     )
   }
 
-  getSchoolStatus(){
+  getSchoolStatus() {
     this.spService.getSchoolStatusList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.schoolStatus = SchoolStatus.fromJsonList(Response);
-        this.selectedSchoolStatus = this.schoolStatus.find(s=>s.id===this.student.schoolStatusId);
+        this.selectedSchoolStatus = this.schoolStatus.find(s => s.id === this.student.schoolStatusId);
         this.getStageStatus();
       }
     )
   }
 
-  getAllStudentDocuments(){
+  getAllStudentDocuments() {
     this.spService.getAllStudentDocuments(this.student.id).then(
-      (Response)=>{
+      (Response) => {
         this.savedStudentDocuments = SavedStudentDocument.fromJsonList(Response);
-      },err=>{
+        //this.loadDocumentsControls();
+        //this.updateDocumentsValues();
+        if (this.savedStudentDocuments.length > 0) {
+          this.displaySavedDocuments = "block";
+        }
+      }, err => {
         alert('Error Obteniendo')
       }
     )
   }
 
-  deleteSavedDocument(document){
+  deleteSavedDocument(document) {
     let index = this.savedStudentDocuments.findIndex(d => d.name === document.name);
     if (index > -1) {
-     this.savedStudentDocuments.splice(index,1);
-     this.deleteSavedStudentDocuments.push(document);
+      this.savedStudentDocuments.splice(index, 1);
+      this.deleteSavedStudentDocuments.push(document);
+      if (this.savedStudentDocuments.length == 0) {
+        this.displaySavedDocuments = "none";
+      }
     }
   }
 
-  getStageStatus(){
+  deletePendingDocument(pendingDocument) {
+    let index = this.pendingStudentDocuments.findIndex(d => d.file.name === pendingDocument.file.name);
+    if (index > -1) {
+      this.pendingStudentDocuments.splice(index, 1);
+      this.deletePendingDocuments.push(pendingDocument);
+      if (this.pendingStudentDocuments.length == 0) {
+        this.displayPendingDocuments = "none";
+      }
+    }
+  }
+
+  getStageStatus() {
     this.spService.getStageShoolList().subscribe(
-      (Response)=>{
+      (Response) => {
         this.stagesSchool = StageSchool.fromJsonList(Response);
-        this.selectedStageSchool = this.stagesSchool.find(s=>s.id===this.student.stageSchoolId);
+        this.selectedStageSchool = this.stagesSchool.find(s => s.id === this.student.stageSchoolId);
         this.selectStage();
         this.updateValues();
       }
     )
   }
 
-  selectConcept(concept:PaymentConcept){
+  selectConcept(concept: PaymentConcept) {
     concept.checked = !concept.checked;
   }
 
-  selectGrade(){
+  selectGrade() {
     this.getGruopList();
   }
 
@@ -222,33 +243,37 @@ export class UpdateStudentComponent implements OnInit {
       phoneNumber: this.student.phoneNumber,
       movilNumber: this.student.movilNumber,
       parentsPhoneNumber: this.student.parentsPhoneNumber,
-      studentStatus:this.selectedStudentStatus,
-      schoolStatus:this.selectedSchoolStatus,
-      parentJob:this.student.parentJob,
-      stageSchool:this.selectedStageSchool,
-      originSchool:this.student.originSchool,
-      observations:this.student.observations,
-      cycleSchoolControl:'',
-      turnSchoolControl:'',
-      gradeSchoolControl:'',
-      groupSchoolControl:'',
-      paymentModalityControl:''
+      studentStatus: this.selectedStudentStatus,
+      schoolStatus: this.selectedSchoolStatus,
+      parentJob: this.student.parentJob,
+      stageSchool: this.selectedStageSchool,
+      originSchool: this.student.originSchool,
+      observations: this.student.observations,
+      cycleSchoolControl: '',
+      turnSchoolControl: '',
+      gradeSchoolControl: '',
+      groupSchoolControl: '',
+      paymentModalityControl: ''
+    });
+  }
+
+  updateDocumentsValues() {
+    this.savedStudentDocuments.forEach(element => {
+      this.updateStudentForm.controls['documentDate' + element.id].setValue(element.validity);
     });
   }
 
   onFileChange(event) {
-
+    this.selectedTab = 0;
+    this.displayPendingDocuments = "block";
     let attachedDocuments = event.target.files;
-
     if (this.pendingStudentDocuments.length > 0) {
       for (let index = 0; index < attachedDocuments.length; index++) {
         const file = attachedDocuments[index];
-        console.log(file);
         let existDocumentInList = this.pendingStudentDocuments.some(x => x.file.name === file.name);
-        console.log(existDocumentInList);
-        if(!existDocumentInList){
+        if (!existDocumentInList) {
           this.pendingStudentDocuments.push(new PendingStudentDocument(index, file));
-        }else{
+        } else {
           console.log("Este nombre de documento ya existe: " + file.name);
         }
       }
@@ -258,12 +283,11 @@ export class UpdateStudentComponent implements OnInit {
         this.pendingStudentDocuments.push(new PendingStudentDocument(index, file));
       }
     }
-
-
+    // Clear the input
+    event.srcElement.value = null;
   }
 
-  get f(){return this.updateStudentForm.controls}
-
+  get f() { return this.updateStudentForm.controls }
 
   private registerControlsForm() {
     this.updateStudentForm = this.formBuilder.group({
@@ -279,33 +303,39 @@ export class UpdateStudentComponent implements OnInit {
       phoneNumber: [''],
       movilNumber: [''],
       parentsPhoneNumber: [''],
-      studentStatus:['', Validators.required],
-      schoolStatus:['',Validators.required],
-      parentJob:[''],
-      stageSchool:['',Validators.required],
-      originSchool:[''],
-      observations:[''],
-      cycleSchoolControl:['',Validators.required],
-      turnSchoolControl:['',Validators.required],
-      gradeSchoolControl:['',Validators.required],
-      groupSchoolControl:['',Validators.required],
-      paymentModalityControl:['',Validators.required]
+      studentStatus: ['', Validators.required],
+      schoolStatus: ['', Validators.required],
+      parentJob: [''],
+      stageSchool: ['', Validators.required],
+      originSchool: [''],
+      observations: [''],
+      cycleSchoolControl: ['', Validators.required],
+      turnSchoolControl: ['', Validators.required],
+      gradeSchoolControl: ['', Validators.required],
+      groupSchoolControl: ['', Validators.required],
+      paymentModalityControl: ['', Validators.required],
     });
   }
 
-  closeSuccessUpdateStudentModal(){
+  private loadDocumentsControls() {
+    this.savedStudentDocuments.forEach(element => {
+      this.updateStudentForm.addControl('documentDate' + element.id, new FormControl());
+    });
+  }
+
+  closeSuccessUpdateStudentModal() {
     this.successUpdateStudentModal.hide();
   }
 
-  getPaymentConceptIds(){
+  getPaymentConceptIds() {
     let paymentConceptIdsToSave = this.paymentConcepts;
     for (let i = 0; i < this.opcionalPaymentConcepts.length; i++) {
       const op = this.opcionalPaymentConcepts[i];
       for (let j = 0; j < paymentConceptIdsToSave.length; j++) {
         const o = paymentConceptIdsToSave[j];
-        if (op.id==o.id) {
+        if (op.id == o.id) {
           if (!op.checked) {
-            paymentConceptIdsToSave.splice(j,1);
+            paymentConceptIdsToSave.splice(j, 1);
           }
         }
       }
@@ -313,8 +343,8 @@ export class UpdateStudentComponent implements OnInit {
     return paymentConceptIdsToSave.map(obj => obj.id);
   }
 
-  onSubmit(template:TemplateRef<any>){
-    this.submitted=true;
+  onSubmit(template: TemplateRef<any>) {
+    this.submitted = true;
     if (this.updateStudentForm.invalid) {
       return;
     }
@@ -322,13 +352,13 @@ export class UpdateStudentComponent implements OnInit {
     let birthDate = new Date(this.updateStudentForm.controls.birthDate.value);
     let entryDate = new Date(this.updateStudentForm.controls.entryDate.value);
 
-    this.student.name= this.updateStudentForm.controls.firstName.value;
+    this.student.name = this.updateStudentForm.controls.firstName.value;
     this.student.birthDate = birthDate.toISOString();
     this.student.sexId = this.updateStudentForm.controls.sexControl.value.id;
     this.student.parentName = this.updateStudentForm.controls.parentName.value;
     this.student.studentStatusId = this.updateStudentForm.controls.studentStatus.value.id;
     this.student.schoolStatusId = this.updateStudentForm.controls.schoolStatus.value.id;
-    this.student.stageSchoolId=this.updateStudentForm.controls.stageSchool.value.id;
+    this.student.stageSchoolId = this.updateStudentForm.controls.stageSchool.value.id;
     this.student.enrollDate = enrollDate.toISOString();
     this.student.entryDate = entryDate.toISOString();
     this.student.motherName = this.updateStudentForm.controls.motherName.value;
@@ -348,17 +378,17 @@ export class UpdateStudentComponent implements OnInit {
     this.student.paymentMadalityId = this.updateStudentForm.controls.paymentModalityControl.value.id;
 
     this.spService.updateStudent(this.student, this.student.id).then(
-      (Response)=>{
+      (Response) => {
         this.spService.addStudentDocuments(this.student.id, this.studentDocuments).then(
-          (response)=>{
-            sessionStorage.setItem('student',JSON.stringify(this.student));
+          (response) => {
+            sessionStorage.setItem('student', JSON.stringify(this.student));
             this.successUpdateStudentModal = this.modalService.show(template);
             this.router.navigate(['/menu']);
-          },err=>{
+          }, err => {
             alert('no actulizo');
           }
         );
-      },err=>{
+      }, err => {
         alert('No actualizo');
       }
     )

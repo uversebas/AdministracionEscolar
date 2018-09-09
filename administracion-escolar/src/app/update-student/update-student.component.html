@@ -6,10 +6,10 @@
         <div class="row">
           <div class="col-md-2">
             <div class="form-group">
-                <label class="title-student-key">Clave</label>
-                <div class="place-student-key">
-                  <label class="student-key">{{student.key}}</label>
-                </div>
+              <label class="title-student-key">Clave</label>
+              <div class="place-student-key">
+                <label class="student-key">{{student.key}}</label>
+              </div>
             </div>
           </div>
           <div class="col-md-8">
@@ -207,7 +207,8 @@
             <div class="for-group">
               <mat-form-field>
                 <label>División</label>
-                <mat-select formControlName="stageSchool" [(value)]='selectedStageSchool' (selectionChange)='selectStage()' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+                <mat-select formControlName="stageSchool" [(value)]='selectedStageSchool' (selectionChange)='selectStage()' class="form-control"
+                  [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
                   <mat-option *ngFor="let stage of stagesSchool" [value]="stage">
                     {{stage.title}}
                   </mat-option>
@@ -271,7 +272,8 @@
           <div class="col-md-4">
             <mat-form-field>
               <label>Grado y grupo</label>
-              <mat-select formControlName="gradeSchoolControl" [(value)]='selectedGradeSchool' class="form-control" (selectionChange)='selectGrade()' [ngClass]="{ 'is-invalid': submitted && f.gradeSchoolControl.errors }">
+              <mat-select formControlName="gradeSchoolControl" [(value)]='selectedGradeSchool' class="form-control" (selectionChange)='selectGrade()'
+                [ngClass]="{ 'is-invalid': submitted && f.gradeSchoolControl.errors }">
                 <mat-option *ngFor="let grade of grades" [value]="grade">
                   {{grade.title}}
                 </mat-option>
@@ -291,19 +293,21 @@
               </div>
             </mat-form-field>
           </div>
-      </div>
         </div>
+      </div>
     </fieldset>
+
     <div class="row">
       <div class="col-md-6">
         <fieldset class="scheduler-border">
           <legend class="scheduler-border">Documentos recibidos</legend>
           <div class="control-group">
-            <input type="file" name="file" multiple (change)="onFileChange($event)" accept="application/pdf, image/*" required>
-            <mat-tab-group>
+            <input id="fileUploadDocuments" type="file" name="file" multiple (change)="onFileChange($event)" accept="application/pdf, image/*"
+              required>
+            <mat-tab-group [(selectedIndex)]="selectedTab">
               <mat-tab label="Documentos pendientes por subir">
                 <div class="table-wrapper-scroll-y">
-                  <table class="table-responsive">
+                  <table class="table-responsive" [ngStyle]="{display:displayPendingDocuments}">
                     <thead>
                       <tr>
                         <th>Nombre</th>
@@ -315,15 +319,10 @@
                       <tr *ngFor='let Pendingdocument of pendingStudentDocuments'>
                         <td>{{Pendingdocument.file.name}}</td>
                         <td>
-                          <mat-form-field>
-                            <input matInput [matDatepicker]="pickerValidityDocument" class="form-control" />
-                            <mat-datepicker-toggle matSuffix [for]="pickerValidityDocument"></mat-datepicker-toggle>
-                            <mat-datepicker #pickerValidityDocument></mat-datepicker>
-                          </mat-form-field>
                         </td>
                         <td>
                           <img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/delete.png" alt="Eliminar"
-                            (click)="deleteSavedDocument(document)">
+                            (click)="deletePendingDocument(Pendingdocument)">
                         </td>
                       </tr>
                     </tbody>
@@ -332,7 +331,7 @@
               </mat-tab>
               <mat-tab label="Documentos guardados">
                 <div class="table-wrapper-scroll-y">
-                  <table class="table-responsive">
+                  <table class="table-responsive" [ngStyle]="{display:displaySavedDocuments}">
                     <thead>
                       <tr>
                         <th>Nombre</th>
@@ -346,19 +345,20 @@
                       <tr *ngFor='let document of savedStudentDocuments'>
                         <td>{{document.name}}</td>
                         <td>
-                          <a href="{{document.url}}" download="{{document.name}}">
+                          <a href="{{document.urlDownload}}" download="{{document.name}}">
                             <img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/download.png" alt="Descargar">
                           </a>
                         </td>
                         <td>
-                          <a href="{{document.viewUrl}}">
+                          <a href="{{document.urlPreview}}" target="_blank">
                             <img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/see_document.png"
                               alt="Ver documento">
                           </a>
                         </td>
                         <td>
                           <mat-form-field>
-                            <input matInput [matDatepicker]="pickerValidityDocument" class="form-control" />
+                            <input matInput formControlName="documentDate{{document.Id}}" [matDatepicker]="pickerValidityDocument" class="form-control"
+                            />
                             <mat-datepicker-toggle matSuffix [for]="pickerValidityDocument"></mat-datepicker-toggle>
                             <mat-datepicker #pickerValidityDocument></mat-datepicker>
                           </mat-form-field>
@@ -373,40 +373,39 @@
                 </div>
               </mat-tab>
             </mat-tab-group>
-
           </div>
         </fieldset>
       </div>
       <div class="col-md-4">
-          <fieldset class="scheduler-border">
-              <legend class="scheduler-border">Datos adicionales de registro</legend>
-                <div class="control-group">
-                  <mat-form-field>
-                    <label>Modalidad de pago colegiatura</label>
-                    <mat-select formControlName="paymentModalityControl" [(value)]='selectedPaymentModality' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentModalityControl.errors }">
-                      <mat-option *ngFor="let paymentModality of paymentModalities" [value]="paymentModality">
-                        {{paymentModality.title}}
-                      </mat-option>
-                    </mat-select>
-                    <div *ngIf="submitted && f.paymentModalityControl.errors" class="invalid-feedback">
-                      <div *ngIf="f.paymentModalityControl.errors.required">Modalidad de pago requerida</div>
-                    </div>
-                  </mat-form-field>
-                  <div class="payment-concepts">
-                    <div *ngFor='let concept of opcionalPaymentConcepts'>
-                      <mat-checkbox [checked]="concept.checked" (change)='selectConcept(concept)'>{{concept.title}}</mat-checkbox>
-                    </div>
-                  </div>
-                </div>
-          </fieldset>
+        <fieldset class="scheduler-border">
+          <legend class="scheduler-border">Datos adicionales de registro</legend>
+          <div class="control-group">
+            <mat-form-field>
+              <label>Modalidad de pago colegiatura</label>
+              <mat-select formControlName="paymentModalityControl" [(value)]='selectedPaymentModality' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentModalityControl.errors }">
+                <mat-option *ngFor="let paymentModality of paymentModalities" [value]="paymentModality">
+                  {{paymentModality.title}}
+                </mat-option>
+              </mat-select>
+              <div *ngIf="submitted && f.paymentModalityControl.errors" class="invalid-feedback">
+                <div *ngIf="f.paymentModalityControl.errors.required">Modalidad de pago requerida</div>
+              </div>
+            </mat-form-field>
+            <div class="payment-concepts">
+              <div *ngFor='let concept of opcionalPaymentConcepts'>
+                <mat-checkbox [checked]="concept.checked" (change)='selectConcept(concept)'>{{concept.title}}</mat-checkbox>
+              </div>
+            </div>
+          </div>
+        </fieldset>
       </div>
       <div class="col-md-2">
-          <fieldset class="scheduler-border">
-              <legend class="scheduler-border">Beca</legend>
-                <div class="control-group">
-  
-                </div>
-          </fieldset>
+        <fieldset class="scheduler-border">
+          <legend class="scheduler-border">Beca</legend>
+          <div class="control-group">
+
+          </div>
+        </fieldset>
       </div>
     </div>
     <div class="row">
@@ -420,20 +419,20 @@
   </form>
   <ng-template #templatesuccessUpdateStudent>
     <div class="modal-header">
-        <button type="button" class="close pull-right" aria-label="Close" (click)="closeSuccessUpdateStudentModal()">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title"> Actualización exitosa </h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="closeSuccessUpdateStudentModal()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="modal-title"> Actualización exitosa </h4>
     </div>
     <div class="modal-body">
-        <div class="row">
-            <div class="col-md-12">
-              La información del alumno se actualizo exitosamente.
-            </div>
+      <div class="row">
+        <div class="col-md-12">
+          La información del alumno se actualizo exitosamente.
         </div>
+      </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="closeSuccessUpdateStudentModal()">Ok</button>
+      <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="closeSuccessUpdateStudentModal()">Ok</button>
     </div>
-</ng-template>
+  </ng-template>
 </div>
