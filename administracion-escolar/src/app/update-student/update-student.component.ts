@@ -17,6 +17,7 @@ import { Group } from '../dtos/group';
 import { PaymentModality } from '../dtos/paymentModality';
 import { PaymentConcept } from '../dtos/paymentConcept';
 import { PendingStudentDocument } from '../dtos/pendingStudenDocument';
+import { when } from '../../../node_modules/@types/q';
 
 export interface RequestUniform {
   value: boolean;
@@ -56,6 +57,7 @@ export class UpdateStudentComponent implements OnInit {
   opcionalPaymentConcepts: PaymentConcept[] = [];
   pendingStudentDocuments: PendingStudentDocument[] = [];
   deletePendingDocuments: PendingStudentDocument[] = [];
+  pendingStudentDocumentsBySave: PendingStudentDocument[] = [];
   displaySavedDocuments: string;
   displayPendingDocuments: string;
   selectedTab: number;
@@ -74,12 +76,12 @@ export class UpdateStudentComponent implements OnInit {
 
   ngOnInit() {
     this.InitializeDocumentstables();
-    this.registerControlsForm();
-    this.getStudent();
     this.getActiveCycleList();
     this.getTurnsList();
     this.getGradeList();
     this.getPaymentModalityList();
+    this.getStudent();
+    this.registerControlsForm();
   }
 
   InitializeDocumentstables() {
@@ -138,9 +140,7 @@ export class UpdateStudentComponent implements OnInit {
 
   getStudent() {
     this.student = JSON.parse(sessionStorage.getItem('student'));
-    this.getAllStudentDocuments();
     this.getSexList();
-
   }
 
   getSexList() {
@@ -177,8 +177,8 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getAllStudentDocuments(this.student.id).then(
       (Response) => {
         this.savedStudentDocuments = SavedStudentDocument.fromJsonList(Response);
-        //this.loadDocumentsControls();
-        //this.updateDocumentsValues();
+        this.loadDocumentsControls();
+        this.updateDocumentsValues();
         if (this.savedStudentDocuments.length > 0) {
           this.displaySavedDocuments = "block";
         }
@@ -255,6 +255,7 @@ export class UpdateStudentComponent implements OnInit {
       groupSchoolControl: '',
       paymentModalityControl: ''
     });
+    this.getAllStudentDocuments();
   }
 
   updateDocumentsValues() {
@@ -272,7 +273,8 @@ export class UpdateStudentComponent implements OnInit {
         const file = attachedDocuments[index];
         let existDocumentInList = this.pendingStudentDocuments.some(x => x.file.name === file.name);
         if (!existDocumentInList) {
-          this.pendingStudentDocuments.push(new PendingStudentDocument(index, file));
+          this.addControlPendingDocument(index);
+          this.pendingStudentDocuments.push(new PendingStudentDocument(index, '', file));
         } else {
           console.log("Este nombre de documento ya existe: " + file.name);
         }
@@ -280,11 +282,16 @@ export class UpdateStudentComponent implements OnInit {
     } else {
       for (let index = 0; index < attachedDocuments.length; index++) {
         const file = attachedDocuments[index];
-        this.pendingStudentDocuments.push(new PendingStudentDocument(index, file));
+        this.addControlPendingDocument(index);
+        this.pendingStudentDocuments.push(new PendingStudentDocument(index, '', file));
       }
     }
     // Clear the input
     event.srcElement.value = null;
+  }
+
+  addControlPendingDocument(index) {
+    this.updateStudentForm.addControl('pendingDocumentDate' + index, new FormControl());
   }
 
   get f() { return this.updateStudentForm.controls }
@@ -377,21 +384,82 @@ export class UpdateStudentComponent implements OnInit {
     this.student.paymentConceptIds = this.getPaymentConceptIds();
     this.student.paymentMadalityId = this.updateStudentForm.controls.paymentModalityControl.value.id;
 
-    this.spService.updateStudent(this.student, this.student.id).then(
-      (Response) => {
-        this.spService.addStudentDocuments(this.student.id, this.studentDocuments).then(
-          (response) => {
-            sessionStorage.setItem('student', JSON.stringify(this.student));
-            this.successUpdateStudentModal = this.modalService.show(template);
-            this.router.navigate(['/menu']);
-          }, err => {
-            alert('no actulizo');
-          }
-        );
-      }, err => {
-        alert('No actualizo');
-      }
-    )
+    this.pendingStudentDocuments.forEach(element => {
+      let validitySave = this.updateStudentForm.controls["pendingDocumentDate" + element.id].value;
+      this.pendingStudentDocumentsBySave.push(new PendingStudentDocument(element.id, validitySave, element.file));
+    });
+
+    this.UpdateStudentInformation(this.student, this.pendingStudentDocumentsBySave);
   }
 
+
+  ActualizarEstudiante(student: Student) {
+    this.spService.updateStudent(this.student, this.student.id).then(
+      (response) => {
+        console.log("Actualizó la información del estudiante");
+      }, err => {
+        alert('no actulizo, falló en el método updateDocuments');
+      }
+    );
+  }
+
+  AgregarDocumentos(student: Student) {
+    let randomKey = this.generateRandomKeyDocument(6);
+    this.pendingStudentDocumentsBySave.forEach(element => {
+      this.spService.addStudentDocuments(student, element.file,randomKey).then(
+        (response) => {
+          console.log("Guarda documento: " + element.file.name);
+          let validityDate = (element.validity != '') ? new Date(element.validity).toISOString() : null;
+          response.file.getItem("ID", "Title", "Vigencia").then(
+            (item) => {
+              this.spService.updateDocuments(this.student, item["ID"], element.file.name, validityDate,randomKey).then(
+                (response) => {
+                  console.log("Actualizó los datos del documento: " + element.file.name);
+                }, err => {
+                  alert('no actulizo, falló en el método updateDocuments');
+                }
+              );
+            }, err => {
+              alert('no actulizo, falló en el método getItem');
+            }
+          );
+        }, err => {
+          alert('no actulizo, falló en el método updateDocuments');
+        }
+      );
+    });
+  }
+
+  mostrarMensajeExitoso() {
+    console.log("Se ejecutaron todas los métodos para actualizar el estudiante");
+  }
+
+   async UpdateStudentInformation(student: Student, pendingDocuments: PendingStudentDocument[]) {
+
+    await Promise.all([
+       this.ActualizarEstudiante(student),
+       this.deleteDocuments(),
+       this.AgregarDocumentos(student),
+    ]).then(value => this.mostrarMensajeExitoso());
+  }
+
+  private deleteDocuments() {
+    if (this.deleteSavedStudentDocuments.length > 0) {
+      for (let i = 0; i < this.deleteSavedStudentDocuments.length; i++) {
+        this.spService.deleteDocuments(this.deleteSavedStudentDocuments[i].name).then((response) => {
+          console.log("Se borra el documento: " + this.deleteSavedStudentDocuments[i].name);
+          delete this.pendingStudentDocuments[i];
+        }, err => {
+          alert('error en el método deleteDocuments');
+        });
+      }
+    }
+  }
+
+  generateRandomKeyDocument(length){
+    var str = "";
+    for ( ; str.length < length; str += Math.random().toString( 36 ).substr( 2 ) );
+    return str.substr( 0, length );
+  }
+  
 }

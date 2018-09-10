@@ -319,6 +319,11 @@
                       <tr *ngFor='let Pendingdocument of pendingStudentDocuments'>
                         <td>{{Pendingdocument.file.name}}</td>
                         <td>
+                            <mat-form-field>
+                                <input matInput formControlName="pendingDocumentDate{{Pendingdocument.id}}"  [matDatepicker]="pickerValidityDocument" class="form-control"/>
+                                <mat-datepicker-toggle matSuffix [for]="pickerValidityDocument"></mat-datepicker-toggle>
+                                <mat-datepicker #pickerValidityDocument></mat-datepicker>
+                              </mat-form-field>
                         </td>
                         <td>
                           <img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/delete.png" alt="Eliminar"
@@ -343,7 +348,7 @@
                     </thead>
                     <tbody>
                       <tr *ngFor='let document of savedStudentDocuments'>
-                        <td>{{document.name}}</td>
+                        <td>{{document.documentname}}</td>
                         <td>
                           <a href="{{document.urlDownload}}" download="{{document.name}}">
                             <img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/download.png" alt="Descargar">
@@ -357,7 +362,7 @@
                         </td>
                         <td>
                           <mat-form-field>
-                            <input matInput formControlName="documentDate{{document.Id}}" [matDatepicker]="pickerValidityDocument" class="form-control"
+                            <input matInput formControlName="documentDate{{document.id}}" [matDatepicker]="pickerValidityDocument" class="form-control"
                             />
                             <mat-datepicker-toggle matSuffix [for]="pickerValidityDocument"></mat-datepicker-toggle>
                             <mat-datepicker #pickerValidityDocument></mat-datepicker>

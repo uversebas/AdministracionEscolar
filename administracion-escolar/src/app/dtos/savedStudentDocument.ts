@@ -1,12 +1,12 @@
 import { environment } from '../../environments/environment';
 export class SavedStudentDocument {
 
-    constructor(public name: string, public urlDownload: string, public urlPreview: string, public validity: string, public id?: number) {
+    constructor(public name: string, public documentname: string, public urlDownload: string, public urlPreview: string, public validity: string, public id?: number) {
 
     }
 
     public static fromJson(element: any) {
-        return new SavedStudentDocument(element.Title, environment.web + element.UrlDescarga, element.ServerRedirectedEmbedUri, element.Vigencia, element.Id);
+        return new SavedStudentDocument(element.Title, element.NombreDocumento, environment.web + element.UrlDescarga, element.ServerRedirectedEmbedUri, element.Vigencia, element.Id);
     }
 
     public static fromJsonList(elements: any) {
