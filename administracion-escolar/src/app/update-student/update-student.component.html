@@ -356,14 +356,12 @@
                         </td>
                         <td>
                           <a href="{{document.urlPreview}}" target="_blank">
-                            <img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/see_document.png"
-                              alt="Ver documento">
+                            <img src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/see_document.png" alt="Ver documento">
                           </a>
                         </td>
                         <td>
                           <mat-form-field>
-                            <input matInput formControlName="documentDate{{document.id}}" [matDatepicker]="pickerValidityDocument" class="form-control"
-                            />
+                            <input matInput formControlName="documentDate{{document.id}}" [matDatepicker]="pickerValidityDocument" class="form-control"/>
                             <mat-datepicker-toggle matSuffix [for]="pickerValidityDocument"></mat-datepicker-toggle>
                             <mat-datepicker #pickerValidityDocument></mat-datepicker>
                           </mat-form-field>

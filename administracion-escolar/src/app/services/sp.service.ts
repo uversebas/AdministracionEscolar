@@ -3,9 +3,7 @@ import { default as pnp, ItemAddResult } from 'sp-pnp-js';
 import { environment } from '../../environments/environment';
 import { from } from 'rxjs';
 import { Student } from '../dtos/student';
-import { StageSchool } from '../dtos/stageSchool';
-import { StudentDocument } from '../dtos/studentDocument';
-import { PendingStudentDocument } from "../dtos/pendingStudenDocument";
+
 
 @Injectable()
 export class SPService {

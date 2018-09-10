@@ -261,6 +261,7 @@ export class UpdateStudentComponent implements OnInit {
   updateDocumentsValues() {
     this.savedStudentDocuments.forEach(element => {
       this.updateStudentForm.controls['documentDate' + element.id].setValue(element.validity);
+      this.updateStudentForm.controls['documentDate' + element.id].disable();
     });
   }
 
@@ -389,18 +390,36 @@ export class UpdateStudentComponent implements OnInit {
       this.pendingStudentDocumentsBySave.push(new PendingStudentDocument(element.id, validitySave, element.file));
     });
 
-    this.UpdateStudentInformation(this.student, this.pendingStudentDocumentsBySave);
+    this.UpdateStudentInformation(this.student, template);
   }
 
+  async UpdateStudentInformation(student: Student, template: TemplateRef<any>) {
+    await Promise.all([
+       this.ActualizarEstudiante(student),
+       this.deleteDocuments(),
+       this.AgregarDocumentos(student),
+    ]).then(value => this.mostrarMensajeExitoso(student, template));
+  }
 
   ActualizarEstudiante(student: Student) {
     this.spService.updateStudent(this.student, this.student.id).then(
       (response) => {
-        console.log("Actualizó la información del estudiante");
       }, err => {
-        alert('no actulizo, falló en el método updateDocuments');
+        alert('Falla en el método updateDocuments');
       }
     );
+  }
+
+  private deleteDocuments() {
+    if (this.deleteSavedStudentDocuments.length > 0) {
+      for (let i = 0; i < this.deleteSavedStudentDocuments.length; i++) {
+        this.spService.deleteDocuments(this.deleteSavedStudentDocuments[i].name).then((response) => {
+          delete this.pendingStudentDocuments[i];
+        }, err => {
+          alert('Falla en el método deleteDocuments');
+        });
+      }
+    }
   }
 
   AgregarDocumentos(student: Student) {
@@ -408,52 +427,30 @@ export class UpdateStudentComponent implements OnInit {
     this.pendingStudentDocumentsBySave.forEach(element => {
       this.spService.addStudentDocuments(student, element.file,randomKey).then(
         (response) => {
-          console.log("Guarda documento: " + element.file.name);
-          let validityDate = (element.validity != '') ? new Date(element.validity).toISOString() : null;
+          let validityDate = (element.validity != null) ? new Date(element.validity).toISOString() : null;
           response.file.getItem("ID", "Title", "Vigencia").then(
             (item) => {
               this.spService.updateDocuments(this.student, item["ID"], element.file.name, validityDate,randomKey).then(
                 (response) => {
-                  console.log("Actualizó los datos del documento: " + element.file.name);
                 }, err => {
-                  alert('no actulizo, falló en el método updateDocuments');
+                  alert('Falla en el método updateDocuments');
                 }
               );
             }, err => {
-              alert('no actulizo, falló en el método getItem');
+              alert('Falla en el método getItem');
             }
           );
         }, err => {
-          alert('no actulizo, falló en el método updateDocuments');
+          alert('Falla en el método updateDocuments');
         }
       );
     });
   }
 
-  mostrarMensajeExitoso() {
-    console.log("Se ejecutaron todas los métodos para actualizar el estudiante");
-  }
-
-   async UpdateStudentInformation(student: Student, pendingDocuments: PendingStudentDocument[]) {
-
-    await Promise.all([
-       this.ActualizarEstudiante(student),
-       this.deleteDocuments(),
-       this.AgregarDocumentos(student),
-    ]).then(value => this.mostrarMensajeExitoso());
-  }
-
-  private deleteDocuments() {
-    if (this.deleteSavedStudentDocuments.length > 0) {
-      for (let i = 0; i < this.deleteSavedStudentDocuments.length; i++) {
-        this.spService.deleteDocuments(this.deleteSavedStudentDocuments[i].name).then((response) => {
-          console.log("Se borra el documento: " + this.deleteSavedStudentDocuments[i].name);
-          delete this.pendingStudentDocuments[i];
-        }, err => {
-          alert('error en el método deleteDocuments');
-        });
-      }
-    }
+  mostrarMensajeExitoso(student: Student, template: TemplateRef<any>) {
+    sessionStorage.setItem('student',JSON.stringify(student));
+    this.successUpdateStudentModal = this.modalService.show(template);
+    this.router.navigate(['/menu']);
   }
 
   generateRandomKeyDocument(length){
