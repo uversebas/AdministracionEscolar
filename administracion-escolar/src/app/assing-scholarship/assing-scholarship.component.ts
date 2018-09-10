@@ -8,7 +8,10 @@ import { SchoolStatus } from '../dtos/schoolStatus';
 import { StudentStatus } from '../dtos/studentStatus';
 import { ConceptStudent } from '../dtos/conceptStudent';
 import { PaymentConcept } from '../dtos/paymentConcept';
-import { Alert } from 'selenium-webdriver';
+import { Scholarship } from '../dtos/scholarship';
+import { bloomAdd } from '@angular/core/src/render3/di';
+import { StatusScholarship } from '../dtos/statusScholarship';
+import { PaymentModality } from '../dtos/paymentModality';
 
 @Component({
   selector: 'app-assing-scholarship',
@@ -29,9 +32,17 @@ export class AssingScholarshipComponent implements OnInit {
   selectedStudentStatus:StudentStatus;
   selectedSchoolStatus:SchoolStatus;
 
+  paymentModalities:PaymentModality[]=[];
+  paymentModality:PaymentModality;
+
   conceptsByStudent:ConceptStudent[]=[];
   paymentConcepts:PaymentConcept[]=[];
   paymentConceptsStudent:PaymentConcept[]=[];
+  scholarshipListToSave:Scholarship[]=[];
+  scholarshipList:Scholarship[]=[];
+  statusScholarshipList:StatusScholarship[]=[];
+  selectedStatus;
+  selectedDay;
   isPercentage=false;
 
   constructor(private formBuilder: FormBuilder, private spService: SPService) { }
@@ -40,6 +51,8 @@ export class AssingScholarshipComponent implements OnInit {
     this.getStudent();
     this.getscholarshipConfiguration();
   }
+
+  get f(){return this.assingScholarshipForm.controls}
 
   getStudent(){
     this.student = JSON.parse(sessionStorage.getItem('student'));
@@ -57,16 +70,13 @@ export class AssingScholarshipComponent implements OnInit {
     )
   }
 
-  private registerControlsForm() {
-    this.assingScholarshipForm = this.formBuilder.group({
-    });
-
-    this.paymentConceptsStudent.forEach(element => {
-      this.assingScholarshipForm.addControl('conceptValue'+element.id,new FormControl());
-      this.assingScholarshipForm.addControl('conceptScholarship'+element.id,new FormControl());
-      this.assingScholarshipForm.addControl('conceptPercentage'+element.id,new FormControl());
-    });
-    this.setValues();
+  getPaymentModalityList(){
+    this.spService.getPaymentModalityList().subscribe(
+      (Response)=>{
+        this.paymentModalities = PaymentModality.fromJsonList(Response);
+        this.getConceptsByStudent();
+      }
+    )
   }
 
   getActiveCycleList(){
@@ -110,7 +120,7 @@ export class AssingScholarshipComponent implements OnInit {
     this.spService.getPaymentConceptList(this.stageSchool.id).subscribe(
       (Response)=>{
         this.paymentConcepts= PaymentConcept.fromJsonList(Response);
-        this.getConceptsByStudent();
+        this.getPaymentModalityList();
       }
     )
   }
@@ -129,25 +139,113 @@ export class AssingScholarshipComponent implements OnInit {
     this.paymentConcepts.forEach( pc => {
       this.conceptsByStudent.forEach(spc => {
         if (pc.id === spc.conceptId) {
-            this.paymentConceptsStudent.push(pc);
+          if (pc.dues) {
+            let monthCounter = this.paymentModalities.find(p=> p.id === spc.paymentModalityId).monthCounter;
+            pc.duesCounter=monthCounter;
+          }
+          this.paymentConceptsStudent.push(pc);
         }
       });
     });
+    this.getScholarshipList();
+    
+  }
+
+  getScholarshipList(){
+    this.spService.getScholarshipList(this.student.id).subscribe(
+      (Response)=>{
+        this.scholarshipList = Scholarship.fromJsonList(Response);
+        this.getScholarshipStatus()
+        
+      }
+    )
+  }
+
+  getScholarshipStatus(){
+    this.spService.getScholarshipStatus().subscribe(
+      (Response)=>{
+        this.statusScholarshipList = StatusScholarship.fromJsonList(Response);
+        if (this.scholarshipList.length>0) {
+          this.selectedStatus = this.statusScholarshipList.find(s => s.id === this.scholarshipList[0].statusId).id.toString();
+          this.selectedDay = this.scholarshipList[0].paymentDay.toString();
+        }else{
+          this.selectedStatus = this.statusScholarshipList[0].id.toString();
+          this.selectedDay = '5';
+        }
+        this.getScholarshipToSave();
+      }
+    )
+  }
+
+  getScholarshipToSave(){
+    this.scholarshipListToSave = new Array();
+    if (this.scholarshipList.length>0) {
+      this.paymentConceptsStudent.forEach(concept => {
+        let equal=false;
+        this.scholarshipList.forEach(ship => {
+          if (concept.id === ship.conceptId) {
+            if (concept.dues) {
+              this.scholarshipListToSave.push(new Scholarship(this.student.id,concept.id,ship.amount,ship.porcentage,ship.statusId,ship.paymentDay,ship.id,concept.title,this.getAmountFee(concept)));
+            }else{
+              this.scholarshipListToSave.push(new Scholarship(this.student.id,concept.id,ship.amount,ship.porcentage,ship.statusId,ship.paymentDay,ship.id,concept.title,concept.amount));
+            }
+            equal=true;
+          }
+        });
+        if(!equal){
+          if (concept.dues) {
+            this.scholarshipListToSave.push(new Scholarship(this.student.id,concept.id,0,0,0,0,0,concept.title,this.getAmountFee(concept)));
+          }else{
+            this.scholarshipListToSave.push(new Scholarship(this.student.id,concept.id,0,0,0,0,0,concept.title,concept.amount));
+          }
+        }
+      });
+    }else{
+      this.paymentConceptsStudent.forEach(concept => {
+        if (concept.dues) {
+          this.scholarshipListToSave.push(new Scholarship(this.student.id,concept.id,0,0,0,0,0,concept.title,this.getAmountFee(concept)));
+        }else{
+          this.scholarshipListToSave.push(new Scholarship(this.student.id,concept.id,0,0,0,0,0,concept.title,concept.amount));
+        }
+      });
+    }
     this.registerControlsForm();
   }
 
+  getAmountFee(concept:PaymentConcept){
+    return concept.amount/concept.duesCounter;
+  }
+
+  private registerControlsForm() {
+    this.assingScholarshipForm = this.formBuilder.group({
+      paymentDay:[''],
+      statusControl:[''],
+    });
+    this.paymentConceptsStudent.forEach(element => {
+      this.assingScholarshipForm.addControl('conceptValue'+element.id,new FormControl());
+      this.assingScholarshipForm.addControl('conceptScholarship'+element.id,new FormControl());
+      this.assingScholarshipForm.addControl('conceptPercentage'+element.id,new FormControl());
+    });
+    this.setValues();
+  }
   setValues(){
+    this.assingScholarshipForm.controls['paymentDay'].setValue(this.selectedDay);
+    this.assingScholarshipForm.controls['statusControl'].setValue(this.selectedStatus);
     if (this.isPercentage) {
-        this.paymentConceptsStudent.forEach(element => {
-        this.assingScholarshipForm.controls['conceptValue'+element.id].disable();
-        this.assingScholarshipForm.controls['conceptValue'+element.id].setValue(element.amount);
-        this.assingScholarshipForm.controls['conceptScholarship'+element.id].disable();
+        this.scholarshipListToSave.forEach(element => {
+        this.assingScholarshipForm.controls['conceptValue'+element.conceptId].disable();
+        this.assingScholarshipForm.controls['conceptValue'+element.conceptId].setValue(element.conceptAmount);
+        this.assingScholarshipForm.controls['conceptScholarship'+element.conceptId].setValue(element.amount);
+        this.assingScholarshipForm.controls['conceptPercentage'+element.conceptId].setValue(element.porcentage);
+        this.assingScholarshipForm.controls['conceptScholarship'+element.conceptId].disable();
       });
     }else{
-      this.paymentConceptsStudent.forEach(element => {
-        this.assingScholarshipForm.controls['conceptValue'+element.id].disable();
-        this.assingScholarshipForm.controls['conceptValue'+element.id].setValue(element.amount);
-        this.assingScholarshipForm.controls['conceptPercentage'+element.id].disable();
+      this.scholarshipListToSave.forEach(element => {
+        this.assingScholarshipForm.controls['conceptValue'+element.conceptId].disable();
+        this.assingScholarshipForm.controls['conceptValue'+element.conceptId].setValue(element.conceptAmount);
+        this.assingScholarshipForm.controls['conceptScholarship'+element.conceptId].setValue(element.amount);
+        this.assingScholarshipForm.controls['conceptPercentage'+element.conceptId].setValue(element.porcentage);
+        this.assingScholarshipForm.controls['conceptPercentage'+element.conceptId].disable();
       });
     }
   }
@@ -155,14 +253,20 @@ export class AssingScholarshipComponent implements OnInit {
   calculateScholarshipByValue(conceptId:number){
     let value = this.assingScholarshipForm.controls['conceptValue'+conceptId].value;
     let newValue = this.assingScholarshipForm.controls['conceptScholarship'+conceptId].value;
-    let porcentage = 100-(((newValue) * 100)/value);
+    let porcentage = 0
+    if (newValue) {
+      porcentage = 100-(((newValue) * 100)/value);
+    }
     this.assingScholarshipForm.controls['conceptPercentage'+conceptId].setValue(porcentage);
   }
 
   calculateScholarshipByPorcentage(conceptId:number){
     let value = this.assingScholarshipForm.controls['conceptValue'+conceptId].value;
     let porcentage = this.assingScholarshipForm.controls['conceptPercentage'+conceptId].value;
-    let newValue = value - ((value*porcentage)/100)
+    let newValue=0;
+    if (porcentage) {
+      newValue = value - ((value*porcentage)/100)
+    }
     this.assingScholarshipForm.controls['conceptScholarship'+conceptId].setValue(newValue);
   }
 
@@ -171,7 +275,18 @@ export class AssingScholarshipComponent implements OnInit {
     if (this.assingScholarshipForm.invalid) {
       return;
     }
-    console.log(this.assingScholarshipForm.controls.conceptValue13.value);
+    this.scholarshipListToSave.forEach(element => {
+      element.amount = this.assingScholarshipForm.controls['conceptScholarship'+element.conceptId].value;
+      element.porcentage = this.assingScholarshipForm.controls['conceptPercentage'+element.conceptId].value;
+      if (element.amount && element.amount>0) {
+        if (element.id>0) {
+          this.spService.updateScholarship(element,parseInt(this.selectedStatus),parseInt(this.selectedDay)).then();
+        }
+        else{
+          this.spService.createScholarship(element, parseInt(this.selectedStatus),parseInt(this.selectedDay)).then();
+        }
+      }
+    });
   }
 
 }

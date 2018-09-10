@@ -15,6 +15,8 @@ import { PaymentWay } from '../dtos/paymentWay';
 import { StudentPayment } from '../dtos/studentPayment';
 import { element } from 'protractor';
 import { ConceptStudent } from '../dtos/conceptStudent';
+import { Scholarship } from '../dtos/scholarship';
+import { StatusScholarship } from '../dtos/statusScholarship';
 
 @Component({
   selector: 'app-register-payment',
@@ -51,6 +53,11 @@ export class RegisterPaymentComponent implements OnInit {
   studentPayments:StudentPayment[]=[];
   conceptsByStudent:ConceptStudent[]=[];
   totalDebt:number=0;
+  currentStatusScholarship:StatusScholarship;
+  paymentDay;
+
+  scholarshipList:Scholarship[]=[];
+  statusScholarshipList:StatusScholarship[]=[];
 
   previousBalance='Abono Anterior';
 
@@ -83,6 +90,25 @@ export class RegisterPaymentComponent implements OnInit {
       
     });
   }
+
+  getScholarshipStatus(){
+    this.spService.getScholarshipStatus().subscribe(
+      (Response)=>{
+        this.statusScholarshipList = StatusScholarship.fromJsonList(Response);
+        this.scholarshipList.forEach(element => {
+          
+          this.paymentConcepts.forEach(concept =>{
+            if (element.id === concept.id) {
+              element.conceptName = concept.title;
+            }
+          })
+        });
+        this.currentStatusScholarship = this.statusScholarshipList.find(s => s.id === this.scholarshipList[0].statusId);
+        this.paymentDay = this.scholarshipList[0].paymentDay;
+      }
+    )
+  }
+
   disabledControls(){
     this.registerPaymentForm.controls['quantityToPayControl'].disable();
     this.registerPaymentForm.controls['debtAmountControl'].disable();
@@ -143,7 +169,7 @@ export class RegisterPaymentComponent implements OnInit {
       let modalityStudent = this.conceptsByStudent.find(c => c.conceptId === this.selectedPaymentConcept.id);
       this.paymentModality = this.paymentModalities.find(p => p.id === modalityStudent.paymentModalityId);
       this.selectedPaymentMonth=new Month('',0);
-      this.loadRemainingMonths();
+      this.getMonths();
     }else{
       this.previousBalance='Abono anterior';
       this.registerPaymentForm.controls.quantityToPayControl.setValue(this.selectedPaymentConcept.amount);
@@ -237,7 +263,18 @@ export class RegisterPaymentComponent implements OnInit {
     this.spService.getPaymentConceptList(this.stageSchool.id).subscribe(
       (Response)=>{
         this.paymentConcepts= PaymentConcept.fromJsonList(Response);
+        this.getScholarshipList();
         this.getConceptsByStudent();
+      }
+    )
+  }
+
+  getScholarshipList(){
+    this.spService.getScholarshipList(this.student.id).subscribe(
+      (Response)=>{
+        this.scholarshipList = Scholarship.fromJsonList(Response);
+        this.getScholarshipStatus()
+        
       }
     )
   }
@@ -316,7 +353,7 @@ export class RegisterPaymentComponent implements OnInit {
       (Response)=>{
         this.paymentModalities = PaymentModality.fromJsonList(Response);
         this.paymentModality = this.paymentModalities.find(p => p.id === this.student.paymentMadalityId);
-        this.getMonths();
+        
       }
     )
   }
@@ -333,6 +370,7 @@ export class RegisterPaymentComponent implements OnInit {
             }
           });
         });
+        this.loadRemainingMonths();
       }
     )
   }
@@ -361,6 +399,7 @@ export class RegisterPaymentComponent implements OnInit {
     if (this.registerPaymentForm.invalid) {
       return;
     }
+
   }
 
 }

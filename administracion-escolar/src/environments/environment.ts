@@ -24,7 +24,9 @@ export const environment = {
   paymentWayList:'MetodosPago',
   studentPaymentList:'PagosAlumnos',
   conceptStudentList:'ConceptosDelAlumno',
-  scholarshipConfigurationList:'ConfiguracionBeca'
+  scholarshipConfigurationList:'ConfiguracionBeca',
+  scholarshipList:'Beca',
+  statusScholarshipList:'EstatusBeca'
 
 };
 

@@ -43,9 +43,9 @@
               Indique los montos asignados por beca a cada uno de los conceptos
             </div>
           </div>
-          <div class="row" *ngIf='!isPercentage'>
-            <div class="col-md-12">
-                <table class="table-responsive">
+          <div class="row" >
+            <div class="col-md-8" >
+                <table class="table-responsive" *ngIf='!isPercentage'>
                   <thead>
                     <th>Concepto</th>
                     <th>Monto del pago</th>
@@ -53,52 +53,83 @@
                     <th>Porcentaje</th>
                   </thead>
                   <tbody>
-                    <tr *ngFor='let concept of paymentConceptsStudent'>
+                    <tr *ngFor='let ship of scholarshipListToSave'>
                       <td>
-                        <label>{{concept.title}}</label>
+                        <label>{{ship.conceptName}}</label>
                       </td>
                       <td>
-                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptValue{{concept.id}}" class="form-control">
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptValue{{ship.conceptId}}" class="form-control scholarshipInput">
                       </td>
                       <td>
-                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptScholarship{{concept.id}}" (keyup)="calculateScholarshipByValue(concept.id)" class="form-control">
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptScholarship{{ship.conceptId}}" (keyup)="calculateScholarshipByValue(ship.conceptId)" class="form-control scholarshipInput">
                       </td>
                       <td>
-                          <input currencyMask autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',', precision:0, suffix:'%' }" matInput formControlName="conceptPercentage{{concept.id}}" class="form-control">
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',', precision:0, suffix:'%' }" matInput formControlName="conceptPercentage{{ship.conceptId}}" class="form-control scholarshipInput">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="table-responsive" *ngIf='isPercentage'>
+                  <thead>
+                    <th>Concepto</th>
+                    <th>Monto del pago</th>
+                    <th>Porcentaje</th>
+                    <th>Monto de la beca</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor='let ship of scholarshipListToSave'>
+                      <td>
+                        <label>{{ship.conceptName}}</label>
+                      </td>
+                      <td>
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptValue{{ship.conceptId}}" class="form-control scholarshipInput">
+                      </td>
+                      <td>
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',', precision:0, suffix:'%' }" matInput formControlName="conceptPercentage{{ship.conceptId}}" (keyup)="calculateScholarshipByPorcentage(ship.conceptId)" class="form-control scholarshipInput">
+                      </td>
+                      <td>
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptScholarship{{ship.conceptId}}" class="form-control scholarshipInput">
                       </td>
                     </tr>
                   </tbody>
                 </table>
             </div>
-          </div>
-
-          <div class="row" *ngIf='isPercentage'>
-              <div class="col-md-12">
-                  <table class="table-responsive">
-                    <thead>
-                      <th>Concepto</th>
-                      <th>Monto del pago</th>
-                      <th>Porcentaje</th>
-                      <th>Monto de la beca</th>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor='let concept of paymentConceptsStudent'>
-                        <td>
-                          <label>{{concept.title}}</label>
-                        </td>
-                        <td>
-                            <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptValue{{concept.id}}" class="form-control">
-                        </td>
-                        <td>
-                            <input currencyMask autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',', precision:0, suffix:'%' }" matInput formControlName="conceptPercentage{{concept.id}}" (keyup)="calculateScholarshipByPorcentage(concept.id)" class="form-control">
-                        </td>
-                        <td>
-                            <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptScholarship{{concept.id}}" class="form-control">
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+            <div class="col-md-4">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                      <mat-form-field>
+                          <label>Día limite de pago para respetar la beca</label>
+                          <mat-select formControlName='paymentDay' [(value)]="selectedDay" class="form-control">
+                            <mat-option value=1>1</mat-option>
+                            <mat-option value=2>2</mat-option>
+                            <mat-option value=3>3</mat-option>
+                            <mat-option value=4>4</mat-option>
+                            <mat-option value=5>5</mat-option>
+                            <mat-option value=6>6</mat-option>
+                            <mat-option value=7>7</mat-option>
+                            <mat-option value=8>8</mat-option>
+                            <mat-option value=9>9</mat-option>
+                            <mat-option value=9>10</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                  </div>
+                </div>
               </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                      <mat-form-field>
+                          <label>Estatus de la beca</label>
+                          <mat-select formControlName="statusControl" [(value)]='selectedStatus' class="form-control">
+                              <mat-option value=1>Activa</mat-option>
+                              <mat-option value=2>Cancelada</mat-option>
+                          </mat-select>
+                      </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
             </div>
 
         </fieldset>
@@ -107,8 +138,8 @@
     <div class="row">
         <div class="form-group">
           <div class="buttons-app">
-            <button class="btn btn-default">Salir</button>
-            <button  class="btn btn-primary">Guardar</button>
+            <button type="button" class="btn btn-default">Salir</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
           </div>
         </div>
       </div>

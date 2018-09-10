@@ -5,6 +5,8 @@ import { from } from 'rxjs';
 import { Student } from '../dtos/student';
 import { StageSchool } from '../dtos/stageSchool';
 import { StudentDocument } from '../dtos/studentDocument';
+import { Scholarship } from '../dtos/scholarship';
+import { StudentPayment } from '../dtos/studentPayment';
 
 @Injectable()
 export class SPService {
@@ -26,7 +28,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'Authorization':'Bearer 0x3C3C422CC9C3A97CDE3B46AF5C6CAF0DDD5B159174D94DEE35C78EA2701ACEA67C23E1A0CC83511569BFDBC721714B13B7B0C15B67A8EE2DA28B8B00C9EDFEC0,03 Sep 2018 19:28:54 -0000'
+            'Authorization':'Bearer 0xE228028845B6287BE6280BD632852F6386A4BDA204E430B2335A2F24325740682B7B112BDF750762B9BD837D9AC1516F46CA317978EEBFEA8E080D1BE6916CD7,09 Sep 2018 23:01:31 -0000'
         }
     },environment.web);
 
@@ -138,6 +140,38 @@ getConceptsByStudent(studentId:number){
     return data;
 }
 
+getScholarshipList(studentId:number){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.scholarshipList).items.filter("AlumnoId eq " + studentId).get());
+    return data;
+}
+
+getScholarshipStatus(){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.statusScholarshipList).items.getAll());
+    return data;
+}
+
+updateScholarship(sc:Scholarship, statusId:number, paymentDay:number){
+    return this.getConfigPost().web.lists.getByTitle(environment.scholarshipList).items.getById(sc.id).update({
+        AlumnoId:sc.studentId, ConceptoId:sc.conceptId, Monto:sc.amount, Porcentaje:sc.porcentage, EstatusId:statusId, PagoOportuno:paymentDay 
+      });
+    
+}
+
+createScholarship(sc:Scholarship, statusId:number, paymentDay:number){
+
+    return this.getConfigPost().web.lists.getByTitle(environment.scholarshipList).items.add({
+        AlumnoId:sc.studentId, 
+        ConceptoId:sc.conceptId, 
+        Monto:sc.amount, 
+        Porcentaje:sc.porcentage, 
+        EstatusId:statusId, 
+        PagoOportuno:paymentDay
+    });
+}
+
+    
+
+
   addStudent(student:Student, abbreviationStage:string){
     return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.add({
         Title:student.name,
@@ -188,6 +222,12 @@ getConceptsByStudent(studentId:number){
         ConceptosId:{results:student.paymentConceptIds},
         ModalidadPagoId:student.paymentMadalityId
       });
+  }
+
+  addStudentPayment(studentPayment:StudentPayment){
+    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
+        
+    });
   }
 
   addStudentDocuments(studentId:number, studentDocuments: StudentDocument[]){

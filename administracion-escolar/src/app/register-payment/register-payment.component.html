@@ -53,7 +53,33 @@
             </fieldset>
             <fieldset class="scheduler-border">
                 <legend class="scheduler-border">Beca</legend>
-    
+                    <div class="row">
+                        <div class="col-md-8">
+                                <table class="table-responsive">
+                                        <thead>
+                                          <th>Concepto</th>
+                                          <th>Monto de la beca</th>
+                                          <th>Porcentaje</th>
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor='let ship of scholarshipList'>
+                                            <td>
+                                              <label>{{ship.conceptName}}</label>
+                                            </td>
+                                            <td>
+                                                <span>{{ship.amount | currency}}</span>
+                                            </td>
+                                            <td>
+                                                <span>{{ship.porcentage | number: '1.2-2'}}%</span>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                        </div>
+                        <div class="col-md-4">
+                            
+                        </div>
+                    </div>
             </fieldset>
             <fieldset class="scheduler-border">
                 <legend class="scheduler-border">Información del pago</legend>
