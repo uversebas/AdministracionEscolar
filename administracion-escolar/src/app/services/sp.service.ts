@@ -215,4 +215,12 @@ export class SPService {
             ClaveAlumno: password
         });
     }
+
+    addconceptsStudent(studentId: number, conceptId: number, modalityId: any){
+        return this.getConfigPost().web.lists.getByTitle(environment.conceptStudentList).items.add({
+            AlumnoId: studentId,
+            ConceptoId: conceptId,
+            ModalidadId:modalityId
+        });
+    }
 }

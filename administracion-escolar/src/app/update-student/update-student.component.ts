@@ -351,6 +351,24 @@ export class UpdateStudentComponent implements OnInit {
     return paymentConceptIdsToSave.map(obj => obj.id);
   }
 
+  getPaymentConcepts() {
+    let paymentConceptIdsToSave = this.paymentConcepts;
+    for (let i = 0; i < this.opcionalPaymentConcepts.length; i++) {
+      const op = this.opcionalPaymentConcepts[i];
+      for (let j = 0; j < paymentConceptIdsToSave.length; j++) {
+        const o = paymentConceptIdsToSave[j];
+        if (op.id == o.id) {
+          if (!op.checked) {
+            paymentConceptIdsToSave.splice(j, 1);
+          }
+        }
+      }
+    }
+    return paymentConceptIdsToSave;
+  }
+
+
+
   onSubmit(template: TemplateRef<any>) {
     this.submitted = true;
     if (this.updateStudentForm.invalid) {
@@ -395,15 +413,47 @@ export class UpdateStudentComponent implements OnInit {
 
   async UpdateStudentInformation(student: Student, template: TemplateRef<any>) {
     await Promise.all([
-       this.ActualizarEstudiante(student),
-       this.deleteDocuments(),
-       this.AgregarDocumentos(student),
+      this.ActualizarEstudiante(student),
+      this.deleteDocuments(),
+      this.AgregarDocumentos(student),
+      this.AddConcepts(student),
     ]).then(value => this.mostrarMensajeExitoso(student, template));
   }
 
   ActualizarEstudiante(student: Student) {
     this.spService.updateStudent(this.student, this.student.id).then(
       (response) => {
+        console.log("Actualiza estudiante");
+      }, err => {
+        alert('Falla en el método updateDocuments');
+      }
+    );
+  }
+
+  AddConcepts(student: Student) {
+    let paymentModalityenrollment = this.updateStudentForm.controls.paymentModalityControl.value;
+    let concepts = this.getPaymentConcepts();
+    concepts.forEach(element => {
+      let studentId = this.student.id;
+      let conceptId = element.id;
+      let paymentModalityenrollmentid = paymentModalityenrollment.id;
+      switch (element.title) {
+        default:
+          this.addConcepts(studentId, conceptId, null);
+          break;
+        case "Colegiatura":
+          this.addConcepts(studentId, conceptId, paymentModalityenrollmentid);
+          break;
+        case "Transporte":
+          this.addConcepts(studentId, conceptId, 2);
+      }
+    });
+  }
+
+  addConcepts(studentId: number, conceptId: number, modalityId: any) {
+    this.spService.addconceptsStudent(studentId, conceptId,modalityId).then(
+      (response) => {
+        console.log("Agrega conceptos");
       }, err => {
         alert('Falla en el método updateDocuments');
       }
@@ -425,12 +475,12 @@ export class UpdateStudentComponent implements OnInit {
   AgregarDocumentos(student: Student) {
     let randomKey = this.generateRandomKeyDocument(6);
     this.pendingStudentDocumentsBySave.forEach(element => {
-      this.spService.addStudentDocuments(student, element.file,randomKey).then(
+      this.spService.addStudentDocuments(student, element.file, randomKey).then(
         (response) => {
           let validityDate = (element.validity != null) ? new Date(element.validity).toISOString() : null;
           response.file.getItem("ID", "Title", "Vigencia").then(
             (item) => {
-              this.spService.updateDocuments(this.student, item["ID"], element.file.name, validityDate,randomKey).then(
+              this.spService.updateDocuments(this.student, item["ID"], element.file.name, validityDate, randomKey).then(
                 (response) => {
                 }, err => {
                   alert('Falla en el método updateDocuments');
@@ -448,15 +498,16 @@ export class UpdateStudentComponent implements OnInit {
   }
 
   mostrarMensajeExitoso(student: Student, template: TemplateRef<any>) {
-    sessionStorage.setItem('student',JSON.stringify(student));
-    this.successUpdateStudentModal = this.modalService.show(template);
-    this.router.navigate(['/menu']);
+     sessionStorage.setItem('student',JSON.stringify(student));
+     this.successUpdateStudentModal = this.modalService.show(template);
+     this.router.navigate(['/menu']);
+    console.log("Actualiza");
   }
 
-  generateRandomKeyDocument(length){
+  generateRandomKeyDocument(length) {
     var str = "";
-    for ( ; str.length < length; str += Math.random().toString( 36 ).substr( 2 ) );
-    return str.substr( 0, length );
+    for (; str.length < length; str += Math.random().toString(36).substr(2));
+    return str.substr(0, length);
   }
-  
+
 }
