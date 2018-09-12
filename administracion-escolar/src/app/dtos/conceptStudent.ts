@@ -1,5 +1,5 @@
 export class ConceptStudent{
-    constructor(public studentId:number, public conceptId:number, public id:number, public paymentModalityId?:number){
+    constructor(public studentId:number, public conceptId:number, public id:number, public paymentModalityId?:number, public conceptName?:string){
 
     }
 

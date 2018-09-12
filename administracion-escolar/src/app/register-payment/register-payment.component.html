@@ -77,7 +77,13 @@
                                       </table>
                         </div>
                         <div class="col-md-4">
-                            
+                            <div class="form-group">
+                                <label>Estatus de la beca</label>
+                                <span>{{currentStatusScholarship.title}}</span>
+                            </div>
+                            <div class="form-group">
+                                <span>Día limite de pago para respetar la beca: {{paymentDay}} de cada mes.</span>
+                            </div>
                         </div>
                     </div>
             </fieldset>
@@ -251,6 +257,7 @@
                                                 <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="amountToPayControl" (keyup)="calculatePayment()" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.amountToPayControl.errors }"/>
                                                 <div *ngIf="submitted && f.amountToPayControl.errors" class="invalid-feedback">
                                                         <div *ngIf="f.amountToPayControl.errors.required">Monto del pago requerido</div>
+                                                        <div *ngIf="f.amountToPayControl.errors.min">El monto debe ser mayor que cero</div>
                                                     </div>
                                             </mat-form-field>
                                         </div>

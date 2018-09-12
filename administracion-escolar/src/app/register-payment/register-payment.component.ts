@@ -17,6 +17,7 @@ import { element } from 'protractor';
 import { ConceptStudent } from '../dtos/conceptStudent';
 import { Scholarship } from '../dtos/scholarship';
 import { StatusScholarship } from '../dtos/statusScholarship';
+import { ItemAddResult } from 'sp-pnp-js';
 
 @Component({
   selector: 'app-register-payment',
@@ -165,12 +166,14 @@ export class RegisterPaymentComponent implements OnInit {
   selectecPaymentConcept(){
     this.clearValueControls();
     if (this.selectedPaymentConcept.dues) {
+      this.registerPaymentForm.controls.paymentMonthControl.setValidators([Validators.required]);
       this.previousBalance='Adeudo anterior';
       let modalityStudent = this.conceptsByStudent.find(c => c.conceptId === this.selectedPaymentConcept.id);
       this.paymentModality = this.paymentModalities.find(p => p.id === modalityStudent.paymentModalityId);
       this.selectedPaymentMonth=new Month('',0);
       this.getMonths();
     }else{
+      this.registerPaymentForm.controls.paymentMonthControl.clearValidators();
       this.previousBalance='Abono anterior';
       this.registerPaymentForm.controls.quantityToPayControl.setValue(this.selectedPaymentConcept.amount);
       let paymentUntilNow= this.getPaymentUntilNow(this.selectedPaymentConcept);
@@ -381,13 +384,13 @@ export class RegisterPaymentComponent implements OnInit {
       entryDateControl:['',Validators.required],
       receivedPersonControl:['',Validators.required],
       paymentConceptControl:['',Validators.required],
-      paymentMonthControl:['',Validators.required],
+      paymentMonthControl:[''],
       paymentWayControl:['',Validators.required],
       referenceControl:[''],
       quantityToPayControl:[''],
       debtAmountControl:[''],
       totalAmountToPayControl:[''],
-      amountToPayControl:['',Validators.required],
+      amountToPayControl:['',[Validators.required, Validators.min(1)]],
       newBalanceControl:[''],
       paymentAgreementControl:[''],
       observationControl:['']
@@ -399,7 +402,82 @@ export class RegisterPaymentComponent implements OnInit {
     if (this.registerPaymentForm.invalid) {
       return;
     }
+    let quantityToPay = this.registerPaymentForm.controls.quantityToPayControl.value;
+    let amountToPay = this.registerPaymentForm.controls.amountToPayControl.value;
+    //let totalAmountToPay = this.registerPaymentForm.controls.totalAmountToPayControl.value;
+    let newBalance = this.registerPaymentForm.controls.newBalanceControl.value;
+    let debtAmount = this.registerPaymentForm.controls.debtAmountControl.value;
+    
+    if (this.selectedPaymentConcept.dues) {
+      if (debtAmount===0 && newBalance === 0) {
+        this.addPaymentStudentConceptDues(amountToPay,this.selectedPaymentMonth.id);
+      }else{
+        if (debtAmount>0) {
+          let restAmount = amountToPay - debtAmount;
+          let newDebt= debtAmount;
+          this.studentPayments.forEach(payment => {
+            if ((newDebt>0)&&(this.selectedPaymentConcept.id === payment.conceptId && payment.amount < quantityToPay)) {
+              let newAmount = newDebt + payment.amount;
+              if (newAmount<=quantityToPay) {
+                newDebt = 0;
+                this.updatePaymentStudentConceptDues(newAmount, payment.id);
+              }
+              if(newAmount>quantityToPay){
+                newDebt = newDebt - quantityToPay;
+                this.updatePaymentStudentConceptDues(quantityToPay, payment.id);
+              }
+            }
+          });
+          if(restAmount>0){
+            restAmount = this.inprovePayment(restAmount, quantityToPay);
+          }
+        }else{
+          this.inprovePayment(amountToPay, quantityToPay);
+        }
+      }
+    }else{
+      this.addPaymentStudentConceptNotDues(amountToPay);
+    }
+  }
 
+  private inprovePayment(restAmount: number, quantityToPay: any) {
+    this.remainingPaymentMonths.forEach(month => {
+      if (restAmount > 0) {
+          let newAmount = restAmount;
+          if (newAmount <= quantityToPay) {
+            restAmount=0;
+            this.addPaymentStudentConceptDues(newAmount, month.id);
+          }else{
+            restAmount = restAmount - quantityToPay;
+            this.addPaymentStudentConceptDues(quantityToPay, month.id);
+            }
+        }
+    });
+    return restAmount;
+  }
+
+  addPaymentStudentConceptNotDues(amountToPay:number){
+    this.spService.addPaymentStudent(this.student.id, this.selectedPaymentConcept.id,amountToPay).then(
+      (iar:ItemAddResult)=>{
+        
+      },err=>{
+
+      }
+    )
+  }
+
+  addPaymentStudentConceptDues(amountToPay:number, monthId:number){
+    this.spService.addPaymentStudentWithMont(this.student.id, this.selectedPaymentConcept.id,amountToPay,monthId).then(
+      (iar:ItemAddResult)=>{
+        
+      },err=>{
+
+      }
+    )
+  }
+
+  updatePaymentStudentConceptDues(amountToPay:number,paymentId:number){
+    this.spService.updatePaymentStudentConceptDues(amountToPay,paymentId)
   }
 
 }

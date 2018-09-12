@@ -30,6 +30,7 @@ import { SearchStudentComponent } from './search-student/search-student.componen
 import { AssingScholarshipComponent } from './assing-scholarship/assing-scholarship.component';
 
 import { SPService } from '../app/services/sp.service';
+import { PaymentHistoryComponent } from './payment-history/payment-history.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { SPService } from '../app/services/sp.service';
     ReEnrollStudentComponent,
     RegisterPaymentComponent,
     SearchStudentComponent,
-    AssingScholarshipComponent
+    AssingScholarshipComponent,
+    PaymentHistoryComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +68,8 @@ import { SPService } from '../app/services/sp.service';
       {path:'actualizar-alumno', component:UpdateStudentComponent},
       {path:'reeinscribir-alumno', component:ReEnrollStudentComponent},
       {path:'beca', component:AssingScholarshipComponent},
-      {path:'buscar-alumno', component:SearchStudentComponent}
+      {path:'buscar-alumno', component:SearchStudentComponent},
+      {path:'historial-pagos', component:PaymentHistoryComponent}
     ])
   ],
   providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'es-US'}],

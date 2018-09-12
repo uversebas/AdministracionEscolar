@@ -10,7 +10,6 @@ import { StudentPayment } from '../dtos/studentPayment';
 
 @Injectable()
 export class SPService {
-  
   constructor() {}
 
   private getConfig(){
@@ -135,6 +134,11 @@ getStudentPaymentList(studentId:number){
     return data;
 }
 
+getStudentPaymentExpandList(studentId:number){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.select("AlumnoId", "Id", "Concepto/ID", "Concepto/ConceptoCalculado", "Mes/Id", "Mes/Title", "Monto").expand("Concepto, Mes").filter("AlumnoId eq " + studentId).get());
+    return data;
+}
+
 getConceptsByStudent(studentId:number){
     let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.filter("AlumnoId eq "+ studentId).get());
     return data;
@@ -169,7 +173,28 @@ createScholarship(sc:Scholarship, statusId:number, paymentDay:number){
     });
 }
 
-    
+addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number){
+    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
+        AlumnoId:studentId,
+        ConceptoId:conceptId,
+        Monto:totalAmountToPay
+    });
+  }
+  
+  addPaymentStudentWithMont(studentId: number, conceptId: number, totalAmountToPay: number, monthId:number){
+    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
+        AlumnoId:studentId,
+        ConceptoId:conceptId,
+        Monto:totalAmountToPay,
+        MesId:monthId
+    });
+  }
+
+  updatePaymentStudentConceptDues(amountToPay: number,paymentId: number): any {
+    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.getById(paymentId).update({
+        Monto:amountToPay
+    });
+  }
 
 
   addStudent(student:Student, abbreviationStage:string){
