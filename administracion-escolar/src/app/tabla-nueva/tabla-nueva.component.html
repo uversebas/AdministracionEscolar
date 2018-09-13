@@ -1,0 +1,14 @@
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table-striped">
+  <thead>
+    <tr>
+      <th>Clave</th>
+      <th>Nombre</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let student of students">
+      <td>{{ student.key }}</td>
+      <td>{{ student.name }}</td>
+    </tr>
+  </tbody>
+</table>

@@ -20,6 +20,8 @@ import { CurrencyMaskModule } from "ng2-currency-mask";
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 
+import { DataTablesModule } from 'angular-datatables';
+
 import { AppComponent } from './app.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { EnrollStudentComponent } from './enroll-student/enroll-student.component';
@@ -31,6 +33,7 @@ import { AssingScholarshipComponent } from './assing-scholarship/assing-scholars
 
 import { SPService } from '../app/services/sp.service';
 import { PaymentHistoryComponent } from './payment-history/payment-history.component';
+import { TablaNuevaComponent } from './tabla-nueva/tabla-nueva.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +45,8 @@ import { PaymentHistoryComponent } from './payment-history/payment-history.compo
     RegisterPaymentComponent,
     SearchStudentComponent,
     AssingScholarshipComponent,
-    PaymentHistoryComponent
+    PaymentHistoryComponent,
+    TablaNuevaComponent
   ],
   imports: [
     BrowserModule,
@@ -59,6 +63,7 @@ import { PaymentHistoryComponent } from './payment-history/payment-history.compo
     MatCheckboxModule,
     CurrencyMaskModule,
     MatTabsModule,
+    DataTablesModule,
     ModalModule.forRoot(),
     RouterModule.forRoot([
       {path:'',redirectTo:'/menu',pathMatch:'full'},
@@ -69,7 +74,8 @@ import { PaymentHistoryComponent } from './payment-history/payment-history.compo
       {path:'reeinscribir-alumno', component:ReEnrollStudentComponent},
       {path:'beca', component:AssingScholarshipComponent},
       {path:'buscar-alumno', component:SearchStudentComponent},
-      {path:'historial-pagos', component:PaymentHistoryComponent}
+      {path:'historial-pagos', component:PaymentHistoryComponent},
+      {path:'data-table', component:TablaNuevaComponent}
     ])
   ],
   providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'es-US'}],
