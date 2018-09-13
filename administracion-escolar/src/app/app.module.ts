@@ -14,7 +14,7 @@ import {MatInputModule} from '@angular/material';
 import {MatSelectModule} from '@angular/material/select';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import { MAT_DATE_LOCALE} from '@angular/material/core';
 import { MatTabsModule } from '@angular/material';
 import { CurrencyMaskModule } from "ng2-currency-mask";
 
