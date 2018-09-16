@@ -31,6 +31,9 @@ export class MainMenuComponent implements OnInit {
     if (item.RouterFinal) {
       sessionStorage.setItem('routerFinal',item.RouterFinal);
     }
+    if (item.FiltroDivision) {
+      sessionStorage.setItem('filtroDivision',item.FiltroDivision);
+    }
     this.router.navigate([item.NombreRouter]);
   }
 

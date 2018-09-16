@@ -56,6 +56,7 @@ export class RegisterPaymentComponent implements OnInit {
   totalDebt:number=0;
   currentStatusScholarship:StatusScholarship;
   paymentDay;
+  studentHasSholarship=false;
 
   scholarshipList:Scholarship[]=[];
   statusScholarshipList:StatusScholarship[]=[];
@@ -276,8 +277,10 @@ export class RegisterPaymentComponent implements OnInit {
     this.spService.getScholarshipList(this.student.id).subscribe(
       (Response)=>{
         this.scholarshipList = Scholarship.fromJsonList(Response);
-        this.getScholarshipStatus()
-        
+        if (this.scholarshipList.length>0) {
+          this.studentHasSholarship=true;
+          this.getScholarshipStatus()
+        }
       }
     )
   }
@@ -402,6 +405,14 @@ export class RegisterPaymentComponent implements OnInit {
     if (this.registerPaymentForm.invalid) {
       return;
     }
+    let paymentDate = new Date(this.registerPaymentForm.controls.paymentDateControl.value);
+    let registerDate = new Date(this.registerPaymentForm.controls.entryDateControl.value);
+    let receivedPersonId = this.registerPaymentForm.controls.receivedPersonControl.value.id;
+    let paymentWayId = this.registerPaymentForm.controls.paymentWayControl.value.id;
+    let reference = this.registerPaymentForm.controls.referenceControl.value;
+    let paymentAgreement = this.registerPaymentForm.controls.paymentAgreementControl.value;
+    let observation = this.registerPaymentForm.controls.observationControl.value;
+
     let quantityToPay = this.registerPaymentForm.controls.quantityToPayControl.value;
     let amountToPay = this.registerPaymentForm.controls.amountToPayControl.value;
     //let totalAmountToPay = this.registerPaymentForm.controls.totalAmountToPayControl.value;
@@ -410,7 +421,7 @@ export class RegisterPaymentComponent implements OnInit {
     
     if (this.selectedPaymentConcept.dues) {
       if (debtAmount===0 && newBalance === 0) {
-        this.addPaymentStudentConceptDues(amountToPay,this.selectedPaymentMonth.id);
+        this.addPaymentStudentConceptDues(amountToPay,this.selectedPaymentMonth.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
       }else{
         if (debtAmount>0) {
           let restAmount = amountToPay - debtAmount;
@@ -420,44 +431,44 @@ export class RegisterPaymentComponent implements OnInit {
               let newAmount = newDebt + payment.amount;
               if (newAmount<=quantityToPay) {
                 newDebt = 0;
-                this.updatePaymentStudentConceptDues(newAmount, payment.id);
+                this.updatePaymentStudentConceptDues(newAmount, payment.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
               }
               if(newAmount>quantityToPay){
                 newDebt = newDebt - quantityToPay;
-                this.updatePaymentStudentConceptDues(quantityToPay, payment.id);
+                this.updatePaymentStudentConceptDues(quantityToPay, payment.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
               }
             }
           });
           if(restAmount>0){
-            restAmount = this.inprovePayment(restAmount, quantityToPay);
+            restAmount = this.inprovePayment(restAmount, quantityToPay, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
           }
         }else{
-          this.inprovePayment(amountToPay, quantityToPay);
+          this.inprovePayment(amountToPay, quantityToPay, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
         }
       }
     }else{
-      this.addPaymentStudentConceptNotDues(amountToPay);
+      this.addPaymentStudentConceptNotDues(amountToPay, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
     }
   }
 
-  private inprovePayment(restAmount: number, quantityToPay: any) {
+  private inprovePayment(restAmount: number, quantityToPay: any, paymentDate, registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation) {
     this.remainingPaymentMonths.forEach(month => {
       if (restAmount > 0) {
           let newAmount = restAmount;
           if (newAmount <= quantityToPay) {
             restAmount=0;
-            this.addPaymentStudentConceptDues(newAmount, month.id);
+            this.addPaymentStudentConceptDues(newAmount, month.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
           }else{
             restAmount = restAmount - quantityToPay;
-            this.addPaymentStudentConceptDues(quantityToPay, month.id);
+            this.addPaymentStudentConceptDues(quantityToPay, month.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
             }
         }
     });
     return restAmount;
   }
-
-  addPaymentStudentConceptNotDues(amountToPay:number){
-    this.spService.addPaymentStudent(this.student.id, this.selectedPaymentConcept.id,amountToPay).then(
+    addPaymentStudentConceptNotDues(amountToPay:number, paymentDate:string, registerDate:string, receivedPersonId:number,
+                                     paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
+    this.spService.addPaymentStudent(this.student.id, this.selectedPaymentConcept.id,amountToPay, this.cycle.id, paymentDate, registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation).then(
       (iar:ItemAddResult)=>{
         
       },err=>{
@@ -466,8 +477,9 @@ export class RegisterPaymentComponent implements OnInit {
     )
   }
 
-  addPaymentStudentConceptDues(amountToPay:number, monthId:number){
-    this.spService.addPaymentStudentWithMont(this.student.id, this.selectedPaymentConcept.id,amountToPay,monthId).then(
+  addPaymentStudentConceptDues(amountToPay:number, monthId:number,  paymentDate:string, registerDate:string, receivedPersonId:number,
+    paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
+    this.spService.addPaymentStudentWithMont(this.student.id, this.selectedPaymentConcept.id,amountToPay,monthId, this.cycle.id, paymentDate,registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation).then(
       (iar:ItemAddResult)=>{
         
       },err=>{
@@ -476,8 +488,15 @@ export class RegisterPaymentComponent implements OnInit {
     )
   }
 
-  updatePaymentStudentConceptDues(amountToPay:number,paymentId:number){
-    this.spService.updatePaymentStudentConceptDues(amountToPay,paymentId)
+  updatePaymentStudentConceptDues(amountToPay:number,paymentId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
+    paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
+    this.spService.updatePaymentStudentConceptDues(amountToPay,paymentId, this.cycle.id, paymentDate,registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation).then(
+      (iar:ItemAddResult)=>{
+        
+      },err=>{
+
+      }
+    )
   }
 
 }

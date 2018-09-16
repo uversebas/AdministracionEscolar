@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Student } from '../dtos/student';
 import { SPService } from '../services/sp.service';
 import { Subject } from 'rxjs';
+import { StudentByDivision } from '../dtos/studentByDivision';
+import { AppSettings } from '../shared/appSettings';
 
 
 @Component({
@@ -11,13 +13,22 @@ import { Subject } from 'rxjs';
 })
 export class TablaNuevaComponent implements OnDestroy, OnInit {
   dtOptions: any = {};
-  students: Student[]= [];
+  students: StudentByDivision[]= [];
   dtTrigger: Subject<any> = new Subject();
+  divisionId: string;
   constructor(private spService: SPService) { }
 
   ngOnInit() {
     this.configDataTable();
-    this.getStudentList();
+    this.getDivisionId();
+
+  }
+
+  getDivisionId(){
+    this.divisionId = sessionStorage.getItem('filtroDivision');
+    if (this.divisionId) {
+      this.getStudentList();
+    }
   }
 
   ngOnDestroy(): void {
@@ -26,27 +37,13 @@ export class TablaNuevaComponent implements OnDestroy, OnInit {
   }
 
   private configDataTable() {
-    this.dtOptions = {
-      // Declare the use of the extension in the dom parameter
-      dom: 'Bfrtip',
-      // Configure the buttons
-      buttons: [
-        'columnsToggle',
-        'colvis',
-        'copy',
-        'print',
-        'pdf',
-        'excel'
-      ],
-      pagingType: 'full_numbers',
-      pageLength: 5
-    };
+    this.dtOptions = AppSettings.getDataTableConfiguration();
   }
 
   getStudentList(){
-    this.spService.getStudentList().subscribe(
+    this.spService.getStudentsByDivisionList(parseInt(this.divisionId)).subscribe(
       (Response)=>{
-        this.students= Student.fromJsonList(Response);
+        this.students= StudentByDivision.fromJsonList(Response);
         this.dtTrigger.next();
       }
     )

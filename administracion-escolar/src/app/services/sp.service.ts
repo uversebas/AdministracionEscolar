@@ -139,6 +139,11 @@ getStudentPaymentExpandList(studentId:number){
     return data;
 }
 
+getStudentsByDivisionList(divisionId:number){
+    let data =from(this.getConfig().web.lists.getByTitle(environment.studentList).items.select("Title", "ClaveAlumno", "EstatusAlumno/Title", "Division/Title", "Division/ID", "Grado/Title", "Grupo/Title").expand("EstatusAlumno","Division","Grado","Grupo").filter("Division/ID eq " + divisionId).get());
+    return data;
+}
+
 getConceptsByStudent(studentId:number){
     let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.filter("AlumnoId eq "+ studentId).get());
     return data;
@@ -173,7 +178,8 @@ createScholarship(sc:Scholarship, statusId:number, paymentDay:number){
     });
 }
 
-addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number){
+addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
+                  paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
     return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
         AlumnoId:studentId,
         ConceptoId:conceptId,
@@ -181,7 +187,8 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
     });
   }
   
-  addPaymentStudentWithMont(studentId: number, conceptId: number, totalAmountToPay: number, monthId:number){
+  addPaymentStudentWithMont(studentId: number, conceptId: number, totalAmountToPay: number, monthId:number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
+    paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
     return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
         AlumnoId:studentId,
         ConceptoId:conceptId,
@@ -190,7 +197,8 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
     });
   }
 
-  updatePaymentStudentConceptDues(amountToPay: number,paymentId: number): any {
+  updatePaymentStudentConceptDues(amountToPay: number,paymentId: number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
+                                  paymentWayId:number, reference:string, paymentAgreement:string, observation:string): any {
     return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.getById(paymentId).update({
         Monto:amountToPay
     });

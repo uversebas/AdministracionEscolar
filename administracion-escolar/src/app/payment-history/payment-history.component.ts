@@ -6,6 +6,8 @@ import { Scholarship } from '../dtos/scholarship';
 import { StudentPayment } from '../dtos/studentPayment';
 import { ConceptStudent } from '../dtos/conceptStudent';
 import { SPService } from '../services/sp.service';
+import { Subject } from 'rxjs';
+import { AppSettings } from '../shared/appSettings';
 
 @Component({
   selector: 'app-payment-history',
@@ -13,6 +15,8 @@ import { SPService } from '../services/sp.service';
   styleUrls: ['./payment-history.component.css']
 })
 export class PaymentHistoryComponent implements OnInit {
+  dtOptions: any = {};
+  dtTrigger: Subject<any> = new Subject();
   student: Student;
   paymentConcepts:PaymentConcept[]=[];
   paymentConceptsStudent:PaymentConcept[]=[];
@@ -24,6 +28,7 @@ export class PaymentHistoryComponent implements OnInit {
   constructor(private spService: SPService) { }
 
   ngOnInit() {
+    this.configDataTable();
     this.getStudent();
   }
 
@@ -31,6 +36,15 @@ export class PaymentHistoryComponent implements OnInit {
     this.student = JSON.parse(sessionStorage.getItem('student'));
     this.getStudentPaymentList();
 
+  }
+
+  ngOnDestroy(): void {
+    // Do not forget to unsubscribe the event
+    this.dtTrigger.unsubscribe();
+  }
+
+  private configDataTable() {
+    this.dtOptions = AppSettings.getDataTableConfiguration();
   }
 
   getStudentPaymentList(){

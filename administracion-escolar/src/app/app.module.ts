@@ -34,6 +34,7 @@ import { AssingScholarshipComponent } from './assing-scholarship/assing-scholars
 import { SPService } from '../app/services/sp.service';
 import { PaymentHistoryComponent } from './payment-history/payment-history.component';
 import { TablaNuevaComponent } from './tabla-nueva/tabla-nueva.component';
+import { UpdateStudentInfoComponent } from './update-student-info/update-student-info.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { TablaNuevaComponent } from './tabla-nueva/tabla-nueva.component';
     SearchStudentComponent,
     AssingScholarshipComponent,
     PaymentHistoryComponent,
-    TablaNuevaComponent
+    TablaNuevaComponent,
+    UpdateStudentInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -70,12 +72,13 @@ import { TablaNuevaComponent } from './tabla-nueva/tabla-nueva.component';
       {path:'menu',component:MainMenuComponent},
       {path:'registrar-alumno', component:EnrollStudentComponent},
       {path:'registrar-pago', component:RegisterPaymentComponent},
-      {path:'actualizar-alumno', component:UpdateStudentComponent},
+      {path:'registrar-datos-alumno', component:UpdateStudentComponent},
       {path:'reeinscribir-alumno', component:ReEnrollStudentComponent},
       {path:'beca', component:AssingScholarshipComponent},
       {path:'buscar-alumno', component:SearchStudentComponent},
       {path:'historial-pagos', component:PaymentHistoryComponent},
-      {path:'data-table', component:TablaNuevaComponent}
+      {path:'data-table', component:TablaNuevaComponent},
+      {path:'actualizar-alumno', component:UpdateStudentInfoComponent}
     ])
   ],
   providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'es-US'}],

@@ -42,7 +42,30 @@
             <legend class="scheduler-border">Historial</legend>
             <div class="row">
               <div class="col-md-12">
-                <table ></table>
+                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table-striped">
+                    <thead>
+                      <tr>
+                        <th>Ciclo</th>
+                        <th>División</th>
+                        <th>Concepto</th>
+                        <th>Monto del adeudo</th>
+                        <th>Mes</th>
+                        <th>Fecha del registro</th>
+                        <th>Fecha de pago</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let payment of studentPayments">
+                        <td>{{payment.}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
               </div>
             </div>
         </fieldset>

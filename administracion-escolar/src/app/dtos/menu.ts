@@ -1,8 +1,8 @@
 export class MenuAdministracionEscolar{
-    constructor(public title:string, public Descripcion:string, public NombreRouter:string, public Image?:string,public RouterFinal?:string,public id?:number){}
+    constructor(public title:string, public Descripcion:string, public NombreRouter:string, public Image?:string,public RouterFinal?:string,public FiltroDivision?:number,public id?:number){}
 
     public static fromJson(element: any){
-            return new MenuAdministracionEscolar(element.Title,element.Descripcion,element.NombreRouter,element.ImagenMenu.Url,element.RouterFinal,element.ID);
+            return new MenuAdministracionEscolar(element.Title,element.Descripcion,element.NombreRouter,element.ImagenMenu.Url,element.RouterFinal,element.FiltroDivisionId,element.ID);
     }
     public static fromJsonList(elements:any){
         var list=[];

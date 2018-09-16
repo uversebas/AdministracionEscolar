@@ -141,7 +141,7 @@ export class EnrollStudentComponent implements OnInit {
             newStudent.id= iar.data.Id;
             this.successCreateStudentModal = this.modalService.show(template);
             sessionStorage.setItem('student',JSON.stringify(newStudent));
-            this.router.navigate(['/actualizar-alumno']);
+            this.router.navigate(['/registrar-datos-alumno']);
           },err=>{
             alert('Fail update!!');
           }

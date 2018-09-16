@@ -11,4 +11,35 @@ export class AppSettings{
             return (number < 99 ? '0' : '') + number;
         }
      }
+
+     static getDataTableConfiguration(){
+        let dtOptions = {
+            // Declare the use of the extension in the dom parameter
+            dom: 'Bfrtip',
+            // Configure the buttons
+            buttons: [
+              'copy',
+              'print',
+              'pdf',
+              'excel'
+            ],
+            language:{
+              'info':'Pagina _PAGE_ de _PAGES_',
+              'zeroRecords':'No hay estudiantes registrados en esta división',
+              'search': 'Buscar',
+              'paginate': {
+                "first":      "Primero",
+                "last":       "Último",
+                "next":       "Siguiente",
+                "previous":   "Previo"
+              },
+              "loadingRecords": "Cargando...",
+              "processing":     "Procesando...",
+            },
+            pagingType: 'full_numbers',
+            pageLength: 10
+          };
+
+          return dtOptions;
+     }
 }

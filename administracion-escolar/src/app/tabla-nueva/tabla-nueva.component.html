@@ -3,12 +3,20 @@
     <tr>
       <th>Clave</th>
       <th>Nombre</th>
+      <th>Estatus</th>
+      <th>División</th>
+      <th>Grado</th>
+      <th>Grupo</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let student of students">
       <td>{{ student.key }}</td>
       <td>{{ student.name }}</td>
+      <td>{{student.status}}</td>
+      <td>{{student.division}}</td>
+      <td>{{student.grade}}</td>
+      <td>{{student.group}}</td>
     </tr>
   </tbody>
 </table>
