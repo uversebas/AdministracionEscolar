@@ -1,5 +1,143 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
+/*header */
+.col-md-12.header{
+    background: #404E67;
+}
+
+.welcome-user{
+    float: right;
+    margin-right: 20px;
+    font-weight: 400;
+    color: white;
+}
+
+/* fin header */
+
+/*Footer */
+
+section {
+    padding: 60px 0;
+}
+
+fieldset 
+{
+    border: 1px solid #ddd !important;
+    margin: 0;
+    padding: 10px;       
+    position: relative;
+    border-radius:4px;
+    background-color:#f5f5f5;
+    padding-left:10px!important;
+}	
+
+    legend
+    {
+        margin-bottom: 0px; 
+        border: 1px solid #ddd;
+        border-radius: 4px; 
+        background-color: #ffffff;
+    }
+
+    legend.scheduler-border {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+        width:auto;
+        padding:0 10px;
+        border-bottom:none;
+        background-color: #404E67;
+        color: white;
+    }
+
+    fieldset.scheduler-border {
+        border: 5px groove #ddd !important;
+        padding: 0 1.4em 1.4em 1.4em !important;
+        margin: 0 0 1.5em 0 !important;
+        -webkit-box-shadow:  0px 0px 0px 0px #000;
+                box-shadow:  0px 0px 0px 0px #000;
+    }
+    
+     
+
+section .section-title {
+    text-align: center;
+    color: #404E67;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+}
+#footer {
+    background: #404E67 !important;
+}
+#footer h5{
+	padding-left: 10px;
+    border-left: 3px solid #eeeeee;
+    padding-bottom: 6px;
+    margin-bottom: 20px;
+    color:#ffffff;
+}
+#footer a {
+    color: #ffffff;
+    text-decoration: none !important;
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+}
+#footer ul.social li{
+	padding: 3px 0;
+}
+#footer ul.social li a i {
+    margin-right: 5px;
+	font-size:25px;
+	-webkit-transition: .5s all ease;
+	-moz-transition: .5s all ease;
+	transition: .5s all ease;
+}
+#footer ul.social li:hover a i {
+	font-size:30px;
+	margin-top:-10px;
+}
+#footer ul.social li a,
+#footer ul.quick-links li a{
+	color:#ffffff;
+}
+#footer ul.social li a:hover{
+	color:#eeeeee;
+}
+#footer ul.quick-links li{
+	padding: 3px 0;
+	-webkit-transition: .5s all ease;
+	-moz-transition: .5s all ease;
+	transition: .5s all ease;
+}
+#footer ul.quick-links li:hover{
+	padding: 3px 0;
+	margin-left:5px;
+	font-weight:700;
+}
+#footer ul.quick-links li a i{
+	margin-right: 5px;
+}
+#footer ul.quick-links li:hover a i {
+    font-weight: 700;
+}
+
+@media (max-width:767px){
+	#footer h5 {
+    padding-left: 0;
+    border-left: transparent;
+    padding-bottom: 0px;
+    margin-bottom: 10px;
+}
+}
+
+.btn-primary{
+    background-color: #404E67;
+    border-color: #404E67;
+}
+
+     /*Fin Footer */
 
 .mat-form-field{
     width: 100% !important;
@@ -21,10 +159,7 @@
     cursor: pointer;
 }
 
-.welcome-user{
-    float: right;
-    margin-right: 20px;
-}
+
 
 span.header-title{
     text-align: justify;
@@ -32,34 +167,7 @@ span.header-title{
 }
 
 .scholarshipInput:focus { outline: 2px blue solid !important}
-
-fieldset.scheduler-border {
-    border: 1px groove #ddd !important;
-    padding: 0 1.4em 1.4em 1.4em !important;
-    margin: 0 0 1.5em 0 !important;
-    -webkit-box-shadow:  0px 0px 0px 0px #000;
-            box-shadow:  0px 0px 0px 0px #000;
-}
-
-    legend.scheduler-border {
-        font-size: 1.2em !important;
-        font-weight: bold !important;
-        text-align: left !important;
-        width:auto;
-        padding:0 10px;
-        border-bottom:none;
-    }
-
-    .footer{
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    height: 60px;
-    line-height: 60px;
-    background-color: #f5f5f5;
-    text-align: center;
-    }
-
+    
     .img-logo{
         margin-left: 20px;
     }
@@ -71,4 +179,12 @@ fieldset.scheduler-border {
         font-size: 25px;
         font-weight: 400;
     }
+
+    label {
+        display: inline-block;
+        margin-bottom: .5rem;
+        font-weight: 600;
+    }
+
+
    
