@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Student } from '../dtos/student';
 import { SPService } from '../services/sp.service';
@@ -12,6 +12,8 @@ import { Scholarship } from '../dtos/scholarship';
 import { bloomAdd } from '@angular/core/src/render3/di';
 import { StatusScholarship } from '../dtos/statusScholarship';
 import { PaymentModality } from '../dtos/paymentModality';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-assing-scholarship',
@@ -44,8 +46,9 @@ export class AssingScholarshipComponent implements OnInit {
   selectedStatus;
   selectedDay;
   isPercentage=false;
+  public successAssingScholarshipModal:BsModalRef;
 
-  constructor(private formBuilder: FormBuilder, private spService: SPService) { }
+  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
 
   ngOnInit() {
     this.getStudent();
@@ -270,7 +273,12 @@ export class AssingScholarshipComponent implements OnInit {
     this.assingScholarshipForm.controls['conceptScholarship'+conceptId].setValue(newValue);
   }
 
-  onSubmit(){
+  closeSuccessAssingScholarshipModal(){
+    this.successAssingScholarshipModal.hide();
+    this.router.navigate(['/menu']);
+  }
+
+  onSubmit(template:TemplateRef<any>){
     this.submitted=true;
     if (this.assingScholarshipForm.invalid) {
       return;
@@ -286,7 +294,13 @@ export class AssingScholarshipComponent implements OnInit {
           this.spService.createScholarship(element, parseInt(this.selectedStatus),parseInt(this.selectedDay)).then();
         }
       }
+      else{
+        if (element.id>0) {
+          this.spService.deleteScholarship(element).then();
+        }
+      }
     });
+    this.successAssingScholarshipModal = this.modalService.show(template,{backdrop: 'static', keyboard: false});
   }
 
 }

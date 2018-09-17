@@ -1,8 +1,8 @@
 export class StudentPayment{
-    constructor(public studentId:number, public conceptId:number, public amount:number, public monthId?:number, public id?:number, public conceptName?:string, public monthName?:string){}
+    constructor(public studentId:number, public conceptId:number, public amount:number, public isPayment:boolean,public id?:number,public monthId?:number ,public paymentDate?:string,public cycleName?:string, public conceptName?:string, public monthName?:string){}
 
     public static fromJson(element: any){
-        return new StudentPayment(element.AlumnoId,element.ConceptoId,element.Monto,element.MesId, element.Id);
+        return new StudentPayment(element.AlumnoId,element.ConceptoId,element.Monto,element.Pagado, element.Id,element.MesId);
     }
     public static fromJsonList(elements:any){
         var list=[];
@@ -13,7 +13,7 @@ export class StudentPayment{
     }
 
     public static fromJsonExpand(element: any){
-        return new StudentPayment(element.AlumnoId,element.Concepto.ID,element.Monto,element.Mes.ID, element.Id, element.Concepto.ConceptoCalculado, element.Mes.Title);
+        return new StudentPayment(element.AlumnoId,element.Concepto.ID,element.Monto,element.Pagado,element.Id,element.Mes.ID,element.FechaPago,element.Ciclo.Title, element.Concepto.ConceptoCalculado, element.Mes.Title);
     }
     public static fromJsonListExpan(elements:any){
         var list=[];

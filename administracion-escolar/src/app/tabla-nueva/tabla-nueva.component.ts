@@ -13,8 +13,8 @@ import { AppSettings } from '../shared/appSettings';
 })
 export class TablaNuevaComponent implements OnDestroy, OnInit {
   dtOptions: any = {};
-  students: StudentByDivision[]= [];
   dtTrigger: Subject<any> = new Subject();
+  students: StudentByDivision[]= [];
   divisionId: string;
   constructor(private spService: SPService) { }
 

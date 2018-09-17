@@ -26,12 +26,12 @@
                   <table class="table-responsive">
                       <thead>
                         <th>Concepto</th>
-                        <th>Pagado</th>
-                        <th>Beca</th>
+                        <th>Pagado hasta ahora</th>
                       </thead>
                       <tbody>
-                        <tr *ngFor=''>
-  
+                        <tr *ngFor='let concept of summaryPayments'>
+                            <td>{{concept.conceptName}}</td>
+                            <td [ngClass]="{'pending-concepet-payment':!concept.isPayment, 'ready-concepet-payment':concept.isPayment}">{{concept.amount | currency}}</td>
                         </tr>
                       </tbody>
                   </table>
@@ -50,19 +50,19 @@
                         <th>Concepto</th>
                         <th>Monto del adeudo</th>
                         <th>Mes</th>
-                        <th>Fecha del registro</th>
+                        <th>Pagado</th>
                         <th>Fecha de pago</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr *ngFor="let payment of studentPayments">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{payment.cycleName}}</td>
+                        <td>{{stageSchool.title}}</td>
+                        <td>{{payment.conceptName}}</td>
+                        <td [ngClass]="{'pending-concepet-payment':!payment.isPayment, 'ready-concepet-payment':payment.isPayment}">{{payment.amount | currency}}</td>
+                        <td>{{payment.monthName}}</td>
+                        <td><span *ngIf='payment.isPayment'>Sí</span><span *ngIf='!payment.isPayment'>No</span></td>
+                        <td>{{payment.paymentDate | date}}</td>
                       </tr>
                     </tbody>
                   </table>

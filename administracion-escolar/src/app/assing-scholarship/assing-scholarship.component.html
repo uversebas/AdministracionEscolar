@@ -1,5 +1,5 @@
 <div class="container">
-  <form [formGroup]="assingScholarshipForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="assingScholarshipForm" (ngSubmit)="onSubmit(templatesuccessAssingsScholarship)">
     <fieldset class="scheduler-border">
       <legend class="scheduler-border">Asignación de beca</legend>
       <div class="control-group">
@@ -144,4 +144,22 @@
         </div>
       </div>
   </form>
+  <ng-template #templatesuccessAssingsScholarship>
+    <div class="modal-header">
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeSuccessAssingScholarshipModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title"> Modificación Beca </h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                La beca para el alumno {{student.name}} fue modificada con exito.
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="closeSuccessAssingScholarshipModal()">Ok</button>
+    </div>
+</ng-template>
 </div>

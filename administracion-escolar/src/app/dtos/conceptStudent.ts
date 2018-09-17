@@ -4,7 +4,7 @@ export class ConceptStudent{
     }
 
     public static fromJson(element: any){
-        return new ConceptStudent(element.AlumnoId, element.ConceptoId, element.Id, element.ModalidadId);
+        return new ConceptStudent(element.AlumnoId, element.ConceptoId, element.Id, element.ModalidadId, element.Concepto.ConceptoCalculado);
     }
     public static fromJsonList(elements:any){
         var list=[];

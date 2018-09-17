@@ -1,5 +1,5 @@
 <div class="container">
-  <form [formGroup]="updateStudentForm" (ngSubmit)="onSubmit(templatesuccessUpdateStudent)">
+  <form [formGroup]="updateStudentForm">
     <fieldset class="scheduler-border">
       <legend class="scheduler-border">Datos Generales</legend>
       <div class="control-group">
@@ -406,7 +406,7 @@
         <fieldset class="scheduler-border">
           <legend class="scheduler-border">Beca</legend>
           <div class="control-group">
-
+            <button type="button" (click)="onSubmit('BECA', templatesuccessUpdateStudent)" class="btn btn-primary">Asignar Beca</button>
           </div>
         </fieldset>
       </div>
@@ -414,8 +414,7 @@
     <div class="row">
       <div class="form-group">
         <div class="buttons-app">
-          <button class="btn btn-default">Salir</button>
-          <button [disabled]="submitted" class="btn btn-primary">Guardar</button>
+          <button type="button" (click)="onSubmit('POST', templatesuccessUpdateStudent)" class="btn btn-primary">Finalizar</button>
         </div>
       </div>
     </div>

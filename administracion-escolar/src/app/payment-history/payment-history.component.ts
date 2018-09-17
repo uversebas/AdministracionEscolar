@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Student } from '../dtos/student';
 import { PaymentConcept } from '../dtos/paymentConcept';
 import { Month } from '../dtos/month';
@@ -8,13 +8,15 @@ import { ConceptStudent } from '../dtos/conceptStudent';
 import { SPService } from '../services/sp.service';
 import { Subject } from 'rxjs';
 import { AppSettings } from '../shared/appSettings';
+import { StageSchool } from '../dtos/stageSchool';
+import { SummaryPayment } from '../dtos/summaryPayment';
 
 @Component({
   selector: 'app-payment-history',
   templateUrl: './payment-history.component.html',
   styleUrls: ['./payment-history.component.css']
 })
-export class PaymentHistoryComponent implements OnInit {
+export class PaymentHistoryComponent implements OnDestroy, OnInit {
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
   student: Student;
@@ -24,7 +26,9 @@ export class PaymentHistoryComponent implements OnInit {
   scholarshipList:Scholarship[]=[];
   studentPayments:StudentPayment[]=[];
   conceptsByStudent:ConceptStudent[]=[];
-
+  stagesSchool:StageSchool[]=[];
+  stageSchool:StageSchool;
+  summaryPayments: SummaryPayment[]=[];
   constructor(private spService: SPService) { }
 
   ngOnInit() {
@@ -34,8 +38,17 @@ export class PaymentHistoryComponent implements OnInit {
 
   getStudent(){
     this.student = JSON.parse(sessionStorage.getItem('student'));
-    this.getStudentPaymentList();
+    this.getStageSchool();
+  }
 
+  getStageSchool(){
+    this.spService.getStageShoolList().subscribe(
+      (Response)=>{
+        this.stagesSchool = StageSchool.fromJsonList(Response);
+        this.stageSchool = this.stagesSchool.find(s => s.id===this.student.stageSchoolId);
+        this.getStudentPaymentList();
+      }
+    )
   }
 
   ngOnDestroy(): void {
@@ -79,8 +92,13 @@ export class PaymentHistoryComponent implements OnInit {
     this.spService.getConceptsByStudent(this.student.id).subscribe(
       (Response)=>{
         this.conceptsByStudent = ConceptStudent.fromJsonList(Response);
+        this.getSummaryPayment();
       }
     )
+  }
+
+  getSummaryPayment(){
+    this.summaryPayments = SummaryPayment.getSummaryPaymentList(this.conceptsByStudent,this.studentPayments);
   }
 
 }

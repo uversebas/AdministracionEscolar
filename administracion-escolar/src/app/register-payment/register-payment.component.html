@@ -1,5 +1,5 @@
 <div class="container">
-        <form [formGroup]='registerPaymentForm' (ngSubmit)='onSubmit()'>
+        <form [formGroup]='registerPaymentForm' (ngSubmit)='onSubmit(templatesuccessRegisterPayment)'>
             <fieldset class="scheduler-border">
                 <legend class="scheduler-border">Alumno</legend>
                 <div class="control-group">
@@ -282,4 +282,25 @@
                     </div>
                 </div>
         </form>
+        <ng-template #templatesuccessRegisterPayment>
+            <div class="modal-header">
+                <button type="button" class="close pull-right" aria-label="Close" (click)="closeSuccessRegisterPaymentModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title"> Pago exitoso </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        El pago fue registrado con exito.
+                        <br>
+                        ¿Desea registrar otro pago para este estudiante?
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="closeSuccessRegisterPaymentModal()">No</button>
+                <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="otherPay()">Sí</button>
+            </div>
+        </ng-template>
     </div>

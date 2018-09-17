@@ -369,15 +369,18 @@ export class UpdateStudentComponent implements OnInit {
 
 
 
-  onSubmit(template: TemplateRef<any>) {
+  onSubmit(event,template: TemplateRef<any>) {
     this.submitted = true;
     if (this.updateStudentForm.invalid) {
       return;
     }
+    this.saveStudent(template, event);
+  }
+
+  private saveStudent(template: TemplateRef<any>, event) {
     let enrollDate = new Date(this.updateStudentForm.controls.enrollDate.value);
     let birthDate = new Date(this.updateStudentForm.controls.birthDate.value);
     let entryDate = new Date(this.updateStudentForm.controls.entryDate.value);
-
     this.student.name = this.updateStudentForm.controls.firstName.value;
     this.student.birthDate = birthDate.toISOString();
     this.student.sexId = this.updateStudentForm.controls.sexControl.value.id;
@@ -402,22 +405,20 @@ export class UpdateStudentComponent implements OnInit {
     this.student.groupId = this.updateStudentForm.controls.groupSchoolControl.value.id;
     this.student.paymentConceptIds = this.getPaymentConceptIds();
     this.student.paymentMadalityId = this.updateStudentForm.controls.paymentModalityControl.value.id;
-
     this.pendingStudentDocuments.forEach(element => {
       let validitySave = this.updateStudentForm.controls["pendingDocumentDate" + element.id].value;
       this.pendingStudentDocumentsBySave.push(new PendingStudentDocument(element.id, validitySave, element.file));
     });
-
-    this.UpdateStudentInformation(this.student, template);
+    this.UpdateStudentInformation(this.student, template, event);
   }
 
-  async UpdateStudentInformation(student: Student, template: TemplateRef<any>) {
+  async UpdateStudentInformation(student: Student, template: TemplateRef<any>, event) {
     await Promise.all([
       this.ActualizarEstudiante(student),
       this.deleteDocuments(),
       this.AgregarDocumentos(student),
       this.AddConcepts(student),
-    ]).then(value => this.mostrarMensajeExitoso(student, template));
+    ]).then(value => this.mostrarMensajeExitoso(student, template, event));
   }
 
   ActualizarEstudiante(student: Student) {
@@ -497,10 +498,15 @@ export class UpdateStudentComponent implements OnInit {
     });
   }
 
-  mostrarMensajeExitoso(student: Student, template: TemplateRef<any>) {
+  mostrarMensajeExitoso(student: Student, template: TemplateRef<any>, event) {
      sessionStorage.setItem('student',JSON.stringify(student));
      this.successUpdateStudentModal = this.modalService.show(template);
-     this.router.navigate(['/menu']);
+     if (event === 'POST') {
+      this.router.navigate(['/menu']);
+     }else{
+      this.router.navigate(['/beca']);
+     }
+     
     console.log("Actualiza");
   }
 

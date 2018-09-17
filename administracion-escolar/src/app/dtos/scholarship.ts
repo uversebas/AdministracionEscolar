@@ -3,7 +3,7 @@ export class Scholarship{
                  public id?:number, public conceptName?:string, public conceptAmount?:number){}
 
     public static fromJson(element: any){
-        return new Scholarship(element.AlumnoId, element.ConceptoId, element.Monto, element.Porcentaje, element.EstatusId, element.PagoOportuno, element.Id);
+        return new Scholarship(element.AlumnoId, element.Concepto.ID, element.Monto, element.Porcentaje, element.EstatusId, element.PagoOportuno, element.Id, element.Concepto.ConceptoCalculado, element.Concepto.Monto);
     }
     public static fromJsonList(elements:any){
         var list=[];

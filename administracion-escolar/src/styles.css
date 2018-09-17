@@ -159,11 +159,21 @@ section .section-title {
     cursor: pointer;
 }
 
-
+.modal-header {
+    display: inline !important;
+}
 
 span.header-title{
     text-align: justify;
     font-size: 15px;
+}
+
+.ready-concepet-payment{
+    color: green;
+}
+
+.pending-concepet-payment{
+    color: red;
 }
 
 .scholarshipInput:focus { outline: 2px blue solid !important}

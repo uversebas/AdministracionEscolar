@@ -18,6 +18,8 @@ import { ConceptStudent } from '../dtos/conceptStudent';
 import { Scholarship } from '../dtos/scholarship';
 import { StatusScholarship } from '../dtos/statusScholarship';
 import { ItemAddResult } from 'sp-pnp-js';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-payment',
@@ -61,9 +63,11 @@ export class RegisterPaymentComponent implements OnInit {
   scholarshipList:Scholarship[]=[];
   statusScholarshipList:StatusScholarship[]=[];
 
+  public successCreateRegisterPaymentModal:BsModalRef;
+
   previousBalance='Abono Anterior';
 
-  constructor(private formBuilder: FormBuilder, private spService: SPService) { }
+  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
 
   ngOnInit() {
     this.registerControlsForm();
@@ -176,11 +180,27 @@ export class RegisterPaymentComponent implements OnInit {
     }else{
       this.registerPaymentForm.controls.paymentMonthControl.clearValidators();
       this.previousBalance='Abono anterior';
-      this.registerPaymentForm.controls.quantityToPayControl.setValue(this.selectedPaymentConcept.amount);
+      let scholarshipAmount = this.validateScholarshipConcept(this.selectedPaymentConcept);
+      let quantityToPay = 0;
+      if (scholarshipAmount>0) {
+        quantityToPay = scholarshipAmount;
+      }else{
+        quantityToPay = this.selectedPaymentConcept.amount;
+      }
+      this.registerPaymentForm.controls.quantityToPayControl.setValue(quantityToPay);
       let paymentUntilNow= this.getPaymentUntilNow(this.selectedPaymentConcept);
       this.registerPaymentForm.controls.debtAmountControl.setValue(paymentUntilNow);
-      this.registerPaymentForm.controls.totalAmountToPayControl.setValue(this.selectedPaymentConcept.amount-paymentUntilNow);
+      this.registerPaymentForm.controls.totalAmountToPayControl.setValue(quantityToPay-paymentUntilNow);
     }
+  }
+
+  validateScholarshipConcept(concept:PaymentConcept){
+    let scholarshipAmount = 0
+    let scholarship = this.scholarshipList.find(s => s.conceptId === concept.id && s.statusId === 1);
+    if (scholarship) {
+      scholarshipAmount = scholarship.amount;
+    }
+    return scholarshipAmount;
   }
 
   selectecMonth(){
@@ -299,10 +319,18 @@ export class RegisterPaymentComponent implements OnInit {
     this.paymentConcepts.forEach( pc => {
       this.conceptsByStudent.forEach(spc => {
         if (pc.id === spc.conceptId) {
-          let totalAmount = 0;
-          totalAmount = this.getPaymentUntilNow(pc);
-          if (totalAmount < pc.amount) {
+          if (pc.dues) {
+            let totalAmount = 0;
+            totalAmount = this.getPaymentUntilNow(pc);
+            if (totalAmount < pc.amount) {
             this.paymentConceptsStudent.push(pc);
+            }
+          }else{
+            let isPayment = false;
+            isPayment = this.isConceptCompleted(pc);
+            if (!isPayment) {
+              this.paymentConceptsStudent.push(pc);
+            }
           }
         }
       });
@@ -320,6 +348,28 @@ export class RegisterPaymentComponent implements OnInit {
     return totalAmount;
   }
 
+  private isConceptCompleted(concept){
+    let isPayment = false;
+    for (let j = 0; j < this.studentPayments.length; j++) {
+      const payment = this.studentPayments[j];
+      if (concept.id === payment.conceptId) {
+        isPayment = payment.isPayment;
+      }
+    }
+    return isPayment;
+  }
+
+  private isConceptMonthCompleted(concept, monthId){
+    let isPayment = false;
+    for (let j = 0; j < this.studentPayments.length; j++) {
+      const payment = this.studentPayments[j];
+      if (concept.id === payment.conceptId && payment.monthId === monthId) {
+        isPayment = payment.isPayment;
+      }
+    }
+    return isPayment;
+  }
+
   private getPaymentUntilNowTermsConcepts(month: Month){
     let totalAmount = 0;
     this.studentPayments.forEach(payment => {
@@ -335,23 +385,33 @@ export class RegisterPaymentComponent implements OnInit {
   loadRemainingMonths(){
     this.totalDebt=0;
     this.remainingPaymentMonths = new Array();
+    let scholarship = this.scholarshipList.find(s => s.conceptId === this.selectedPaymentConcept.id);
     let fee = this.getAmountFee();
     this.monthsPaymentModality.forEach(month => {
         let amount = 0;
+        let isCompleted = this.isConceptMonthCompleted(this.selectedPaymentConcept,month.id);
         amount = this.getPaymentUntilNowTermsConcepts(month);
-        if (amount===0) {
+        if (amount === 0) {
           this.remainingPaymentMonths.push(month);
         }
         if (amount>0 && amount<fee) {
-          let debt =  fee - amount;
-          this.totalDebt += debt;
+          if (!isCompleted) {
+            let debt =  fee - amount;
+            this.totalDebt += debt;
+          }
         }
     });
   }
 
   getAmountFee(){
-    let counterFee = this.paymentModality.monthCounter;
-    return this.selectedPaymentConcept.amount/counterFee;
+    let scholarship = this.scholarshipList.find(s => s.conceptId === this.selectedPaymentConcept.id && s.statusId === 1);
+    if (scholarship) {
+      return scholarship.amount;
+    }else{
+      let counterFee = this.paymentModality.monthCounter;
+      return this.selectedPaymentConcept.amount/counterFee;
+    }
+
   }
 
   getPaymentModalityList(){
@@ -400,6 +460,16 @@ export class RegisterPaymentComponent implements OnInit {
     });
   }
 
+  closeSuccessRegisterPaymentModal(){
+    this.router.navigate(['/menu']);
+    this.successCreateRegisterPaymentModal.hide();
+  }
+
+  otherPay(){
+    this.successCreateRegisterPaymentModal.hide();
+    window.location.reload();
+  }
+
   onSubmit(template:TemplateRef<any>){
     this.submitted=true;
     if (this.registerPaymentForm.invalid) {
@@ -415,13 +485,13 @@ export class RegisterPaymentComponent implements OnInit {
 
     let quantityToPay = this.registerPaymentForm.controls.quantityToPayControl.value;
     let amountToPay = this.registerPaymentForm.controls.amountToPayControl.value;
-    //let totalAmountToPay = this.registerPaymentForm.controls.totalAmountToPayControl.value;
+    let totalAmountToPay = this.registerPaymentForm.controls.totalAmountToPayControl.value;
     let newBalance = this.registerPaymentForm.controls.newBalanceControl.value;
     let debtAmount = this.registerPaymentForm.controls.debtAmountControl.value;
     
     if (this.selectedPaymentConcept.dues) {
       if (debtAmount===0 && newBalance === 0) {
-        this.addPaymentStudentConceptDues(amountToPay,this.selectedPaymentMonth.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
+        this.addPaymentStudentConceptDues(amountToPay,this.selectedPaymentMonth.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation, true);
       }else{
         if (debtAmount>0) {
           let restAmount = amountToPay - debtAmount;
@@ -431,11 +501,15 @@ export class RegisterPaymentComponent implements OnInit {
               let newAmount = newDebt + payment.amount;
               if (newAmount<=quantityToPay) {
                 newDebt = 0;
-                this.updatePaymentStudentConceptDues(newAmount, payment.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
+                if (newAmount === quantityToPay) {
+                  this.updatePaymentStudentConceptDues(newAmount, payment.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation, true);
+                }else{
+                  this.updatePaymentStudentConceptDues(newAmount, payment.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation, false);
+                }
               }
               if(newAmount>quantityToPay){
                 newDebt = newDebt - quantityToPay;
-                this.updatePaymentStudentConceptDues(quantityToPay, payment.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
+                this.updatePaymentStudentConceptDues(quantityToPay, payment.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation, true);
               }
             }
           });
@@ -447,8 +521,14 @@ export class RegisterPaymentComponent implements OnInit {
         }
       }
     }else{
-      this.addPaymentStudentConceptNotDues(amountToPay, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
+      if (totalAmountToPay === amountToPay) {
+        this.addPaymentStudentConceptNotDues(amountToPay, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation, true);
+      }else{
+        this.addPaymentStudentConceptNotDues(amountToPay, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation, false);
+      }
+      
     }
+    this.successCreateRegisterPaymentModal = this.modalService.show(template, {backdrop: 'static', keyboard: false});
   }
 
   private inprovePayment(restAmount: number, quantityToPay: any, paymentDate, registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation) {
@@ -457,18 +537,22 @@ export class RegisterPaymentComponent implements OnInit {
           let newAmount = restAmount;
           if (newAmount <= quantityToPay) {
             restAmount=0;
-            this.addPaymentStudentConceptDues(newAmount, month.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
+            if (newAmount === quantityToPay) {
+              this.addPaymentStudentConceptDues(newAmount, month.id, paymentDate, registerDate, receivedPersonId, paymentWayId,reference,paymentAgreement,observation,true);
+            }else{
+              this.addPaymentStudentConceptDues(newAmount, month.id, paymentDate, registerDate, receivedPersonId, paymentWayId,reference,paymentAgreement,observation,false);
+            }
           }else{
             restAmount = restAmount - quantityToPay;
-            this.addPaymentStudentConceptDues(quantityToPay, month.id, paymentDate.toISOString(), registerDate.toISOString(), receivedPersonId, paymentWayId,reference,paymentAgreement,observation);
+            this.addPaymentStudentConceptDues(quantityToPay, month.id, paymentDate, registerDate, receivedPersonId, paymentWayId,reference,paymentAgreement,observation,true);
             }
         }
     });
     return restAmount;
   }
     addPaymentStudentConceptNotDues(amountToPay:number, paymentDate:string, registerDate:string, receivedPersonId:number,
-                                     paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
-    this.spService.addPaymentStudent(this.student.id, this.selectedPaymentConcept.id,amountToPay, this.cycle.id, paymentDate, registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation).then(
+                                     paymentWayId:number, reference:string, paymentAgreement:string, observation:string, isPayment:boolean){
+    this.spService.addPaymentStudent(this.student.id, this.selectedPaymentConcept.id,amountToPay, this.cycle.id, paymentDate, registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation, isPayment).then(
       (iar:ItemAddResult)=>{
         
       },err=>{
@@ -478,8 +562,8 @@ export class RegisterPaymentComponent implements OnInit {
   }
 
   addPaymentStudentConceptDues(amountToPay:number, monthId:number,  paymentDate:string, registerDate:string, receivedPersonId:number,
-    paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
-    this.spService.addPaymentStudentWithMont(this.student.id, this.selectedPaymentConcept.id,amountToPay,monthId, this.cycle.id, paymentDate,registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation).then(
+    paymentWayId:number, reference:string, paymentAgreement:string, observation:string, isPayment:boolean){
+    this.spService.addPaymentStudentWithMont(this.student.id, this.selectedPaymentConcept.id,amountToPay,monthId, this.cycle.id, paymentDate,registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation, isPayment).then(
       (iar:ItemAddResult)=>{
         
       },err=>{
@@ -489,8 +573,8 @@ export class RegisterPaymentComponent implements OnInit {
   }
 
   updatePaymentStudentConceptDues(amountToPay:number,paymentId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
-    paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
-    this.spService.updatePaymentStudentConceptDues(amountToPay,paymentId, this.cycle.id, paymentDate,registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation).then(
+    paymentWayId:number, reference:string, paymentAgreement:string, observation:string, isPayment:boolean){
+    this.spService.updatePaymentStudentConceptDues(amountToPay,paymentId, this.cycle.id, paymentDate,registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation, isPayment).then(
       (iar:ItemAddResult)=>{
         
       },err=>{

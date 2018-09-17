@@ -135,7 +135,7 @@ getStudentPaymentList(studentId:number){
 }
 
 getStudentPaymentExpandList(studentId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.select("AlumnoId", "Id", "Concepto/ID", "Concepto/ConceptoCalculado", "Mes/Id", "Mes/Title", "Monto").expand("Concepto, Mes").filter("AlumnoId eq " + studentId).get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.select("AlumnoId", "Id", "Concepto/ID", "Concepto/ConceptoCalculado", "Mes/Id", "Mes/Title", "Monto", "Pagado", "Ciclo/Title", "FechaPago").expand("Concepto, Mes, Ciclo").filter("AlumnoId eq " + studentId).get());
     return data;
 }
 
@@ -145,12 +145,12 @@ getStudentsByDivisionList(divisionId:number){
 }
 
 getConceptsByStudent(studentId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.filter("AlumnoId eq "+ studentId).get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.select("AlumnoId", "ConceptoId", "Id", "ModalidadId", "Concepto/ConceptoCalculado").expand("Concepto").filter("AlumnoId eq "+ studentId).get());
     return data;
 }
 
 getScholarshipList(studentId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.scholarshipList).items.filter("AlumnoId eq " + studentId).get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.scholarshipList).items.select("AlumnoId", "Concepto/ID", "Concepto/ConceptoCalculado", "Monto", "Porcentaje", "EstatusId", "PagoOportuno", "Concepto/Monto", "Id").expand("Concepto").filter("AlumnoId eq " + studentId).get());
     return data;
 }
 
@@ -178,29 +178,59 @@ createScholarship(sc:Scholarship, statusId:number, paymentDay:number){
     });
 }
 
+deleteScholarship(sc:Scholarship){
+    return this.getConfigPost().web.lists.getByTitle(environment.scholarshipList).items.getById(sc.id).delete();
+}
+
 addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
-                  paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
-    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
-        AlumnoId:studentId,
-        ConceptoId:conceptId,
-        Monto:totalAmountToPay
-    });
-  }
-  
-  addPaymentStudentWithMont(studentId: number, conceptId: number, totalAmountToPay: number, monthId:number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
-    paymentWayId:number, reference:string, paymentAgreement:string, observation:string){
+                  paymentWayId:number, reference:string, paymentAgreement:string, observation:string, isPayment:boolean){
     return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
         AlumnoId:studentId,
         ConceptoId:conceptId,
         Monto:totalAmountToPay,
-        MesId:monthId
+        CicloId:cycleId,
+        FechaPago:paymentDate,
+        FechaRegistro:registerDate,
+        MetodoDePagoId:paymentWayId,
+        Referencia:reference,
+        Acuerdos:paymentAgreement,
+        Observaciones:observation,
+        PersonaQueRecibeId:receivedPersonId,
+        Pagado:isPayment
+    });
+  }
+  
+  addPaymentStudentWithMont(studentId: number, conceptId: number, totalAmountToPay: number, monthId:number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
+    paymentWayId:number, reference:string, paymentAgreement:string, observation:string,isPayment:boolean){
+    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
+        AlumnoId:studentId,
+        ConceptoId:conceptId,
+        Monto:totalAmountToPay,
+        MesId:monthId,
+        CicloId:cycleId,
+        FechaPago:paymentDate,
+        FechaRegistro:registerDate,
+        MetodoDePagoId:paymentWayId,
+        Referencia:reference,
+        Acuerdos:paymentAgreement,
+        Observaciones:observation,
+        PersonaQueRecibeId:receivedPersonId,
+        Pagado:isPayment
     });
   }
 
   updatePaymentStudentConceptDues(amountToPay: number,paymentId: number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
-                                  paymentWayId:number, reference:string, paymentAgreement:string, observation:string): any {
+                                  paymentWayId:number, reference:string, paymentAgreement:string, observation:string, isPayment:boolean): any {
     return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.getById(paymentId).update({
-        Monto:amountToPay
+        Monto:amountToPay,
+        FechaPago:paymentDate,
+        FechaRegistro:registerDate,
+        MetodoDePagoId:paymentWayId,
+        Referencia:reference,
+        Acuerdos:paymentAgreement,
+        Observaciones:observation,
+        PersonaQueRecibeId:receivedPersonId,
+        Pagado:isPayment
     });
   }
 
