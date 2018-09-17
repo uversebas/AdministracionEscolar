@@ -385,7 +385,7 @@
           <div class="control-group">
             <mat-form-field>
               <label>Modalidad de pago colegiatura</label>
-              <mat-select formControlName="paymentModalityControl" [(value)]='selectedPaymentModality' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentModalityControl.errors }">
+              <mat-select formControlName="paymentModalityControl" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentModalityControl.errors }">
                 <mat-option *ngFor="let paymentModality of paymentModalities" [value]="paymentModality">
                   {{paymentModality.title}}
                 </mat-option>

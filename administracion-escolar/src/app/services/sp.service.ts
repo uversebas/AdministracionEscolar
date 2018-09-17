@@ -160,7 +160,7 @@ getScholarshipStatus(){
 }
 
 updateScholarship(sc:Scholarship, statusId:number, paymentDay:number){
-    return this.getConfigPost().web.lists.getByTitle(environment.scholarshipList).items.getById(sc.id).update({
+    return this.getConfig().web.lists.getByTitle(environment.scholarshipList).items.getById(sc.id).update({
         AlumnoId:sc.studentId, ConceptoId:sc.conceptId, Monto:sc.amount, Porcentaje:sc.porcentage, EstatusId:statusId, PagoOportuno:paymentDay 
       });
     
@@ -168,7 +168,7 @@ updateScholarship(sc:Scholarship, statusId:number, paymentDay:number){
 
 createScholarship(sc:Scholarship, statusId:number, paymentDay:number){
 
-    return this.getConfigPost().web.lists.getByTitle(environment.scholarshipList).items.add({
+    return this.getConfig().web.lists.getByTitle(environment.scholarshipList).items.add({
         AlumnoId:sc.studentId, 
         ConceptoId:sc.conceptId, 
         Monto:sc.amount, 
@@ -179,12 +179,12 @@ createScholarship(sc:Scholarship, statusId:number, paymentDay:number){
 }
 
 deleteScholarship(sc:Scholarship){
-    return this.getConfigPost().web.lists.getByTitle(environment.scholarshipList).items.getById(sc.id).delete();
+    return this.getConfig().web.lists.getByTitle(environment.scholarshipList).items.getById(sc.id).delete();
 }
 
 addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
                   paymentWayId:number, reference:string, paymentAgreement:string, observation:string, isPayment:boolean){
-    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
+    return this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.add({
         AlumnoId:studentId,
         ConceptoId:conceptId,
         Monto:totalAmountToPay,
@@ -202,7 +202,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
   
   addPaymentStudentWithMont(studentId: number, conceptId: number, totalAmountToPay: number, monthId:number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
     paymentWayId:number, reference:string, paymentAgreement:string, observation:string,isPayment:boolean){
-    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
+    return this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.add({
         AlumnoId:studentId,
         ConceptoId:conceptId,
         Monto:totalAmountToPay,
@@ -221,7 +221,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
 
   updatePaymentStudentConceptDues(amountToPay: number,paymentId: number, cycleId:number, paymentDate:string, registerDate:string, receivedPersonId:number,
                                   paymentWayId:number, reference:string, paymentAgreement:string, observation:string, isPayment:boolean): any {
-    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.getById(paymentId).update({
+    return this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.getById(paymentId).update({
         Monto:amountToPay,
         FechaPago:paymentDate,
         FechaRegistro:registerDate,
@@ -235,13 +235,13 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
   }
 
   addStudentPayment(studentPayment:StudentPayment){
-    return this.getConfigPost().web.lists.getByTitle(environment.studentPaymentList).items.add({
+    return this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.add({
         
     });
   }
 
   assignStudentKey(password:string, id:number){
-    return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(id).update({
+    return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(id).update({
         ClaveAlumno:password
       });
   }
@@ -251,7 +251,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
 
 
     addStudent(student: Student, abbreviationStage: string) {
-        return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.add({
+        return this.getConfig().web.lists.getByTitle(environment.studentList).items.add({
             Title: student.name,
             FechaNacimiento: student.birthDate,
             SexoId: student.sexId,
@@ -274,7 +274,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
     }
 
     updateStudent(student: Student, id: number) {
-        return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(id).update({
+        return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(id).update({
             Title: student.name,
             FechaNacimiento: student.birthDate,
             SexoId: student.sexId,
@@ -303,11 +303,11 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
     }
 
     addStudentDocuments(student: Student, studentDocuments: File, randomkey: string) {
-        return this.getConfigPost().web.getFolderByServerRelativeUrl(environment.relativeweb + environment.documentStudentList).files.add(randomkey + "_" + studentDocuments.name, studentDocuments, true);
+        return this.getConfig().web.getFolderByServerRelativeUrl(environment.relativeweb + environment.documentStudentList).files.add(randomkey + "_" + studentDocuments.name, studentDocuments, true);
     }
 
     updateDocuments(student: Student, documentId: number, titleDocument: string, validityDate: string,  randomkey: string) {
-        return this.getConfigPost().web.lists.getByTitle(environment.documentStudentList).items.getById(documentId).update({
+        return this.getConfig().web.lists.getByTitle(environment.documentStudentList).items.getById(documentId).update({
             Title: randomkey + "_" + titleDocument,
             NombreDocumento: titleDocument,
             IdAlumnoId: student.id,
@@ -316,16 +316,16 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
     }
 
     deleteDocuments(documentname: string){
-        return this.getConfigPost().web.getFileByServerRelativeUrl(environment.relativeweb + environment.documentStudentList + "/" + documentname).recycle();
+        return this.getConfig().web.getFileByServerRelativeUrl(environment.relativeweb + environment.documentStudentList + "/" + documentname).recycle();
     }
 
     getAllStudentDocuments(studentId: number) {
-        return this.getConfigPost().web.lists.getByTitle(environment.documentStudentList).items.filter("IdAlumno eq " + studentId).get();
+        return this.getConfig().web.lists.getByTitle(environment.documentStudentList).items.filter("IdAlumno eq " + studentId).get();
     }
 
 
     addconceptsStudent(studentId: number, conceptId: number, modalityId: any){
-        return this.getConfigPost().web.lists.getByTitle(environment.conceptStudentList).items.add({
+        return this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.add({
             AlumnoId: studentId,
             ConceptoId: conceptId,
             ModalidadId:modalityId

@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  web: 'https://vincicloud.sharepoint.com/sites/SistemadeAdministracionEscolardev',
+  web:'https://vincicloud.sharepoint.com/sites/SistemadeAdministracionEscolardev',
+  relativeweb: '/sites/SistemadeAdministracionEscolardev/',
   menuList:'MenuAdministracionEscolar',
   sexList:'Sexo',
   studentStatusList:'EstatusAlumno',
