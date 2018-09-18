@@ -10,7 +10,10 @@ import { Router } from '@angular/router';
 })
 export class MainMenuComponent implements OnInit {
   menu:MenuAdministracionEscolar[]=[];
-  constructor(private spService: SPService, private router: Router) { }
+  public loading:boolean;
+  constructor(private spService: SPService, private router: Router) {
+    this.loading = true;
+   }
 
   ngOnInit() {
     this.getMenu();
@@ -20,9 +23,11 @@ export class MainMenuComponent implements OnInit {
     this.spService.getMenu().subscribe(
       (Response)=>{
         this.menu = MenuAdministracionEscolar.fromJsonList(Response);
+        this.loading = false;
       }, 
       err=>{
         console.log('err: '+err);
+        this.loading = false;
       }
     );
   }

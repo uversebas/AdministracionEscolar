@@ -1,17 +1,10 @@
+<div class="loading" *ngIf='loading'>
+  <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
+</div>
 <div class="container">
   <div class="row">
     <div class="col-md-12">
       <div class="student-name">
-        <!--mat-form-field class="example-full-width">
-          <label>Nombre alumno</label>
-          <input type="text"  aria-label="Number" matInput [formControl]="studentControl" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let student of filteredStudents | async" [value]="student.name">
-              {{student.name}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field-->
-
         <mat-form-field class="example-full-width">
             <label>Alumno</label>
             <input type="text"  aria-label="Number" matInput [formControl]="studentControl" [matAutocomplete]="auto">

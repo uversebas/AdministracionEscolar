@@ -29,7 +29,10 @@ export class PaymentHistoryComponent implements OnDestroy, OnInit {
   stagesSchool:StageSchool[]=[];
   stageSchool:StageSchool;
   summaryPayments: SummaryPayment[]=[];
-  constructor(private spService: SPService) { }
+  public loading:boolean;
+  constructor(private spService: SPService) {
+    this.loading=true;
+   }
 
   ngOnInit() {
     this.configDataTable();
@@ -99,6 +102,7 @@ export class PaymentHistoryComponent implements OnDestroy, OnInit {
 
   getSummaryPayment(){
     this.summaryPayments = SummaryPayment.getSummaryPaymentList(this.conceptsByStudent,this.studentPayments);
+    this.loading=false;
   }
 
 }

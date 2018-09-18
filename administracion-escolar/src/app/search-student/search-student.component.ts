@@ -19,8 +19,11 @@ export class SearchStudentComponent implements OnInit {
   filteredStudents: Observable<Student[]>;
   selectedStudent:Student;
   studentKey:String='';
+  public loading:boolean;
 
-  constructor(private spService: SPService, private modalService: BsModalService, private router: Router) { }
+  constructor(private spService: SPService, private modalService: BsModalService, private router: Router) {
+    this.loading=true;
+   }
 
   ngOnInit() {
     this.getStudentList();
@@ -29,6 +32,7 @@ export class SearchStudentComponent implements OnInit {
   getStudentList(){
     this.spService.getStudentList().subscribe(
       (Response)=>{
+        this.loading=false;
         this.students= Student.fromJsonList(Response);
           this.filteredStudents = this.studentControl.valueChanges.pipe(
           startWith(''),

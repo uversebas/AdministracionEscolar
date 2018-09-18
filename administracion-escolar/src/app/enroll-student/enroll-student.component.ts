@@ -26,11 +26,14 @@ export class EnrollStudentComponent implements OnInit {
     stagesSchool:StageSchool[]=[];
     studentName:string;
     studentKey:string;
+    public loading:boolean;
 
     public successCreateStudentModal:BsModalRef;
 
 
-  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
+  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) {
+    this.loading=true;
+   }
 
   ngOnInit() {
     this.registerControlsForm();
@@ -92,6 +95,7 @@ export class EnrollStudentComponent implements OnInit {
     this.spService.getStageShoolList().subscribe(
       (Response)=>{
         this.stagesSchool = StageSchool.fromJsonList(Response);
+        this.loading=false;
       }
     )
   }
@@ -107,6 +111,7 @@ export class EnrollStudentComponent implements OnInit {
     if (this.registerForm.invalid) {
       return;
     }
+    this.loading=true;
     let enrollDate = new Date(this.registerForm.controls.enrollDate.value);
     let birthDate = new Date(this.registerForm.controls.birthDate.value);
     let entryDate = new Date(this.registerForm.controls.entryDate.value);
@@ -141,6 +146,7 @@ export class EnrollStudentComponent implements OnInit {
             newStudent.id= iar.data.Id;
             this.successCreateStudentModal = this.modalService.show(template);
             sessionStorage.setItem('student',JSON.stringify(newStudent));
+            this.loading=false;
             this.router.navigate(['/registrar-datos-alumno']);
           },err=>{
             alert('Fail update!!');

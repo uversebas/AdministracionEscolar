@@ -8,12 +8,10 @@ import { Grade } from '../dtos/grade';
 import { Group } from '../dtos/group';
 import { PaymentModality } from '../dtos/paymentModality';
 import { PaymentConcept } from '../dtos/paymentConcept';
-import { filter } from 'rxjs/operators';
 import { Month } from '../dtos/month';
 import { ReceivedPerson } from '../dtos/receivedPerson';
 import { PaymentWay } from '../dtos/paymentWay';
 import { StudentPayment } from '../dtos/studentPayment';
-import { element } from 'protractor';
 import { ConceptStudent } from '../dtos/conceptStudent';
 import { Scholarship } from '../dtos/scholarship';
 import { StatusScholarship } from '../dtos/statusScholarship';
@@ -66,8 +64,11 @@ export class RegisterPaymentComponent implements OnInit {
   public successCreateRegisterPaymentModal:BsModalRef;
 
   previousBalance='Abono Anterior';
+  public loading:boolean;
 
-  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
+  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) {
+    this.loading=true;
+   }
 
   ngOnInit() {
     this.registerControlsForm();
@@ -335,6 +336,7 @@ export class RegisterPaymentComponent implements OnInit {
         }
       });
     });
+    this.loading=false;
   }
 
   private getPaymentUntilNow(concept: PaymentConcept) {
@@ -475,6 +477,7 @@ export class RegisterPaymentComponent implements OnInit {
     if (this.registerPaymentForm.invalid) {
       return;
     }
+    this.loading=true;
     let paymentDate = new Date(this.registerPaymentForm.controls.paymentDateControl.value);
     let registerDate = new Date(this.registerPaymentForm.controls.entryDateControl.value);
     let receivedPersonId = this.registerPaymentForm.controls.receivedPersonControl.value.id;
@@ -528,6 +531,7 @@ export class RegisterPaymentComponent implements OnInit {
       }
       
     }
+    this.loading=false;
     this.successCreateRegisterPaymentModal = this.modalService.show(template, {backdrop: 'static', keyboard: false});
   }
 

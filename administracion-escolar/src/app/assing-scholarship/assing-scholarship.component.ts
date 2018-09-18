@@ -47,8 +47,11 @@ export class AssingScholarshipComponent implements OnInit {
   selectedDay;
   isPercentage=false;
   public successAssingScholarshipModal:BsModalRef;
+  public loading:boolean;
 
-  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
+  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) {
+    this.loading=true;
+   }
 
   ngOnInit() {
     this.getStudent();
@@ -212,6 +215,7 @@ export class AssingScholarshipComponent implements OnInit {
         }
       });
     }
+    this.loading=false;
     this.registerControlsForm();
   }
 
@@ -283,6 +287,7 @@ export class AssingScholarshipComponent implements OnInit {
     if (this.assingScholarshipForm.invalid) {
       return;
     }
+    this.loading=true;
     this.scholarshipListToSave.forEach(element => {
       element.amount = this.assingScholarshipForm.controls['conceptScholarship'+element.conceptId].value;
       element.porcentage = this.assingScholarshipForm.controls['conceptPercentage'+element.conceptId].value;
@@ -300,6 +305,7 @@ export class AssingScholarshipComponent implements OnInit {
         }
       }
     });
+    this.loading=false;
     this.successAssingScholarshipModal = this.modalService.show(template,{backdrop: 'static', keyboard: false});
   }
 

@@ -27,7 +27,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'Authorization':'Bearer 0xE228028845B6287BE6280BD632852F6386A4BDA204E430B2335A2F24325740682B7B112BDF750762B9BD837D9AC1516F46CA317978EEBFEA8E080D1BE6916CD7,09 Sep 2018 23:01:31 -0000'
+            'Authorization':'Bearer 0xFC5DE1FD32A5F59F8353B1BD46F714711B65DA92E068ED802775FBCB0B554FBDDCF79671F2FFE5F568551B1E22838C191D6FE867B781209FA89197AF95AE9DC4,17 Sep 2018 20:00:16 -0000'
         }
     },environment.web);
 
@@ -231,12 +231,6 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
         Observaciones:observation,
         PersonaQueRecibeId:receivedPersonId,
         Pagado:isPayment
-    });
-  }
-
-  addStudentPayment(studentPayment:StudentPayment){
-    return this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.add({
-        
     });
   }
 
