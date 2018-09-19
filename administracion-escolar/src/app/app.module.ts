@@ -35,6 +35,7 @@ import { SPService } from '../app/services/sp.service';
 import { PaymentHistoryComponent } from './payment-history/payment-history.component';
 import { TablaNuevaComponent } from './tabla-nueva/tabla-nueva.component';
 import { UpdateStudentInfoComponent } from './update-student-info/update-student-info.component';
+import { StudentsWithDebtComponent } from './students-with-debt/students-with-debt.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { UpdateStudentInfoComponent } from './update-student-info/update-student
     AssingScholarshipComponent,
     PaymentHistoryComponent,
     TablaNuevaComponent,
-    UpdateStudentInfoComponent
+    UpdateStudentInfoComponent,
+    StudentsWithDebtComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +80,8 @@ import { UpdateStudentInfoComponent } from './update-student-info/update-student
       {path:'buscar-alumno', component:SearchStudentComponent},
       {path:'historial-pagos', component:PaymentHistoryComponent},
       {path:'data-table', component:TablaNuevaComponent},
-      {path:'actualizar-alumno', component:UpdateStudentInfoComponent}
+      {path:'actualizar-alumno', component:UpdateStudentInfoComponent},
+      {path:'estudiantes-con-adeudos', component:StudentsWithDebtComponent}
     ])
   ],
   providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'es-US'}],

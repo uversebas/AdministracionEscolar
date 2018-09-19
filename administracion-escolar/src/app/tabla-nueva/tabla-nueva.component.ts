@@ -21,7 +21,6 @@ export class TablaNuevaComponent implements OnDestroy, OnInit {
   ngOnInit() {
     this.configDataTable();
     this.getDivisionId();
-
   }
 
   getDivisionId(){
