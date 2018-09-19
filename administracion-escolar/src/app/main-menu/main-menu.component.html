@@ -1,19 +1,22 @@
-<div class="loading" *ngIf='loading'>
-    <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
-</div>
-<div class="cards-menu">
-    <div class="row">
-        <div class="col-md-3" *ngFor='let item of menu' (click)='menuOptionClick(item)'>
-            <div class="card card-default">
-                <div class="card-header">
-                    <span class="header-title">{{item.title}}</span>
-                </div>
-                <div class="card-block">
-                    <img src="{{item.Image}}" alt="Imagen">
-                </div>
-                <div class="card-footer">Ingresar aqui</div>
+
+<div class="container">
+        <div class="loading" *ngIf='loading'>
+                <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
             </div>
-            <br>
-        </div>
-    </div>
+            <div class="cards-menu">
+                <div class="row">
+                    <div class="col-md-3" *ngFor='let item of menu' (click)='menuOptionClick(item)'>
+                        <div class="card card-default">
+                            <div class="card-header">
+                                <span class="header-title">{{item.title}}</span>
+                            </div>
+                            <div class="card-block">
+                                <img src="{{item.Image}}" alt="Imagen">
+                            </div>
+                            <div class="card-footer">Ingresar aqui</div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
 </div>

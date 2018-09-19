@@ -1,7 +1,15 @@
-<div class="loading" *ngIf='loading'>
-  <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
-</div>
+
 <div class="container">
+    <div class="loading" *ngIf='loading'>
+        <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
+      </div>
+      <div class="row">
+          <div class="col-md-12">
+            <div class="title-page">
+              <h3>Buscar alumno</h3>
+            </div>
+          </div>
+        </div>
   <div class="row">
     <div class="col-md-12">
       <div class="student-name">
@@ -19,7 +27,9 @@
   </div>
   <div class="row">
     <div class="col-md-12">
-      <button type="button" (click)="searchStudent()">Buscar</button>
+      <div class="botonera">
+          <button type="button" class="btn btn-primary" (click)="searchStudent()">Buscar</button>
+      </div>
     </div>
   </div>
 </div>

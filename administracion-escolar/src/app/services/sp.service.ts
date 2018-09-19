@@ -65,7 +65,7 @@ export class SPService {
   }
 
   getMenu(){
-      let data = from(this.getConfig().web.lists.getByTitle(environment.menuList).items.getAll());
+      let data = from(this.getConfig().web.lists.getByTitle(environment.menuList).items.orderBy("OrdenMenu",true).get());
       return data;
   }
 

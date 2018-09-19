@@ -1,7 +1,15 @@
-<div class="loading" *ngIf='loading'>
-    <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
-</div>
+
 <div class="container">
+        <div class="loading" *ngIf='loading'>
+                <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
+            </div>
+            <div class="row">
+                    <div class="col-md-12">
+                      <div class="title-page">
+                        <h3>Registrar alumno</h3>
+                      </div>
+                    </div>
+                  </div>
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit(templatesuccessCreateStudent)">
         <fieldset class="scheduler-border">
             <legend class="scheduler-border">Datos Generales</legend>
@@ -141,7 +149,7 @@
                         <div class="form-group">
                             <mat-form-field>
                                 <label>Particular</label>
-                                <input matInput formControlName="phoneNumber" class="form-control">
+                                <input  matInput formControlName="phoneNumber" class="form-control">
                             </mat-form-field>
                         </div>
                     </div>
@@ -235,12 +243,15 @@
             </div>
         </fieldset>
         <div class="row">
-            <div class="form-group">
-                <div class="buttons-app">
-                    <button type="button" class="btn btn-default">Salir</button>
-                    <button type="submit" class="btn btn-primary">Siguiente</button>
-                </div>
+            <div class="col-md-12">
+                    <div class="form-group">
+                            <div class="botonera">
+                                <button type="button" class="btn btn-default">Salir</button>
+                                <button type="submit" class="btn btn-primary">Siguiente</button>
+                            </div>
+                        </div>
             </div>
+            
         </div>
     </form>
     <ng-template #templatesuccessCreateStudent>

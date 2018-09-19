@@ -22,6 +22,17 @@ section {
     padding: 60px 0;
 }
 
+.botonera {
+    margin: 10px 0;
+    text-align: right;
+    display: inline-flex;
+    float: right;
+}
+
+.btn-primary{
+    margin-left: 10px;
+}
+
 fieldset 
 {
     border: 1px solid #ddd !important;
@@ -130,6 +141,10 @@ section .section-title {
 }
 #footer ul.quick-links li:hover a i {
     font-weight: 700;
+}
+
+.container{
+    margin-top: 40px;
 }
 
 @media (max-width:767px){

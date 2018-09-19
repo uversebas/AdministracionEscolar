@@ -1,4 +1,11 @@
 <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+          <div class="title-page">
+            <h3>Registrar alumno</h3>
+          </div>
+        </div>
+      </div>
   <form [formGroup]="updateStudentForm">
     <fieldset class="scheduler-border">
       <legend class="scheduler-border">Datos Generales</legend>
@@ -246,7 +253,7 @@
           <div class="col-md-4">
             <mat-form-field>
               <label>Ciclo escolar</label>
-              <mat-select formControlName="cycleSchoolControl" [(value)]='selectedCycleSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.cycleSchoolControl.errors }">
+              <mat-select autofocus formControlName="cycleSchoolControl" [(value)]='selectedCycleSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.cycleSchoolControl.errors }">
                 <mat-option *ngFor="let cycle of cycles" [value]="cycle">
                   {{cycle.title}}
                 </mat-option>
@@ -412,11 +419,14 @@
       </div>
     </div>
     <div class="row">
-      <div class="form-group">
-        <div class="buttons-app">
-          <button type="button" (click)="onSubmit('POST', templatesuccessUpdateStudent)" class="btn btn-primary">Finalizar</button>
-        </div>
+      <div class="col-md-12">
+          <div class="form-group">
+              <div class="botonera">
+                <button type="button" (click)="onSubmit('POST', templatesuccessUpdateStudent)" class="btn btn-primary">Finalizar</button>
+              </div>
+            </div>
       </div>
+
     </div>
   </form>
   <ng-template #templatesuccessUpdateStudent>
