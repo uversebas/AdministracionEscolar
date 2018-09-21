@@ -1,4 +1,4 @@
-<table datatable class="table table-responsive table-hover">
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
   <thead>
       <tr>
         <th></th>
@@ -11,65 +11,14 @@
       </tr>
   </thead>
   <tbody>
-      <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
-          <td><i class="fa fa-plus" aria-hidden="true"></i></td>
-          <td>data</td>
-          <td>data</td>  
-          <td>data</td>
-          <td>data</td>
-          <td>data</td>  
-          <td>data</td>
-      </tr>
-  </tbody>
-  <tbody id="group-of-rows-1" class="collapse">
-      <tr>
-          <td>- child row</td>
-          <td>data 1</td>
-          <td>data 1</td>  
-          <td>data 1</td>
-          <td>data 1</td>
-          <td>data 1</td>  
-          <td>data 1</td>
-      </tr>
-      <tr>
-          <td>- child row</td>
-          <td>data 1</td>
-          <td>data 1</td>  
-          <td>data 1</td>
-          <td>data 1</td>
-          <td>data 1</td>  
-          <td>data 1</td>
-      </tr>
-  </tbody>
-  <tbody>
-      <tr class="clickable" data-toggle="collapse" data-target="#group-of-rows-2" aria-expanded="false" aria-controls="group-of-rows-2">
-          <td><i class="fa fa-plus" aria-hidden="true"></i></td>
-          <td>data</td>
-          <td>data</td>  
-          <td>data</td>
-          <td>data</td>
-          <td>data</td>  
-          <td>data</td>
-      </tr>
-  </tbody>
-  <tbody id="group-of-rows-2" class="collapse">
-      <tr>
-          <td>- child row</td>
-          <td>data 2</td>
-          <td>data 2</td>  
-          <td>data 2</td>
-          <td>data 2</td>
-          <td>data 2</td>  
-          <td>data 2</td>
-      </tr>
-      <tr>
-          <td>- child row</td>
-          <td>data 2</td>
-          <td>data 2</td>  
-          <td>data 2</td>
-          <td>data 2</td>
-          <td>data 2</td>  
-          <td>data 2</td>
-      </tr>
+    <tr *ngFor='let student of studentswithdebt'>
+        <td></td>    
+        <td>{{ student.key }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{student.status}}</td>
+            <td>{{student.division}}</td>
+            <td>{{student.grade}}</td>
+            <td>{{student.group}}</td>
+    </tr>
   </tbody>
 </table>

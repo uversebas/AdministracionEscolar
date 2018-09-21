@@ -25,7 +25,7 @@ export class AppSettings{
             ],
             language:{
               'info':'Pagina _PAGE_ de _PAGES_',
-              'zeroRecords':'No hay estudiantes registrados en esta división',
+              'zeroRecords':'No hay estudiantes.',
               'search': 'Buscar',
               'paginate': {
                 "first":      "Primero",

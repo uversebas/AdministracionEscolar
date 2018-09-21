@@ -1,8 +1,8 @@
 export class StudentByDivision {
-    constructor(public name: string,public key:string ,public status:string, public division:string, public grade:string, public group:string) { }
+    constructor(public name: string,public key:string ,public status:string, public division:string, public grade:string, public group:string, public id:number) { }
 
     public static fromJson(element: any) {
-        return new StudentByDivision(element.Title, element.ClaveAlumno, element.EstatusAlumno.Title,element.Division.Title,element.Grado.Title,element.Grupo.Title);
+        return new StudentByDivision(element.Title, element.ClaveAlumno, element.EstatusAlumno.Title,element.Division.Title,element.Grado.Title,element.Grupo.Title, element.Id);
     }
     public static fromJsonList(elements: any) {
         var list = [];

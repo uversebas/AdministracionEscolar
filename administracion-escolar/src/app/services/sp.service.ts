@@ -27,7 +27,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'Authorization':'Bearer 0xD2FC95750304BCD42FB34059ADC3AD5F8156115202DADE2C61537BE44B341F4B7FE38AF5FA170ACBC03D73D2F52C3DD426998F19FF16249B2615DE2353454D13,19 Sep 2018 03:11:05 -0000'
+            'Authorization':'Bearer 0x0B3BC76AC547D15D064B9C5EAD91A6B64F23C922754CB7D6311493A3B5FAB491E712FAAC0AFB098C6B1EB987CC81264AF4A18FEA584E7E7E64C51FF3F9CCB71D,21 Sep 2018 03:34:56 -0000'
         }
     },environment.web);
 
@@ -124,6 +124,11 @@ export class SPService {
       return data;
   }
 
+  getAllStudentList(){
+    let data =from(this.getConfig().web.lists.getByTitle(environment.studentList).items.select("Title","Id", "ClaveAlumno", "EstatusAlumno/Title", "Division/Title", "Division/ID", "Grado/Title", "Grupo/Title").expand("EstatusAlumno","Division","Grado","Grupo").get());
+    return data;
+  }
+
 getPaymentModalityList(){
     let data =from(this.getConfig().web.lists.getByTitle(environment.paymentModality).items.getAll());
     return data;
@@ -150,7 +155,12 @@ getStudentsByDivisionList(divisionId:number){
 }
 
 getConceptsByStudent(studentId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.select("AlumnoId", "ConceptoId", "Id", "ModalidadId", "Concepto/ConceptoCalculado").expand("Concepto").filter("AlumnoId eq "+ studentId).get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.select("AlumnoId", "ConceptoId", "Id", "ModalidadId", "Concepto/ConceptoCalculado", "Concepto/Monto").expand("Concepto").filter("AlumnoId eq "+ studentId).get());
+    return data;
+}
+
+getAllConceptsByStudent(){
+    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.select("AlumnoId","Alumno/Title", "ConceptoId", "Id", "ModalidadId", "Concepto/ConceptoCalculado").expand("Concepto", "Alumno").get());
     return data;
 }
 
