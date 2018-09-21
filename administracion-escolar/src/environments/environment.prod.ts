@@ -23,5 +23,6 @@ export const environment = {
   conceptStudentList:'ConceptosDelAlumno',
   scholarshipConfigurationList:'ConfiguracionBeca',
   scholarshipList:'Beca',
-  statusScholarshipList:'EstatusBeca'
+  statusScholarshipList:'EstatusBeca',
+  countryStatesList: 'Estados'
 };

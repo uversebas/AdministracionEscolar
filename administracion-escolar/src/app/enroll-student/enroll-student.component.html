@@ -6,7 +6,7 @@
             <div class="row">
                     <div class="col-md-12">
                       <div class="title-page">
-                        <h3>Registrar alumno</h3>
+                        <h3>Registro de alumno de nuevo ingreso</h3>
                       </div>
                     </div>
                   </div>
@@ -92,7 +92,11 @@
                         <div class="form-group">
                             <mat-form-field>
                                 <label>Lugar de nacimiento</label>
-                                <input matInput formControlName="birthPlace" class="form-control">
+                                <mat-select formControlName="birthPlace" class="form-control">
+                                        <mat-option *ngFor="let state of states" [value]="state">
+                                          {{state.title}}
+                                        </mat-option>
+                                      </mat-select>
                             </mat-form-field>
                         </div>
                     </div>
@@ -246,7 +250,7 @@
             <div class="col-md-12">
                     <div class="form-group">
                             <div class="botonera">
-                                <button type="button" class="btn btn-default">Salir</button>
+                                <button type="button" (click)='backMenu()' class="btn btn-default">Salir</button>
                                 <button type="submit" class="btn btn-primary">Siguiente</button>
                             </div>
                         </div>

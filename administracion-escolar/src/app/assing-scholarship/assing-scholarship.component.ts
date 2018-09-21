@@ -282,6 +282,10 @@ export class AssingScholarshipComponent implements OnInit {
     this.router.navigate(['/menu']);
   }
 
+  backMenu(){
+    this.router.navigate(['/menu']);
+  }
+
   onSubmit(template:TemplateRef<any>){
     this.submitted=true;
     if (this.assingScholarshipForm.invalid) {

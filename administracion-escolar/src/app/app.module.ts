@@ -84,7 +84,7 @@ import { StudentsWithDebtComponent } from './students-with-debt/students-with-de
       {path:'estudiantes-con-adeudos', component:StudentsWithDebtComponent}
     ])
   ],
-  providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'es-US'}],
+  providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -10,6 +10,7 @@ import { Student } from '../dtos/student';
 import { ItemAddResult } from 'sp-pnp-js';
 import { AppSettings } from '../shared/appSettings';
 import {Router} from '@angular/router';
+import { States } from '../dtos/states';
 
 @Component({
   selector: 'app-enroll-student',
@@ -21,6 +22,7 @@ export class EnrollStudentComponent implements OnInit {
     registerForm: FormGroup;
     submitted = false;
     sexs:Sex[] = [];
+    states: States[]=[];
     studentStatus:StudentStatus[]=[];
     schoolStatus:SchoolStatus[]=[];
     stagesSchool:StageSchool[]=[];
@@ -91,11 +93,20 @@ export class EnrollStudentComponent implements OnInit {
     )
   }
 
+  getCountryStates(){
+    this.spService.getCountryStates().subscribe(
+      (Response)=>{
+        this.states = States.fromJsonList(Response);
+        this.loading=false;
+      }
+    )
+  }
+
   getStageStatus(){
     this.spService.getStageShoolList().subscribe(
       (Response)=>{
         this.stagesSchool = StageSchool.fromJsonList(Response);
-        this.loading=false;
+        this.getCountryStates();
       }
     )
   }
@@ -104,6 +115,10 @@ export class EnrollStudentComponent implements OnInit {
 
   closeSuccessCreateStudentModal(){
     this.successCreateStudentModal.hide();
+  }
+
+  backMenu(){
+    this.router.navigate(['/menu']);
   }
 
   onSubmit(template:TemplateRef<any>){
@@ -126,7 +141,7 @@ export class EnrollStudentComponent implements OnInit {
       enrollDate.toISOString(),
       entryDate.toISOString(),
       this.registerForm.controls.motherName.value,
-      this.registerForm.controls.birthPlace.value,
+      this.registerForm.controls.birthPlace.value.id,
       this.registerForm.controls.address.value,
       this.registerForm.controls.phoneNumber.value,
       this.registerForm.controls.movilNumber.value,

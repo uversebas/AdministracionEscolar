@@ -18,6 +18,7 @@ import { PaymentModality } from '../dtos/paymentModality';
 import { PaymentConcept } from '../dtos/paymentConcept';
 import { PendingStudentDocument } from '../dtos/pendingStudenDocument';
 import { when } from '../../../node_modules/@types/q';
+import { States } from '../dtos/states';
 
 export interface RequestUniform {
   value: boolean;
@@ -33,6 +34,7 @@ export class UpdateStudentComponent implements OnInit {
   updateStudentForm: FormGroup;
   submitted = false;
   sexs: Sex[] = [];
+  states: States[]=[];
   studentStatus: StudentStatus[] = [];
   schoolStatus: SchoolStatus[] = [];
   stagesSchool: StageSchool[] = [];
@@ -43,6 +45,7 @@ export class UpdateStudentComponent implements OnInit {
   studentName: string;
   studentKey: string;
   selectedSex: Sex;
+  selectedState: States;
   selectedStudentStatus: StudentStatus;
   selectedSchoolStatus: SchoolStatus;
   selectedStageSchool: StageSchool;
@@ -72,7 +75,11 @@ export class UpdateStudentComponent implements OnInit {
 
   items: FormArray;
 
-  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) { }
+  public loading:boolean;
+
+  constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) {
+    this.loading=true;
+   }
 
   ngOnInit() {
     this.InitializeDocumentstables();
@@ -110,6 +117,7 @@ export class UpdateStudentComponent implements OnInit {
       (Response) => {
         this.paymentConcepts = PaymentConcept.fromJsonList(Response);
         this.opcionalPaymentConcepts = this.paymentConcepts.filter(p => p.isOption);
+        this.loading=false;
       }
     )
   }
@@ -140,7 +148,7 @@ export class UpdateStudentComponent implements OnInit {
 
   getStudent() {
     this.student = JSON.parse(sessionStorage.getItem('student'));
-    this.getSexList();
+    this.getCountryStates();
   }
 
   getSexList() {
@@ -221,6 +229,16 @@ export class UpdateStudentComponent implements OnInit {
     )
   }
 
+  getCountryStates(){
+    this.spService.getCountryStates().subscribe(
+      (Response)=>{
+        this.states = States.fromJsonList(Response);
+        this.selectedState = this.states.find(s => s.id === this.student.stateId);
+        this.getSexList();
+      }
+    )
+  }
+
   selectConcept(concept: PaymentConcept) {
     concept.checked = !concept.checked;
   }
@@ -238,7 +256,7 @@ export class UpdateStudentComponent implements OnInit {
       sexControl: this.selectedSex,
       parentName: this.student.parentName,
       motherName: this.student.motherName,
-      birthPlace: this.student.birthPlace,
+      birthPlace: this.selectedState,
       address: this.student.address,
       phoneNumber: this.student.phoneNumber,
       movilNumber: this.student.movilNumber,
@@ -374,6 +392,7 @@ export class UpdateStudentComponent implements OnInit {
     if (this.updateStudentForm.invalid) {
       return;
     }
+    this.loading=true;
     this.saveStudent(template, event);
   }
 
@@ -391,7 +410,7 @@ export class UpdateStudentComponent implements OnInit {
     this.student.enrollDate = enrollDate.toISOString();
     this.student.entryDate = entryDate.toISOString();
     this.student.motherName = this.updateStudentForm.controls.motherName.value;
-    this.student.birthPlace = this.updateStudentForm.controls.birthPlace.value;
+    this.student.stateId = this.updateStudentForm.controls.birthPlace.value.id;
     this.student.address = this.updateStudentForm.controls.address.value;
     this.student.phoneNumber = this.updateStudentForm.controls.phoneNumber.value;
     this.student.movilNumber = this.updateStudentForm.controls.movilNumber.value;
@@ -499,6 +518,7 @@ export class UpdateStudentComponent implements OnInit {
   }
 
   mostrarMensajeExitoso(student: Student, template: TemplateRef<any>, event) {
+    this.loading=false;
      sessionStorage.setItem('student',JSON.stringify(student));
      this.successUpdateStudentModal = this.modalService.show(template);
      if (event === 'POST') {

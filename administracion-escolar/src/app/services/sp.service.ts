@@ -27,7 +27,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'Authorization':'Bearer 0xFC5DE1FD32A5F59F8353B1BD46F714711B65DA92E068ED802775FBCB0B554FBDDCF79671F2FFE5F568551B1E22838C191D6FE867B781209FA89197AF95AE9DC4,17 Sep 2018 20:00:16 -0000'
+            'Authorization':'Bearer 0xD2FC95750304BCD42FB34059ADC3AD5F8156115202DADE2C61537BE44B341F4B7FE38AF5FA170ACBC03D73D2F52C3DD426998F19FF16249B2615DE2353454D13,19 Sep 2018 03:11:05 -0000'
         }
     },environment.web);
 
@@ -36,6 +36,11 @@ export class SPService {
 
   getSiteInfo(){
       let data = from(this.getConfig().web.get());
+      return data;
+  }
+
+  getCountryStates(){
+      let data = from(this.getConfig().web.lists.getByTitle(environment.countryStatesList).items.getAll());
       return data;
   }
 
@@ -256,7 +261,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
             FechaRegistro: student.enrollDate,
             FechaIngreso: student.entryDate,
             NombreMadre: student.motherName,
-            LugarNacimiento: student.birthPlace,
+            LugarNacimientoId: student.stateId,
             Telefono: student.phoneNumber,
             DomicilioParticular: student.address,
             CelularTutor: student.parentsPhoneNumber,
@@ -279,7 +284,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
             FechaRegistro: student.enrollDate,
             FechaIngreso: student.entryDate,
             NombreMadre: student.motherName,
-            LugarNacimiento: student.birthPlace,
+            LugarNacimientoId: student.stateId,
             Telefono: student.phoneNumber,
             DomicilioParticular: student.address,
             CelularTutor: student.parentsPhoneNumber,
@@ -290,9 +295,32 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
             CicloEscolarId: student.cycleId,
             TurnoId: student.turnId,
             GradoId: student.gradeId,
-            GrupoId: student.groupId,
-            ConceptosId: { results: student.paymentConceptIds },
-            ModalidadPagoId: student.paymentMadalityId
+            GrupoId: student.groupId
+        });
+    }
+
+    updateStudentInfo(student: Student){
+        return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(student.id).update({
+            Title: student.name,
+            FechaNacimiento: student.birthDate,
+            SexoId: student.sexId,
+            NombrePadre: student.parentName,
+            EstatusAlumnoId: student.studentStatusId,
+            EstatusEscolarId: student.schoolStatusId,
+            FechaRegistro: student.enrollDate,
+            FechaIngreso: student.entryDate,
+            NombreMadre: student.motherName,
+            LugarNacimientoId: student.stateId,
+            Telefono: student.phoneNumber,
+            DomicilioParticular: student.address,
+            CelularTutor: student.parentsPhoneNumber,
+            Celular: student.movilNumber,
+            OcupacionTutor: student.parentJob,
+            Observaciones: student.observations,
+            EscuelaOrigen: student.originSchool,
+            TurnoId: student.turnId,
+            GradoId: student.gradeId,
+            GrupoId: student.groupId
         });
     }
 

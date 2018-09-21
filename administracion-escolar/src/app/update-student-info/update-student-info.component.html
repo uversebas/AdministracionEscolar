@@ -1,3 +1,308 @@
-<p>
-  update-student-info works!
-</p>
+<div class="container">
+    <div class="loading" *ngIf='loading'>
+        <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+          <div class="title-page">
+            <h3>Actualizar información del alumno</h3>
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="updateStudentForm" (ngSubmit)="onSubmit(templatesuccessUpdateStudent)" >
+          <fieldset class="scheduler-border">
+              <legend class="scheduler-border">Datos Generales</legend>
+              <div class="control-group">
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label class="title-student-key">Clave</label>
+                      <div class="place-student-key">
+                        <label class="student-key">{{student.key}}</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <mat-form-field>
+                        <label>Nombre</label>
+                        <input matInput formControlName="firstName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }"
+                        />
+                        <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                          <div *ngIf="f.firstName.errors.required">Nombre requerido</div>
+                        </div>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <mat-form-field>
+                        <label>Fecha nacimiento</label>
+                        <input matInput [matDatepicker]="picker1" formControlName="birthDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.birthDate.errors }"
+                        />
+                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                        <mat-datepicker #picker1></mat-datepicker>
+                        <div *ngIf="submitted && f.birthDate.errors" class="invalid-feedback">
+                          <div *ngIf="f.birthDate.errors.required">Fecha de nacimiento requerida</div>
+                        </div>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <mat-form-field>
+                        <label>Fecha registro</label>
+                        <input matInput [matDatepicker]="picker2" formControlName="enrollDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.enrollDate.errors }"
+                        />
+                        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                        <mat-datepicker #picker2></mat-datepicker>
+                        <div *ngIf="submitted && f.enrollDate.errors" class="invalid-feedback">
+                          <div *ngIf="f.enrollDate.errors.required">Fecha de registro requerida</div>
+                        </div>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <mat-form-field>
+                        <label>Fecha de ingreso</label>
+                        <input matInput [matDatepicker]="picker3" formControlName="entryDate" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.entryDate.errors }"
+                        />
+                        <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                        <mat-datepicker #picker3></mat-datepicker>
+                        <div *ngIf="submitted && f.entryDate.errors" class="invalid-feedback">
+                          <div *ngIf="f.entryDate.errors.required">Fecha de ingreso requerida</div>
+                        </div>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="for-group">
+                      <mat-form-field>
+                        <label>Sexo</label>
+                        <mat-select formControlName="sexControl" [(value)]='selectedSex' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.sexControl.errors }">
+                          <mat-option *ngFor="let sex of sexs" [value]="sex">
+                            {{sex.title}}
+                          </mat-option>
+                        </mat-select>
+                        <div *ngIf="submitted && f.sexControl.errors" class="invalid-feedback">
+                          <div *ngIf="f.sexControl.errors.required">Sexo requerido</div>
+                        </div>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <mat-form-field>
+                        <label>Lugar de nacimiento</label>
+                        <mat-select formControlName="birthPlace" [(value)]='selectedState' class="form-control">
+                            <mat-option *ngFor="let state of states" [value]="state">
+                              {{state.title}}
+                            </mat-option>
+                          </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <mat-form-field>
+                        <label>Domicilio</label>
+                        <input matInput formControlName="address" class="form-control">
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Datos del tutor</legend>
+                <div class="control-group">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <mat-form-field>
+                          <label>Nombre del padre o tutor</label>
+                          <input matInput formControlName="parentName" class="form-control" [ngClass]="{'is-invalid': submitted && f.parentName.errors}">
+                          <div *ngIf="submitted && f.parentName.errors" class="invalid-feedback">
+                            <div *ngIf="f.parentName.errors.required">Nombre de padre o tutor obligatorio</div>
+                          </div>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <mat-form-field>
+                          <label>Nombre de la madre</label>
+                          <input matInput formControlName="motherName" class="form-control">
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <mat-form-field>
+                          <label>Ocupación del padre o tutor</label>
+                          <input matInput formControlName="parentJob" class="form-control">
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Datos de Teléfono</legend>
+                  <div class="control-group">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <mat-form-field>
+                            <label>Particular</label>
+                            <input matInput formControlName="phoneNumber" class="form-control">
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <mat-form-field>
+                            <label>Móvil</label>
+                            <input matInput formControlName="movilNumber" class="form-control">
+                          </mat-form-field>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <mat-form-field>
+                            <label>Móvil padre y/o madre</label>
+                            <input matInput formControlName="parentsPhoneNumber" class="form-control">
+                          </mat-form-field>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Datos escolares</legend>
+                    <div class="control-group">
+                      <div class="row">
+                        <div class="col-md-3">
+                          <div class="for-group">
+                            <mat-form-field>
+                              <label>Estatus del alumno</label>
+                              <mat-select formControlName="studentStatus" [(value)]='selectedStudentStatus' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.studentStatus.errors }">
+                                <mat-option *ngFor="let status of studentStatus" [value]="status">
+                                  {{status.title}}
+                                </mat-option>
+                              </mat-select>
+                              <div *ngIf="submitted && f.studentStatus.errors" class="invalid-feedback">
+                                <div *ngIf="f.studentStatus.errors.required">Estatus del alumno requerido</div>
+                              </div>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="for-group">
+                            <mat-form-field>
+                              <label>Estatus escolar</label>
+                              <mat-select formControlName="schoolStatus" [(value)]='selectedSchoolStatus' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.schoolStatus.errors }">
+                                <mat-option *ngFor="let status of schoolStatus" [value]="status">
+                                  {{status.title}}
+                                </mat-option>
+                              </mat-select>
+                              <div *ngIf="submitted && f.schoolStatus.errors" class="invalid-feedback">
+                                <div *ngIf="f.schoolStatus.errors.required">Estatus escolar requerido</div>
+                              </div>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                            <mat-form-field>
+                              <label>Turno</label>
+                              <mat-select formControlName="turnSchoolControl" [(value)]='selectedTurnSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+                                <mat-option *ngFor="let turn of turns" [value]="turn">
+                                  {{turn.title}}
+                                </mat-option>
+                              </mat-select>
+                              <div *ngIf="submitted && f.turnSchoolControl.errors" class="invalid-feedback">
+                                <div *ngIf="f.turnSchoolControl.errors.required">Turno requerido</div>
+                              </div>
+                            </mat-form-field>
+                          </div>
+                          <div class="col-md-3">
+                            <mat-form-field>
+                              <label>Grado y grupo</label>
+                              <mat-select formControlName="gradeSchoolControl" [(value)]='selectedGradeSchool' class="form-control" (selectionChange)='selectGrade()'
+                                [ngClass]="{ 'is-invalid': submitted && f.gradeSchoolControl.errors }">
+                                <mat-option *ngFor="let grade of grades" [value]="grade">
+                                  {{grade.title}}
+                                </mat-option>
+                              </mat-select>
+                              <div *ngIf="submitted && f.gradeSchoolControl.errors" class="invalid-feedback">
+                                <div *ngIf="f.gradeSchoolControl.errors.required">Grado requerido</div>
+                              </div>
+                            </mat-form-field>
+                            <mat-form-field>
+                              <mat-select formControlName="groupSchoolControl" [(value)]='selectedGroupSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.groupSchoolControl.errors }">
+                                <mat-option *ngFor="let group of groups" [value]="group">
+                                  {{group.title}}
+                                </mat-option>
+                              </mat-select>
+                              <div *ngIf="submitted && f.groupSchoolControl.errors" class="invalid-feedback">
+                                <div *ngIf="f.groupSchoolControl.errors.required">Grupo requerido</div>
+                              </div>
+                            </mat-form-field>
+                          </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <mat-form-field>
+                              <label>Escuela de origen</label>
+                              <input matInput formControlName="originSchool" class="form-control">
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col md-12">
+                          <mat-form-field>
+                            <label>Observaciones</label>
+                            <textarea matInput formControlName="observations" class="form-control"></textarea>
+                          </mat-form-field>
+                        </div>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <div class="row">
+                      <div class="col-md-12">
+                          <div class="form-group">
+                              <div class="botonera">
+                                  <button type="button" (click)='backMenu()' class="btn btn-default">Salir</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                              </div>
+                            </div>
+                      </div>
+                
+                    </div>
+      </form>
+      <ng-template #templatesuccessUpdateStudent>
+          <div class="modal-header">
+            <button type="button" class="close pull-right" aria-label="Close" (click)="closeSuccessUpdateStudentModal()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title"> Actualización exitosa </h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-12">
+                La información del alumno se actualizo exitosamente.
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="closeSuccessUpdateStudentModal()">Ok</button>
+          </div>
+        </ng-template>
+</div>

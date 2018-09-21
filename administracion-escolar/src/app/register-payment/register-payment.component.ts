@@ -472,6 +472,10 @@ export class RegisterPaymentComponent implements OnInit {
     window.location.reload();
   }
 
+  backMenu(){
+    this.router.navigate(['/menu']);
+  }
+
   onSubmit(template:TemplateRef<any>){
     this.submitted=true;
     if (this.registerPaymentForm.invalid) {
