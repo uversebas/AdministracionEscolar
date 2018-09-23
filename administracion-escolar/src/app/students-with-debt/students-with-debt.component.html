@@ -1,24 +1,42 @@
-<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
-  <thead>
-      <tr>
-        <th></th>
-        <th>Clave</th>
-        <th>Nombre</th>
-        <th>Estatus</th>
-        <th>División</th>
-        <th>Grado</th>
-        <th>Grupo</th>
-      </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor='let student of studentswithdebt'>
-        <td></td>    
-        <td>{{ student.key }}</td>
-            <td>{{ student.name }}</td>
-            <td>{{student.status}}</td>
-            <td>{{student.division}}</td>
-            <td>{{student.grade}}</td>
-            <td>{{student.group}}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="container">
+    <div class="loading" *ngIf='loading'>
+        <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
+      </div>
+      <div class="row">
+          <div class="col-md-12">
+            <div class="title-page">
+              <h3>Alumnos con adeudos</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+              <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
+                  <thead>
+                      <tr>
+                        <th></th>
+                        <th>Clave</th>
+                        <th>Nombre</th>
+                        <th>Estatus</th>
+                        <th>División</th>
+                        <th>Grado</th>
+                        <th>Grupo</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor='let student of studentswithdebt'>
+                        <td></td>    
+                        <td>{{ student.key }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{student.status}}</td>
+                            <td>{{student.division}}</td>
+                            <td>{{student.grade}}</td>
+                            <td>{{student.group}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+          </div>
+        </div>
+</div>
+

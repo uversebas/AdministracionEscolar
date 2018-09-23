@@ -69,8 +69,8 @@
                                 <table class="table-responsive">
                                         <thead>
                                           <th>Concepto</th>
-                                          <th>Monto de la beca</th>
-                                          <th>Porcentaje</th>
+                                          <th>Monto por pagar con beca</th>
+                                          <th>Porcentaje asignado de beca</th>
                                         </thead>
                                         <tbody>
                                           <tr *ngFor='let ship of scholarshipList'>
@@ -78,10 +78,10 @@
                                               <label>{{ship.conceptName}}</label>
                                             </td>
                                             <td>
-                                                <span>{{ship.amount | currency}}</span>
+                                                <span> {{ship.amount | currency}}</span>
                                             </td>
                                             <td>
-                                                <span>{{ship.porcentage | number: '1.2-2'}}%</span>
+                                                <span> {{ship.porcentage | number: '1.2-2'}}%</span>
                                             </td>
                                           </tr>
                                         </tbody>
@@ -176,7 +176,7 @@
                                 <div class="col-md-6">
                                         <label class="title-student-key">Monto definido del pago</label>
                                         <div class="place-student-key">
-                                            <label class="student-name">{{selectedPaymentConcept.amount | currency}}</label>
+                                            <label class="student-name">{{conceptAmount | currency}}</label>
                                         </div>
                                 </div>
                             </div>
@@ -243,39 +243,42 @@
                         </div>
                         <div class="col-md-4" >
                             <div class="values" *ngIf='selectedPaymentConcept.id>0'>
+                                <div class="alert scholarship-day" *ngIf='alertScholarshipDay'>
+                                        <div class="alert alert-warning" role="alert"> <strong>Advertencia!</strong> Pago fuera del día de acuerdo de la beca </div>
+                                </div>
                                     <div class="form-group">
                                             <mat-form-field>
                                                 <label>Cantidad a pagar</label>
-                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="quantityToPayControl" class="form-control" />
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: ',', decimal: '.', precision:0 }" matInput formControlName="quantityToPayControl" class="form-control" />
                                                
                                             </mat-form-field>
                                         </div>
                                         <div class="form-group">
                                             <mat-form-field>
                                                 <label>{{previousBalance}}</label>
-                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="debtAmountControl" class="form-control" />
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: ',', decimal: '.', precision:0 }" matInput formControlName="debtAmountControl" class="form-control" />
                                             </mat-form-field>
                                         </div>
                                         <div class="form-group">
                                             <mat-form-field>
                                                 <label>Cantidad total a pagar</label>
-                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="totalAmountToPayControl" class="form-control" />
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: ',', decimal: '.', precision:0 }" matInput formControlName="totalAmountToPayControl" class="form-control" />
                                             </mat-form-field>
                                         </div>
                                         <div class="form-group">
                                             <mat-form-field>
-                                                <label>Monto del pago</label>
-                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="amountToPayControl" (keyup)="calculatePayment()" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.amountToPayControl.errors }"/>
+                                                <label>Costo</label>
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: ',', decimal: '.', precision:0 }" matInput formControlName="amountToPayControl" (keyup)="calculatePayment()" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.amountToPayControl.errors }"/>
                                                 <div *ngIf="submitted && f.amountToPayControl.errors" class="invalid-feedback">
-                                                        <div *ngIf="f.amountToPayControl.errors.required">Monto del pago requerido</div>
-                                                        <div *ngIf="f.amountToPayControl.errors.min">El monto debe ser mayor que cero</div>
+                                                        <div *ngIf="f.amountToPayControl.errors.required">Costo requerido</div>
+                                                        <div *ngIf="f.amountToPayControl.errors.min">El costo debe ser mayor que cero</div>
                                                     </div>
                                             </mat-form-field>
                                         </div>
                                         <div class="form-group">
                                             <mat-form-field>
                                                 <label>Nuevo saldo</label>
-                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="newBalanceControl" class="form-control" />
+                                                <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: ',', decimal: '.', precision:0 }" matInput formControlName="newBalanceControl" class="form-control" />
                                             </mat-form-field>
                                         </div>
                             </div>

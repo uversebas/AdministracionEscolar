@@ -81,14 +81,14 @@
                   <div class="col-md-4">
                     <div class="for-group">
                       <mat-form-field>
-                        <label>Sexo</label>
+                        <label>Género</label>
                         <mat-select formControlName="sexControl" [(value)]='selectedSex' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.sexControl.errors }">
                           <mat-option *ngFor="let sex of sexs" [value]="sex">
                             {{sex.title}}
                           </mat-option>
                         </mat-select>
                         <div *ngIf="submitted && f.sexControl.errors" class="invalid-feedback">
-                          <div *ngIf="f.sexControl.errors.required">Sexo requerido</div>
+                          <div *ngIf="f.sexControl.errors.required">Género requerido</div>
                         </div>
                       </mat-form-field>
                     </div>
@@ -125,10 +125,10 @@
                     <div class="col-md-3">
                       <div class="form-group">
                         <mat-form-field>
-                          <label>Nombre del padre o tutor</label>
+                          <label>Tutor 1 (padre o madre)</label>
                           <input matInput formControlName="parentName" class="form-control" [ngClass]="{'is-invalid': submitted && f.parentName.errors}">
                           <div *ngIf="submitted && f.parentName.errors" class="invalid-feedback">
-                            <div *ngIf="f.parentName.errors.required">Nombre de padre o tutor obligatorio</div>
+                            <div *ngIf="f.parentName.errors.required">Tutor 1 obligatorio</div>
                           </div>
                         </mat-form-field>
                       </div>
@@ -136,7 +136,7 @@
                     <div class="col-md-3">
                       <div class="form-group">
                         <mat-form-field>
-                          <label>Nombre de la madre</label>
+                          <label>Tutor 2 (padre o madre)</label>
                           <input matInput formControlName="motherName" class="form-control">
                         </mat-form-field>
                       </div>
@@ -232,7 +232,7 @@
                           </div>
                           <div class="col-md-3">
                             <mat-form-field>
-                              <label>Grado y grupo</label>
+                              <label>Grado</label>
                               <mat-select formControlName="gradeSchoolControl" [(value)]='selectedGradeSchool' class="form-control" (selectionChange)='selectGrade()'
                                 [ngClass]="{ 'is-invalid': submitted && f.gradeSchoolControl.errors }">
                                 <mat-option *ngFor="let grade of grades" [value]="grade">
@@ -244,6 +244,7 @@
                               </div>
                             </mat-form-field>
                             <mat-form-field>
+                                <label>Grupo</label>
                               <mat-select formControlName="groupSchoolControl" [(value)]='selectedGroupSchool' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.groupSchoolControl.errors }">
                                 <mat-option *ngFor="let group of groups" [value]="group">
                                   {{group.title}}

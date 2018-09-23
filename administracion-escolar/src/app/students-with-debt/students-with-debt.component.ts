@@ -20,8 +20,11 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
   conceptsByStudent:ConceptStudent[]=[];
   studentPayments:StudentPayment[]=[];
   students: StudentByDivision[]= [];
+  public loading:boolean;
 
-  constructor(private spService: SPService) { }
+  constructor(private spService: SPService) {
+    this.loading=true;
+   }
 
   ngOnInit() {
     this.configDataTable();
@@ -77,6 +80,7 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
       )
     }
     this.dtTrigger.next();
+    this.loading=false;
   }
 
   getConceptsByStudent(stundetId:number){

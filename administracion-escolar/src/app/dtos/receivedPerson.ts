@@ -1,9 +1,9 @@
 export class ReceivedPerson{
-    constructor(public title:string, public id:number){}
+    constructor(public title:string, public id:number, public loadDefault?:boolean){}
 
     
     public static fromJson(element: any){
-        return new ReceivedPerson(element.Title, element.ID);
+        return new ReceivedPerson(element.Title, element.ID, element.ValorPorDefecto);
     }
     public static fromJsonList(elements:any){
         var list=[];

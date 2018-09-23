@@ -1,8 +1,8 @@
 export class SchoolStatus{
-    constructor(public title:string, public id:number){}
+    constructor(public title:string, public id:number, public loadDefault?:boolean){}
 
     public static fromJson(element: any){
-        return new SchoolStatus(element.Title,element.ID);
+        return new SchoolStatus(element.Title,element.ID, element.ValorPorDefecto);
 }
 public static fromJsonList(elements:any){
     var list=[];

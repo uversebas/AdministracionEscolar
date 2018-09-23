@@ -16,35 +16,35 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group">
-              <label>Clave </label>
-              <span>{{student.key}}</span>
+              <label>Clave</label>
+              <span> {{student.key}}</span>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group">
               <label>Nombre </label>
-              <span>{{student.name}}</span>
+              <span> {{student.name}}</span>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label>Ciclo </label>
-              <span>{{cycle.title}}</span>
+              <span> {{cycle.title}}</span>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-4">
             <label>División </label>
-            <span>{{stageSchool.title}}</span>
+            <span> {{stageSchool.title}}</span>
           </div>
           <div class="col-md-4">
             <label>Estatus del alumno </label>
-            <span>{{selectedStudentStatus.title}}</span>
+            <span> {{selectedStudentStatus.title}}</span>
           </div>
           <div class="col-md-4">
             <label>Estatus escolar </label>
-            <span>{{selectedSchoolStatus.title}}</span>
+            <span> {{selectedSchoolStatus.title}}</span>
           </div>
         </div>
         <fieldset class="scheduler-border">
@@ -58,9 +58,9 @@
                 <table class="table-responsive" *ngIf='!isPercentage'>
                   <thead>
                     <th>Concepto</th>
-                    <th>Monto del pago</th>
-                    <th>Monto de la beca</th>
-                    <th>Porcentaje</th>
+                    <th>Costo del pago</th>
+                    <th>Monto por pagar con beca</th>
+                    <th>Porcentaje asignado de beca</th>
                   </thead>
                   <tbody>
                     <tr *ngFor='let ship of scholarshipListToSave'>
@@ -68,13 +68,13 @@
                         <label>{{ship.conceptName}}</label>
                       </td>
                       <td>
-                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptValue{{ship.conceptId}}" class="form-control scholarshipInput">
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: ',', decimal: '.', precision:0 }" matInput formControlName="conceptValue{{ship.conceptId}}" class="form-control scholarshipInput">
                       </td>
                       <td>
-                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: '.', decimal: ',', precision:0 }" matInput formControlName="conceptScholarship{{ship.conceptId}}" (keyup)="calculateScholarshipByValue(ship.conceptId)" class="form-control scholarshipInput">
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '$ ', thousands: ',', decimal: '.', precision:0 }" matInput formControlName="conceptScholarship{{ship.conceptId}}" (keyup)="calculateScholarshipByValue(ship.conceptId)" class="form-control scholarshipInput">
                       </td>
                       <td>
-                          <input currencyMask autocomplete="off" [options]="{ prefix: '', thousands: '.', decimal: ',', precision:0, suffix:'%' }" matInput formControlName="conceptPercentage{{ship.conceptId}}" class="form-control scholarshipInput">
+                          <input currencyMask autocomplete="off" [options]="{ prefix: '', thousands: ',', decimal: '.', precision:0, suffix:'%' }" matInput formControlName="conceptPercentage{{ship.conceptId}}" class="form-control scholarshipInput">
                       </td>
                     </tr>
                   </tbody>
@@ -82,9 +82,9 @@
                 <table class="table-responsive" *ngIf='isPercentage'>
                   <thead>
                     <th>Concepto</th>
-                    <th>Monto del pago</th>
-                    <th>Porcentaje</th>
-                    <th>Monto de la beca</th>
+                    <th>Costo</th>
+                    <th>Porcentaje asignado de beca</th>
+                    <th>Monto por pagar con beca</th>
                   </thead>
                   <tbody>
                     <tr *ngFor='let ship of scholarshipListToSave'>
@@ -121,6 +121,27 @@
                             <mat-option value=8>8</mat-option>
                             <mat-option value=9>9</mat-option>
                             <mat-option value=10>10</mat-option>
+                            <mat-option value=11>11</mat-option>
+                            <mat-option value=12>12</mat-option>
+                            <mat-option value=13>13</mat-option>
+                            <mat-option value=14>14</mat-option>
+                            <mat-option value=15>15</mat-option>
+                            <mat-option value=16>16</mat-option>
+                            <mat-option value=17>17</mat-option>
+                            <mat-option value=18>18</mat-option>
+                            <mat-option value=19>19</mat-option>
+                            <mat-option value=10>20</mat-option>
+                            <mat-option value=21>21</mat-option>
+                            <mat-option value=22>22</mat-option>
+                            <mat-option value=23>23</mat-option>
+                            <mat-option value=24>24</mat-option>
+                            <mat-option value=25>25</mat-option>
+                            <mat-option value=26>26</mat-option>
+                            <mat-option value=27>27</mat-option>
+                            <mat-option value=28>28</mat-option>
+                            <mat-option value=29>29</mat-option>
+                            <mat-option value=10>30</mat-option>
+                            <mat-option value=10>31</mat-option>
                           </mat-select>
                         </mat-form-field>
                   </div>

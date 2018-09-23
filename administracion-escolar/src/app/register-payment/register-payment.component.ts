@@ -55,11 +55,14 @@ export class RegisterPaymentComponent implements OnInit {
   conceptsByStudent:ConceptStudent[]=[];
   totalDebt:number=0;
   currentStatusScholarship:StatusScholarship;
-  paymentDay;
+  paymentDay = 0;
   studentHasSholarship=false;
 
   scholarshipList:Scholarship[]=[];
   statusScholarshipList:StatusScholarship[]=[];
+  currentDay;
+  alertScholarshipDay = false;
+  conceptAmount = 0;
 
   public successCreateRegisterPaymentModal:BsModalRef;
 
@@ -68,6 +71,8 @@ export class RegisterPaymentComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder, private spService: SPService, private modalService: BsModalService, private router: Router) {
     this.loading=true;
+    this.currentDay = new Date().getDate();
+    console.log(this.currentDay);
    }
 
   ngOnInit() {
@@ -78,23 +83,24 @@ export class RegisterPaymentComponent implements OnInit {
     this.getPaymentWays();
     this.disabledControls();
     
+  }
 
+  private loadValues() {
     this.registerPaymentForm.setValue({
-      paymentDateControl:new Date().toISOString(),
-      entryDateControl:new Date().toISOString(),
-      receivedPersonControl:'',
-      paymentConceptControl:'',
-      paymentMonthControl:'',
-      paymentWayControl:'',
-      referenceControl:'',
-      quantityToPayControl:'',
-      debtAmountControl:'',
-      totalAmountToPayControl:'',
-      amountToPayControl:'',
-      newBalanceControl:'',
-      paymentAgreementControl:'',
-      observationControl:''
-      
+      paymentDateControl: new Date().toISOString(),
+      entryDateControl: new Date().toISOString(),
+      receivedPersonControl: this.receivedPersons.find(p => p.loadDefault),
+      paymentConceptControl: '',
+      paymentMonthControl: '',
+      paymentWayControl: '',
+      referenceControl: '',
+      quantityToPayControl: '',
+      debtAmountControl: '',
+      totalAmountToPayControl: '',
+      amountToPayControl: '',
+      newBalanceControl: '',
+      paymentAgreementControl: '',
+      observationControl: ''
     });
   }
 
@@ -171,11 +177,13 @@ export class RegisterPaymentComponent implements OnInit {
 
   selectecPaymentConcept(){
     this.clearValueControls();
+    this.conceptAmount=this.selectedPaymentConcept.amount;
     if (this.selectedPaymentConcept.dues) {
       this.registerPaymentForm.controls.paymentMonthControl.setValidators([Validators.required]);
       this.previousBalance='Adeudo anterior';
       let modalityStudent = this.conceptsByStudent.find(c => c.conceptId === this.selectedPaymentConcept.id);
       this.paymentModality = this.paymentModalities.find(p => p.id === modalityStudent.paymentModalityId);
+      this.conceptAmount = this.selectedPaymentConcept.amount/this.paymentModality.monthCounter;
       this.selectedPaymentMonth=new Month('',0);
       this.getMonths();
     }else{
@@ -200,6 +208,9 @@ export class RegisterPaymentComponent implements OnInit {
     let scholarship = this.scholarshipList.find(s => s.conceptId === concept.id && s.statusId === 1);
     if (scholarship) {
       scholarshipAmount = scholarship.amount;
+      if(this.currentDay > this.paymentDay){
+        this.alertScholarshipDay = true;
+      }
     }
     return scholarshipAmount;
   }
@@ -220,6 +231,7 @@ export class RegisterPaymentComponent implements OnInit {
   }
 
   clearValueControls(){
+    this.alertScholarshipDay = false;
     this.registerPaymentForm.controls.amountToPayControl.setValue('');
     this.registerPaymentForm.controls.newBalanceControl.setValue('');
     this.registerPaymentForm.controls.debtAmountControl.setValue('');
@@ -243,6 +255,7 @@ export class RegisterPaymentComponent implements OnInit {
     this.spService.getReceivedPersonList().subscribe(
       (Response)=>{
         this.receivedPersons=ReceivedPerson.fromJsonList(Response);
+        this.loadValues();
       }
     )
   }
@@ -408,6 +421,9 @@ export class RegisterPaymentComponent implements OnInit {
   getAmountFee(){
     let scholarship = this.scholarshipList.find(s => s.conceptId === this.selectedPaymentConcept.id && s.statusId === 1);
     if (scholarship) {
+      if (this.currentDay>this.paymentDay) {
+        this.alertScholarshipDay = true;
+      }
       return scholarship.amount;
     }else{
       let counterFee = this.paymentModality.monthCounter;

@@ -268,7 +268,7 @@ export class UpdateStudentComponent implements OnInit {
       originSchool: this.student.originSchool,
       observations: this.student.observations,
       cycleSchoolControl: '',
-      turnSchoolControl: '',
+      turnSchoolControl: this.turns.find(t=>t.loadDefault),
       gradeSchoolControl: '',
       groupSchoolControl: '',
       paymentModalityControl: ''

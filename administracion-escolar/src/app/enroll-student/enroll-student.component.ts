@@ -41,9 +41,30 @@ export class EnrollStudentComponent implements OnInit {
     this.registerControlsForm();
     this.getSexList();
     this.getStudentStatus();
-    this.getSchoolStatus();
     this.getStageStatus();
+  }
 
+  updateValues(){
+    this.registerForm.setValue({
+      firstName:'',
+      birthDate: '',
+      enrollDate: new Date().toISOString(),
+      entryDate: '',
+      sexControl: '',
+      parentName: '',
+      motherName: '',
+      birthPlace: '',
+      address: '',
+      phoneNumber: '',
+      movilNumber: '',
+      parentsPhoneNumber: '',
+      studentStatus:this.studentStatus.find(s=>s.loadDefault),
+      schoolStatus:this.schoolStatus.find(s => s.loadDefault),
+      parentJob:[''],
+      stageSchool:'',
+      originSchool:'',
+      observations:''
+    });
   }
 
   private registerControlsForm() {
@@ -81,6 +102,7 @@ export class EnrollStudentComponent implements OnInit {
     this.spService.getStudentStatusList().subscribe(
       (Response)=>{
         this.studentStatus = StudentStatus.fromJsonList(Response);
+        this.getSchoolStatus();
       }
     )
   }
@@ -89,6 +111,7 @@ export class EnrollStudentComponent implements OnInit {
     this.spService.getSchoolStatusList().subscribe(
       (Response)=>{
         this.schoolStatus = SchoolStatus.fromJsonList(Response);
+        this.updateValues();
       }
     )
   }

@@ -14,7 +14,7 @@ import {MatInputModule} from '@angular/material';
 import {MatSelectModule} from '@angular/material/select';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import { MAT_DATE_LOCALE} from '@angular/material/core';
+import { MAT_DATE_LOCALE, DateAdapter, MAT_DATE_FORMATS} from '@angular/material/core';
 import { MatTabsModule } from '@angular/material';
 import { CurrencyMaskModule } from "ng2-currency-mask";
 
@@ -36,6 +36,7 @@ import { PaymentHistoryComponent } from './payment-history/payment-history.compo
 import { TablaNuevaComponent } from './tabla-nueva/tabla-nueva.component';
 import { UpdateStudentInfoComponent } from './update-student-info/update-student-info.component';
 import { StudentsWithDebtComponent } from './students-with-debt/students-with-debt.component';
+import { AppDateAdapter, APP_DATE_FORMATS} from './shared/appDateAdapter';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { StudentsWithDebtComponent } from './students-with-debt/students-with-de
       {path:'estudiantes-con-adeudos', component:StudentsWithDebtComponent}
     ])
   ],
-  providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}],
+  providers: [SPService, MatDatepickerModule,{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}, {provide:DateAdapter, useClass:AppDateAdapter}, {provide:MAT_DATE_FORMATS, useValue:APP_DATE_FORMATS}],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+ }
