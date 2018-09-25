@@ -9,7 +9,18 @@
             </div>
           </div>
         </div>
-
+<!--div class="row">
+  <div class="col-md-12">
+    <mat-form-field>
+      <label>División</label>
+      <mat-select name="stageSchool" [(ngModel)]="selectedStageSchool"  (selectionChange)='selectStage()' class="form-control">
+        <mat-option *ngFor="let stage of stagesSchool" [value]="stage">
+          {{stage.title}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div-->
         <div class="row">
           <div class="col-md-12">
               <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
@@ -22,6 +33,9 @@
                         <th>División</th>
                         <th>Grado</th>
                         <th>Grupo</th>
+                        <th>Inscripción</th>
+                        <th>Credencial</th>
+                        <th>Colegiatura</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -33,6 +47,9 @@
                             <td>{{student.division}}</td>
                             <td>{{student.grade}}</td>
                             <td>{{student.group}}</td>
+                            <td>{{student.inscripcion | currency}}</td>
+                            <td>{{student.credencial | currency}}</td>
+                            <td>{{student.colegiatura | currency}}</td>
                     </tr>
                   </tbody>
                 </table>

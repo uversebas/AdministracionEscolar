@@ -14,6 +14,7 @@ export class AppSettings{
 
      static getDataTableConfiguration(){
         let dtOptions = {
+            destroy:true,
             // Declare the use of the extension in the dom parameter
             dom: 'Bfrtip',
             // Configure the buttons

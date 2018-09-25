@@ -7,6 +7,7 @@ import { StudentPayment } from '../dtos/studentPayment';
 import { StudentByDivision } from '../dtos/studentByDivision';
 import { SummaryPayment } from '../dtos/summaryPayment';
 import { AppSettings } from '../shared/appSettings';
+import { StageSchool } from '../dtos/stageSchool';
 
 @Component({
   selector: 'app-students-with-debt',
@@ -17,9 +18,12 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
   studentswithdebt: StudentWithDebt[]= [];
+  studentswithdebtByDivision: StudentWithDebt[]= [];
   conceptsByStudent:ConceptStudent[]=[];
   studentPayments:StudentPayment[]=[];
   students: StudentByDivision[]= [];
+  selectedStageSchool: StageSchool;
+  stagesSchool: StageSchool[] = [];
   public loading:boolean;
 
   constructor(private spService: SPService) {
@@ -28,6 +32,7 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
 
   ngOnInit() {
     this.configDataTable();
+    //this.getStageSchool();
     this.getAllStudents();
   }
 
@@ -35,10 +40,27 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
     this.dtOptions = AppSettings.getDataTableConfiguration();
   }
 
+  getStageSchool() {
+    this.spService.getStageShoolList().subscribe(
+      (Response) => {
+        this.stagesSchool = StageSchool.fromJsonList(Response);
+        //this.selectStage();
+      }
+    )
+  }
+
+  selectStage() {
+    this.studentswithdebtByDivision = [];
+    this.studentswithdebtByDivision = this.studentswithdebt.filter(s=>s.divisionId === this.selectedStageSchool.id);
+    this.getStudentsDebt();
+    //this.dtTrigger.next();
+  }
+
   getAllStudents(){
     this.spService.getAllStudentList().subscribe(
       (Response)=>{
         this.studentswithdebt = StudentWithDebt.fromJsonList(Response);
+        this.loading=false;
         this.getStudentsDebt();
       }
     )
@@ -48,6 +70,20 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
     return SummaryPayment.getSummaryPaymentList(conceptsByStudent,studentPayments);
     
   }
+
+  private getConcepts(student:StudentWithDebt){
+    student.sumaryPayments.forEach(element => {
+        if (element.conceptName === 'Colegiatura') {
+            student.colegiatura = element.amount;
+        }
+        if (element.conceptName === 'Inscripción') {
+          student.inscripcion = element.amount;
+      }
+      if (element.conceptName === 'Credencial') {
+        student.credencial = element.amount;
+    }
+    });
+}
 
   getStudentsDebt(){
     for (let index = 0; index < this.studentswithdebt.length; index++) {
@@ -61,6 +97,7 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
                   let studentPayments = StudentPayment.fromJsonListExpan(Response);
                   if (studentPayments.length>0) {
                     student.sumaryPayments = this.getSummaryPayment(concepstByStudent,studentPayments);
+                    this.getConcepts(student);
                     let notDebt = false;
                     for (let j = 0; j < student.sumaryPayments.length; j++) {
                       const payment = student.sumaryPayments[j];

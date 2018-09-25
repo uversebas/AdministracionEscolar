@@ -60,7 +60,7 @@ export class EnrollStudentComponent implements OnInit {
       parentsPhoneNumber: '',
       studentStatus:this.studentStatus.find(s=>s.loadDefault),
       schoolStatus:this.schoolStatus.find(s => s.loadDefault),
-      parentJob:[''],
+      parentJob:'',
       stageSchool:'',
       originSchool:'',
       observations:''
