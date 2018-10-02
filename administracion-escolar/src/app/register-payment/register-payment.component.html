@@ -35,7 +35,7 @@
                             <div class="form-group">
                                 <label class="title-student-key">División</label>
                                 <div class="place-student-key">
-                                    <label class="student-name">{{stageSchool.title}}</label>
+                                    <label class="student-division-name">{{stageSchool.title}}</label>
                                 </div>
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                             <div class="form-group">
                                 <label class="title-student-key">Ciclo escolar</label>
                                 <div class="place-student-key">
-                                    <label class="student-name">{{cycle.title}}</label>
+                                    <label class="student-status-cycle-name">{{cycle.title}}</label>
                                 </div>
                             </div>
                         </div>
@@ -53,8 +53,8 @@
                             <div class="form-group">
                                 <label class="title-student-key">Grado y grupo</label>
                                 <div class="place-student-key">
-                                    <label class="student-name">{{grade.title}}</label>
-                                    <label class="student-name">{{group.title}}</label>
+                                    <span class="student-grade-name">{{grade.title}} </span>
+                                    <span class="student-group-name">{{group.title}}</span>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Estatus de la beca</label>
+                                <span>Estatus de la beca </span>
                                 <span>{{currentStatusScholarship.title}}</span>
                             </div>
                             <div class="form-group">
@@ -134,7 +134,7 @@
                         <div class="col-md-6">
                             <label class="title-student-key">Responsable del registro</label>
                             <div class="place-student-key">
-                                <label class="student-name">{{currentUser}}</label>
+                                <label class="student-current-user-name">{{currentUser}}</label>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -176,7 +176,7 @@
                                 <div class="col-md-6">
                                         <label class="title-student-key">Monto definido del pago</label>
                                         <div class="place-student-key">
-                                            <label class="student-name">{{conceptAmount | currency}}</label>
+                                            <label class="student-ammount">{{conceptAmount | currency}}</label>
                                         </div>
                                 </div>
                             </div>
@@ -184,7 +184,7 @@
                                 <div class="col-md-6">
                                         <label class="title-student-key">Modalidad de pago</label>
                                         <div class="place-student-key">
-                                            <label class="student-name">{{paymentModality.title}}</label>
+                                            <label class="student-modality-payment">{{paymentModality.title}}</label>
                                         </div> 
                                 </div>
                                 <div class="col-md-6">

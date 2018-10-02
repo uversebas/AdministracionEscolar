@@ -211,8 +211,13 @@ span.header-title{
     .title-student-key{
         margin-top: 17px;
     }
+
+    .student-name{
+        font-size: 25px !important;
+    }
+
     .student-key{
-        font-size: 25px;
+        font-size: 20px;
         font-weight: 400;
     }
 

@@ -19,7 +19,7 @@
                         <div class="form-group">
                             <mat-form-field>
                                 <label>Nombre</label>
-                                <input matInput formControlName="firstName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }"
+                                <input matInput formControlName="firstName" class="form-control student-name" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }"
                                 />
                                 <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
                                     <div *ngIf="f.firstName.errors.required">Nombre requerido</div>
