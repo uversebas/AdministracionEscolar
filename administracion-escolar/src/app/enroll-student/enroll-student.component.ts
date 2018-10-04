@@ -173,7 +173,7 @@ export class EnrollStudentComponent implements OnInit {
       this.registerForm.controls.originSchool.value,
       this.registerForm.controls.observations.value
     );
-    this.spService.addStudent(newStudent,this.registerForm.controls.stageSchool.value.Abreviatura).then(
+    this.spService.addStudent(newStudent).then(
       (iar: ItemAddResult)=>{
         let studentKey = AppSettings.generateStudentKey(iar.data.Id,enrollDate.getMonth(),enrollDate.getFullYear(),this.registerForm.controls.stageSchool.value.Abreviatura);
         this.spService.assignStudentKey(studentKey,iar.data.Id).then(

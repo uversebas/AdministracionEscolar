@@ -73,7 +73,7 @@ import { AppDateAdapter, APP_DATE_FORMATS} from './shared/appDateAdapter';
     RouterModule.forRoot([
       {path:'',redirectTo:'/menu',pathMatch:'full'},
       {path:'menu',component:MainMenuComponent},
-      {path:'registrar-alumno', component:EnrollStudentComponent},
+      {path:'registrar-alumno', component:UpdateStudentComponent},
       {path:'registrar-pago', component:RegisterPaymentComponent},
       {path:'registrar-datos-alumno', component:UpdateStudentComponent},
       {path:'reeinscribir-alumno', component:ReEnrollStudentComponent},

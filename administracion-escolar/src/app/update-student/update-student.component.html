@@ -14,14 +14,6 @@
       <legend class="scheduler-border">Datos Generales</legend>
       <div class="control-group">
         <div class="row">
-          <div class="col-md-2">
-            <div class="form-group">
-              <label class="title-student-key">Clave</label>
-              <div class="place-student-key">
-                <label class="student-key">{{student.key}}</label>
-              </div>
-            </div>
-          </div>
           <div class="col-md-8">
             <div class="form-group">
               <mat-form-field>
@@ -34,7 +26,7 @@
               </mat-form-field>
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-4">
             <div class="form-group">
               <mat-form-field>
                 <label>Fecha nacimiento</label>
@@ -248,7 +240,7 @@
           <div class="col md-12">
             <mat-form-field>
               <label>Observaciones</label>
-              <textarea autofocus matInput formControlName="observations" class="form-control"></textarea>
+              <textarea matInput formControlName="observations" class="form-control"></textarea>
             </mat-form-field>
           </div>
         </div>
@@ -430,7 +422,8 @@
       <div class="col-md-12">
           <div class="form-group">
               <div class="botonera">
-                <button type="button" (click)="onSubmit('POST', templatesuccessUpdateStudent)" class="btn btn-primary">Finalizar</button>
+                  <button type="button" (click)='backMenu()' class="btn btn-default">Salir</button>
+                <button type="button" (click)="onSubmit('POST', templatesuccessUpdateStudent)" class="btn btn-primary">Guardar</button>
               </div>
             </div>
       </div>
@@ -442,12 +435,13 @@
       <button type="button" class="close pull-right" aria-label="Close" (click)="closeSuccessUpdateStudentModal()">
         <span aria-hidden="true">&times;</span>
       </button>
-      <h4 class="modal-title"> Actualización exitosa </h4>
+      <h4 class="modal-title"> Registro exitoso </h4>
     </div>
     <div class="modal-body">
       <div class="row">
         <div class="col-md-12">
-          La información del alumno se actualizo exitosamente.
+          El alumno {{student.name}} fue registrado con exito.
+                    <br> Se le asigno la clave {{student.key}}.
         </div>
       </div>
     </div>

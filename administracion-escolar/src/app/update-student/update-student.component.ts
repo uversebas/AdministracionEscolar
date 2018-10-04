@@ -19,6 +19,8 @@ import { PaymentConcept } from '../dtos/paymentConcept';
 import { PendingStudentDocument } from '../dtos/pendingStudenDocument';
 import { when } from '../../../node_modules/@types/q';
 import { States } from '../dtos/states';
+import { ItemAddResult } from 'sp-pnp-js';
+import { AppSettings } from '../shared/appSettings';
 
 export interface RequestUniform {
   value: boolean;
@@ -117,7 +119,6 @@ export class UpdateStudentComponent implements OnInit {
       (Response) => {
         this.paymentConcepts = PaymentConcept.fromJsonList(Response);
         this.opcionalPaymentConcepts = this.paymentConcepts.filter(p => p.isOption);
-        this.loading=false;
       }
     )
   }
@@ -147,7 +148,7 @@ export class UpdateStudentComponent implements OnInit {
   }
 
   getStudent() {
-    this.student = JSON.parse(sessionStorage.getItem('student'));
+    this.student = new Student('','',0,'',0,0,0);
     this.getCountryStates();
   }
 
@@ -155,7 +156,7 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getSexsList().subscribe(
       (Response) => {
         this.sexs = Sex.fromJsonList(Response);
-        this.selectedSex = this.sexs.find(s => s.id === this.student.sexId);
+        //this.selectedSex = this.sexs.find(s => s.id === this.student.sexId);
         this.getStudentStatus();
       }
     )
@@ -165,7 +166,7 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getStudentStatusList().subscribe(
       (Response) => {
         this.studentStatus = StudentStatus.fromJsonList(Response);
-        this.selectedStudentStatus = this.studentStatus.find(s => s.id === this.student.studentStatusId);
+        //this.selectedStudentStatus = this.studentStatus.find(s => s.id === this.student.studentStatusId);
         this.getSchoolStatus();
       }
     )
@@ -175,7 +176,7 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getSchoolStatusList().subscribe(
       (Response) => {
         this.schoolStatus = SchoolStatus.fromJsonList(Response);
-        this.selectedSchoolStatus = this.schoolStatus.find(s => s.id === this.student.schoolStatusId);
+        //this.selectedSchoolStatus = this.schoolStatus.find(s => s.id === this.student.schoolStatusId);
         this.getStageStatus();
       }
     )
@@ -222,9 +223,10 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getStageShoolList().subscribe(
       (Response) => {
         this.stagesSchool = StageSchool.fromJsonList(Response);
-        this.selectedStageSchool = this.stagesSchool.find(s => s.id === this.student.stageSchoolId);
-        this.selectStage();
+        //this.selectedStageSchool = this.stagesSchool.find(s => s.id === this.student.stageSchoolId);
+        //this.selectStage();
         this.updateValues();
+        this.loading=false;
       }
     )
   }
@@ -233,7 +235,7 @@ export class UpdateStudentComponent implements OnInit {
     this.spService.getCountryStates().subscribe(
       (Response)=>{
         this.states = States.fromJsonList(Response);
-        this.selectedState = this.states.find(s => s.id === this.student.stateId);
+        //this.selectedState = this.states.find(s => s.id === this.student.stateId);
         this.getSexList();
       }
     )
@@ -249,31 +251,31 @@ export class UpdateStudentComponent implements OnInit {
 
   updateValues() {
     this.updateStudentForm.setValue({
-      firstName: this.student.name,
-      birthDate: this.student.birthDate,
-      enrollDate: this.student.enrollDate,
-      entryDate: this.student.entryDate,
-      sexControl: this.selectedSex,
-      parentName: this.student.parentName,
-      motherName: this.student.motherName,
-      birthPlace: this.selectedState,
-      address: this.student.address,
-      phoneNumber: this.student.phoneNumber,
-      movilNumber: this.student.movilNumber,
-      parentsPhoneNumber: this.student.parentsPhoneNumber,
-      studentStatus: this.selectedStudentStatus,
-      schoolStatus: this.selectedSchoolStatus,
-      parentJob: this.student.parentJob,
-      stageSchool: this.selectedStageSchool,
-      originSchool: this.student.originSchool,
-      observations: this.student.observations,
+      firstName: '',
+      birthDate: '',
+      enrollDate: new Date().toISOString(),
+      entryDate: '',
+      sexControl: '',
+      parentName: '',
+      motherName: '',
+      birthPlace: '',
+      address: '',
+      phoneNumber: '',
+      movilNumber: '',
+      parentsPhoneNumber: '',
+      studentStatus:this.studentStatus.find(s=>s.loadDefault),
+      schoolStatus:this.schoolStatus.find(s => s.loadDefault),
+      parentJob: '',
+      stageSchool: '',
+      originSchool: '',
+      observations: '',
       cycleSchoolControl: '',
       turnSchoolControl: this.turns.find(t=>t.loadDefault),
       gradeSchoolControl: '',
       groupSchoolControl: '',
       paymentModalityControl: ''
     });
-    this.getAllStudentDocuments();
+    //this.getAllStudentDocuments();
   }
 
   updateDocumentsValues() {
@@ -396,6 +398,10 @@ export class UpdateStudentComponent implements OnInit {
     this.saveStudent(template, event);
   }
 
+  backMenu(){
+    this.router.navigate(['/menu']);
+  }
+
   private saveStudent(template: TemplateRef<any>, event) {
     let enrollDate = new Date(this.updateStudentForm.controls.enrollDate.value);
     let birthDate = new Date(this.updateStudentForm.controls.birthDate.value);
@@ -428,29 +434,37 @@ export class UpdateStudentComponent implements OnInit {
       let validitySave = this.updateStudentForm.controls["pendingDocumentDate" + element.id].value;
       this.pendingStudentDocumentsBySave.push(new PendingStudentDocument(element.id, validitySave, element.file));
     });
-    this.UpdateStudentInformation(this.student, template, event);
+    this.UpdateStudentInformation(this.student, enrollDate, template, event);
   }
 
-  async UpdateStudentInformation(student: Student, template: TemplateRef<any>, event) {
-    await Promise.all([
-      this.ActualizarEstudiante(student),
-      this.deleteDocuments(),
-      this.AgregarDocumentos(student),
-      this.AddConcepts(student),
-    ]).then(value => this.mostrarMensajeExitoso(student, template, event));
+  private UpdateStudentInformation(student: Student, enrollDate:Date, template: TemplateRef<any>, event) {
+      this.ActualizarEstudiante(enrollDate, template, event);
   }
 
-  ActualizarEstudiante(student: Student) {
-    this.spService.updateStudent(this.student, this.student.id).then(
-      (response) => {
-        console.log("Actualiza estudiante");
-      }, err => {
-        alert('Falla en el método updateDocuments');
+  ActualizarEstudiante(enrollDate:Date, template: TemplateRef<any>, event) {
+    this.spService.addStudent(this.student).then(
+      (iar: ItemAddResult)=>{
+        this.student.id = iar.data.Id;
+        let studentKey = AppSettings.generateStudentKey(iar.data.Id,enrollDate.getMonth(),enrollDate.getFullYear(),this.updateStudentForm.controls.stageSchool.value.Abreviatura);
+        this.spService.assignStudentKey(studentKey,iar.data.Id).then(
+          (update:ItemAddResult)=>{
+            this.student.key = studentKey;
+            sessionStorage.setItem('student',JSON.stringify(this.student));
+            this.deleteDocuments(),
+            this.AgregarDocumentos();
+            this.AddConcepts();
+            this.mostrarMensajeExitoso(template, event)
+          },err=>{
+            alert('Fallo asignar clave')
+          }
+        )
+      }, err=>{
+        alert('Error Creando')
       }
-    );
+    )
   }
 
-  AddConcepts(student: Student) {
+  AddConcepts() {
     let paymentModalityenrollment = this.updateStudentForm.controls.paymentModalityControl.value;
     let concepts = this.getPaymentConcepts();
     concepts.forEach(element => {
@@ -475,7 +489,7 @@ export class UpdateStudentComponent implements OnInit {
       (response) => {
         console.log("Agrega conceptos");
       }, err => {
-        alert('Falla en el método updateDocuments');
+        alert('Falla en el método Conceptos');
       }
     );
   }
@@ -492,10 +506,10 @@ export class UpdateStudentComponent implements OnInit {
     }
   }
 
-  AgregarDocumentos(student: Student) {
+  AgregarDocumentos() {
     let randomKey = this.generateRandomKeyDocument(6);
     this.pendingStudentDocumentsBySave.forEach(element => {
-      this.spService.addStudentDocuments(student, element.file, randomKey).then(
+      this.spService.addStudentDocuments(this.student, element.file, randomKey).then(
         (response) => {
           let validityDate = (element.validity != null) ? new Date(element.validity).toISOString() : null;
           response.file.getItem("ID", "Title", "Vigencia").then(
@@ -517,9 +531,8 @@ export class UpdateStudentComponent implements OnInit {
     });
   }
 
-  mostrarMensajeExitoso(student: Student, template: TemplateRef<any>, event) {
+  mostrarMensajeExitoso(template: TemplateRef<any>, event) {
     this.loading=false;
-     sessionStorage.setItem('student',JSON.stringify(student));
      this.successUpdateStudentModal = this.modalService.show(template);
      if (event === 'POST') {
       this.router.navigate(['/menu']);

@@ -27,7 +27,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'Authorization':'Bearer 0x4E893FA20DC1400F6AC62ACFBB4090F668B20ACCC1AE3DE7173DB7FCE2A862232C28BFD17C061FBBFB6920FCEBD05DD03674B7857F84DF30248395C89F6A941B,02 Oct 2018 02:37:31 -0000'
+            'Authorization':'Bearer 0x55A079436469A8C5575A5CA54FCAA77232F45EEDB8514B3178637491BA5A7950A571B8BC686B914BB6A89FA26A776BB8F9E38E913B72F8D3F34CEFC08E5AE3D5,04 Oct 2018 01:07:05 -0000'
         }
     },environment.web);
 
@@ -255,11 +255,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
       });
   }
 
-
-
-
-
-    addStudent(student: Student, abbreviationStage: string) {
+    addStudent(student: Student) {
         return this.getConfig().web.lists.getByTitle(environment.studentList).items.add({
             Title: student.name,
             FechaNacimiento: student.birthDate,
@@ -278,7 +274,11 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
             Celular: student.movilNumber,
             OcupacionTutor: student.parentJob,
             Observaciones: student.observations,
-            EscuelaOrigen: student.originSchool
+            EscuelaOrigen: student.originSchool,
+            CicloEscolarId: student.cycleId,
+            TurnoId: student.turnId,
+            GradoId: student.gradeId,
+            GrupoId: student.groupId
         });
     }
 
