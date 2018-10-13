@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Sex } from '../dtos/sex';
 import { StudentStatus } from '../dtos/studentStatus';
 import { SchoolStatus } from '../dtos/schoolStatus';
@@ -11,6 +11,10 @@ import { SPService } from '../services/sp.service';
 import { Router } from '@angular/router';
 import { Group } from '../dtos/group';
 import { States } from '../dtos/states';
+import { StudentDocument } from '../dtos/studentDocument';
+import { SavedStudentDocument } from '../dtos/savedStudentDocument';
+import { PendingStudentDocument } from '../dtos/pendingStudenDocument';
+
 
 @Component({
   selector: 'app-update-student-info',
@@ -37,6 +41,16 @@ export class UpdateStudentInfoComponent implements OnInit {
   selectedGradeSchool: Grade;
   selectedGroupSchool: Group;
   student: Student;
+  savedStudentDocuments: SavedStudentDocument[] = [];
+  deleteSavedStudentDocuments: SavedStudentDocument[] = [];
+  pendingStudentDocuments: PendingStudentDocument[] = [];
+  deletePendingDocuments: PendingStudentDocument[] = [];
+  pendingStudentDocumentsBySave: PendingStudentDocument[] = [];
+  displaySavedDocuments: string;
+  displayPendingDocuments: string;
+  selectedTab: number;
+  studentDocuments: StudentDocument[] = [];
+
   public loading:boolean;
 
   public successUpdateStudentModal: BsModalRef;
@@ -46,8 +60,14 @@ export class UpdateStudentInfoComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.InitializeDocumentstables();
     this.getStudent();
     this.registerControlsForm();
+  }
+
+  InitializeDocumentstables() {
+    this.displaySavedDocuments = "none";
+    this.displayPendingDocuments = "none";
   }
 
   getTurnsList() {
@@ -120,6 +140,43 @@ export class UpdateStudentInfoComponent implements OnInit {
     )
   }
 
+  getAllStudentDocuments() {
+    this.spService.getAllStudentDocuments(this.student.id).then(
+      (Response) => {
+        this.savedStudentDocuments = SavedStudentDocument.fromJsonList(Response);
+        this.loadDocumentsControls();
+        this.updateDocumentsValues();
+        if (this.savedStudentDocuments.length > 0) {
+          this.displaySavedDocuments = "block";
+        }
+      }, err => {
+        alert('Error Obteniendo')
+      }
+    )
+  }
+
+  deleteSavedDocument(document) {
+    let index = this.savedStudentDocuments.findIndex(d => d.name === document.name);
+    if (index > -1) {
+      this.savedStudentDocuments.splice(index, 1);
+      this.deleteSavedStudentDocuments.push(document);
+      if (this.savedStudentDocuments.length == 0) {
+        this.displaySavedDocuments = "none";
+      }
+    }
+  }
+
+  deletePendingDocument(pendingDocument) {
+    let index = this.pendingStudentDocuments.findIndex(d => d.file.name === pendingDocument.file.name);
+    if (index > -1) {
+      this.pendingStudentDocuments.splice(index, 1);
+      this.deletePendingDocuments.push(pendingDocument);
+      if (this.pendingStudentDocuments.length == 0) {
+        this.displayPendingDocuments = "none";
+      }
+    }
+  }
+
   getCountryStates(){
     this.spService.getCountryStates().subscribe(
       (Response)=>{
@@ -154,7 +211,46 @@ export class UpdateStudentInfoComponent implements OnInit {
       gradeSchoolControl: this.selectedGradeSchool,
       groupSchoolControl: this.selectedGroupSchool,
     });
+    this.getAllStudentDocuments();
   }
+
+  updateDocumentsValues() {
+    this.savedStudentDocuments.forEach(element => {
+      this.updateStudentForm.controls['documentDate' + element.id].setValue(element.validity);
+      this.updateStudentForm.controls['documentDate' + element.id].disable();
+    });
+  }
+
+  onFileChange(event) {
+    this.selectedTab = 0;
+    this.displayPendingDocuments = "block";
+    let attachedDocuments = event.target.files;
+    if (this.pendingStudentDocuments.length > 0) {
+      for (let index = 0; index < attachedDocuments.length; index++) {
+        const file = attachedDocuments[index];
+        let existDocumentInList = this.pendingStudentDocuments.some(x => x.file.name === file.name);
+        if (!existDocumentInList) {
+          this.addControlPendingDocument(index);
+          this.pendingStudentDocuments.push(new PendingStudentDocument(index, '', file));
+        } else {
+          console.log("Este nombre de documento ya existe: " + file.name);
+        }
+      }
+    } else {
+      for (let index = 0; index < attachedDocuments.length; index++) {
+        const file = attachedDocuments[index];
+        this.addControlPendingDocument(index);
+        this.pendingStudentDocuments.push(new PendingStudentDocument(index, '', file));
+      }
+    }
+    // Clear the input
+    event.srcElement.value = null;
+  }
+
+  addControlPendingDocument(index) {
+    this.updateStudentForm.addControl('pendingDocumentDate' + index, new FormControl());
+  }
+
 
   private registerControlsForm() {
     this.updateStudentForm = this.formBuilder.group({
@@ -178,6 +274,12 @@ export class UpdateStudentInfoComponent implements OnInit {
       turnSchoolControl: ['', Validators.required],
       gradeSchoolControl: ['', Validators.required],
       groupSchoolControl: ['', Validators.required],
+    });
+  }
+
+  private loadDocumentsControls() {
+    this.savedStudentDocuments.forEach(element => {
+      this.updateStudentForm.addControl('documentDate' + element.id, new FormControl());
     });
   }
 
@@ -224,8 +326,14 @@ export class UpdateStudentInfoComponent implements OnInit {
     this.student.turnId = this.updateStudentForm.controls.turnSchoolControl.value.id;
     this.student.gradeId = this.updateStudentForm.controls.gradeSchoolControl.value.id;
     this.student.groupId = this.updateStudentForm.controls.groupSchoolControl.value.id;
+    this.pendingStudentDocuments.forEach(element => {
+      let validitySave = this.updateStudentForm.controls["pendingDocumentDate" + element.id].value;
+      this.pendingStudentDocumentsBySave.push(new PendingStudentDocument(element.id, validitySave, element.file));
+    });
     this.spService.updateStudentInfo(this.student).then(
       (response) => {
+        this.deleteDocuments(),
+        this.AgregarDocumentos();
         this.loading=false;
         this.successUpdateStudentModal = this.modalService.show(template);
         this.router.navigate(['/menu']);
@@ -233,6 +341,49 @@ export class UpdateStudentInfoComponent implements OnInit {
         alert('Falla en el método updateDocuments');
       }
     );
+  }
+
+  private deleteDocuments() {
+    if (this.deleteSavedStudentDocuments.length > 0) {
+      for (let i = 0; i < this.deleteSavedStudentDocuments.length; i++) {
+        this.spService.deleteDocuments(this.deleteSavedStudentDocuments[i].name).then((response) => {
+          delete this.pendingStudentDocuments[i];
+        }, err => {
+          alert('Falla en el método deleteDocuments');
+        });
+      }
+    }
+  }
+
+  AgregarDocumentos() {
+    let randomKey = this.generateRandomKeyDocument(6);
+    this.pendingStudentDocumentsBySave.forEach(element => {
+      this.spService.addStudentDocuments(this.student, element.file, randomKey).then(
+        (response) => {
+          let validityDate = (element.validity != null) ? new Date(element.validity).toISOString() : null;
+          response.file.getItem("ID", "Title", "Vigencia").then(
+            (item) => {
+              this.spService.updateDocuments(this.student, item["ID"], element.file.name, validityDate, randomKey).then(
+                (response) => {
+                }, err => {
+                  alert('Falla en el método updateDocuments');
+                }
+              );
+            }, err => {
+              alert('Falla en el método getItem');
+            }
+          );
+        }, err => {
+          alert('Falla en el método updateDocuments');
+        }
+      );
+    });
+  }
+
+  generateRandomKeyDocument(length) {
+    var str = "";
+    for (; str.length < length; str += Math.random().toString(36).substr(2));
+    return str.substr(0, length);
   }
 
   
