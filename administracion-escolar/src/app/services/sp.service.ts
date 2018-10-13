@@ -310,7 +310,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
     }
 
     updateStudentInfo(student: Student){
-        return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(student.id).update({
+        return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(student.id).update({
             Title: student.name,
             FechaNacimiento: student.birthDate,
             SexoId: student.sexId,
@@ -357,7 +357,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
 
 
     addconceptsStudent(studentId: number, conceptId: number, modalityId: any){
-        return this.getConfigPost().web.lists.getByTitle(environment.conceptStudentList).items.add({
+        return this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.add({
             AlumnoId: studentId,
             ConceptoId: conceptId,
             ModalidadId:modalityId

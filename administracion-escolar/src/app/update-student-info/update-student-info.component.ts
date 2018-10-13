@@ -331,14 +331,13 @@ export class UpdateStudentInfoComponent implements OnInit {
   }
 
   getPaymentConcept() {
-    let paymentConceptIdsToSave = this.opcionalPaymentConceptsToPrint;
+    let paymentConceptIdsToSave = new Array();
     for (let i = 0; i < this.opcionalPaymentConceptsToPrint.length; i++) {
       const op = this.opcionalPaymentConceptsToPrint[i];
-      for (let j = 0; j < paymentConceptIdsToSave.length; j++) {
-          if (!op.checked) {
-            paymentConceptIdsToSave.splice(j, 1);
+          if (op.checked) {
+            paymentConceptIdsToSave.push(op);
           }
-      }
+      
     }
     return paymentConceptIdsToSave;
   }
