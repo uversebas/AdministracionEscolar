@@ -360,61 +360,35 @@
                 </div>
               </mat-tab>
             </mat-tab-group>
-                        </div>
-                      </div>
-                    </div>
-                  </fieldset>
-                  <fieldset>
-                    <legend class="scheduler-border">Conceptos</legend>
-                    <div class="col-md-12">
-                      <div class="payment-concepts">
-                        <div *ngFor='let concept of opcionalPaymentConceptsToPrint'>
-                          <mat-checkbox [checked]="concept.checked" (change)='selectConcept(concept)'>{{concept.title}}</mat-checkbox>
-                        </div>
-                      </div>
-                    </div>
-                  </fieldset>
-                  <div class="row">
-                      <div class="col-md-12">
-                          <div class="form-group">
-                              <div class="botonera">
-                                  <button type="button" (click)='backMenu()' class="btn btn-default">Salir</button>
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                              </div>
-                            </div>
-                      </div>
-                
-                    </div>
-      </form>
-      <ng-template #templatesuccessUpdateStudent>
-          <div class="modal-header">
-            <button type="button" class="close pull-right" aria-label="Close" (click)="closeSuccessUpdateStudentModal()">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title"> Actualización exitosa </h4>
           </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-12">
-                La información del alumno se actualizo exitosamente.
-              </div>
-            </div>
-          </div>
-        </fieldset>
-      </div>
+		  </fieldset>
     </div>
+</div>
 
-    <div class="row">
-      <div class="col-md-12">
-        <div class="form-group">
-          <div class="botonera">
-            <button type="button" (click)='backMenu()' class="btn btn-default">Salir</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+    <fieldset>
+      <legend class="scheduler-border">Conceptos</legend>
+	  <div class="row">
+		      <div class="col-md-12">
+        <div class="payment-concepts">
+          <div *ngFor='let concept of opcionalPaymentConceptsToPrint'>
+            <mat-checkbox [checked]="concept.checked" (change)='selectConcept(concept)'>{{concept.title}}</mat-checkbox>
           </div>
         </div>
       </div>
+	  </div>
+    </fieldset>
 
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <div class="botonera">
+          <button type="button" (click)='backMenu()' class="btn btn-default">Salir</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
     </div>
+
+  </div>
   </form>
   <ng-template #templatesuccessUpdateStudent>
     <div class="modal-header">
@@ -434,4 +408,4 @@
       <button type="button" class="btn btn-cr-other" data-dismiss="modal" (click)="closeSuccessUpdateStudentModal()">Ok</button>
     </div>
   </ng-template>
-</div>
+  </div>

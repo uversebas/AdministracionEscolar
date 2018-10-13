@@ -27,7 +27,7 @@ export class SPService {
         headers:{
             "Accept":"application/json; odata=verbose",
             'Content-Type':'application/json;odata=verbose',
-            'Authorization':'Bearer 0x55A079436469A8C5575A5CA54FCAA77232F45EEDB8514B3178637491BA5A7950A571B8BC686B914BB6A89FA26A776BB8F9E38E913B72F8D3F34CEFC08E5AE3D5,04 Oct 2018 01:07:05 -0000'
+            'Authorization':'Bearer 0x0C043186F7C80477A9EA1F2B79057523D6AE8F1BAAE49641C91DB95272495EB22D8E43D055DAAFB58B89A77F33EFF069B073EB8727BA565EF4FBC586E25D2E92,13 Oct 2018 22:40:27 -0000'
         }
     },environment.web);
 
@@ -310,7 +310,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
     }
 
     updateStudentInfo(student: Student){
-        return this.getConfig().web.lists.getByTitle(environment.studentList).items.getById(student.id).update({
+        return this.getConfigPost().web.lists.getByTitle(environment.studentList).items.getById(student.id).update({
             Title: student.name,
             FechaNacimiento: student.birthDate,
             SexoId: student.sexId,
@@ -357,7 +357,7 @@ addPaymentStudent(studentId: number, conceptId: number, totalAmountToPay: number
 
 
     addconceptsStudent(studentId: number, conceptId: number, modalityId: any){
-        return this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.add({
+        return this.getConfigPost().web.lists.getByTitle(environment.conceptStudentList).items.add({
             AlumnoId: studentId,
             ConceptoId: conceptId,
             ModalidadId:modalityId
