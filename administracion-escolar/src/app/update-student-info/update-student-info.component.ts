@@ -11,10 +11,16 @@ import { SPService } from '../services/sp.service';
 import { Router } from '@angular/router';
 import { Group } from '../dtos/group';
 import { States } from '../dtos/states';
+<<<<<<< HEAD
 import { StudentDocument } from '../dtos/studentDocument';
 import { SavedStudentDocument } from '../dtos/savedStudentDocument';
 import { PendingStudentDocument } from '../dtos/pendingStudenDocument';
 
+=======
+import { PaymentConcept } from '../dtos/paymentConcept';
+import { StudentPayment } from '../dtos/studentPayment';
+import { ConceptStudent } from '../dtos/conceptStudent';
+>>>>>>> d003a167176ce3b19a4bf9dc99b4ea52b03bc66c
 
 @Component({
   selector: 'app-update-student-info',
@@ -41,6 +47,7 @@ export class UpdateStudentInfoComponent implements OnInit {
   selectedGradeSchool: Grade;
   selectedGroupSchool: Group;
   student: Student;
+<<<<<<< HEAD
   savedStudentDocuments: SavedStudentDocument[] = [];
   deleteSavedStudentDocuments: SavedStudentDocument[] = [];
   pendingStudentDocuments: PendingStudentDocument[] = [];
@@ -51,6 +58,13 @@ export class UpdateStudentInfoComponent implements OnInit {
   selectedTab: number;
   studentDocuments: StudentDocument[] = [];
 
+=======
+  paymentConcepts: PaymentConcept[] = [];
+  studentPayments:StudentPayment[]=[];
+  opcionalPaymentConcepts: PaymentConcept[] = [];
+  opcionalPaymentConceptsToPrint : PaymentConcept[] = [];
+  conceptsByStudent:ConceptStudent[]=[];
+>>>>>>> d003a167176ce3b19a4bf9dc99b4ea52b03bc66c
   public loading:boolean;
 
   public successUpdateStudentModal: BsModalRef;
@@ -103,7 +117,38 @@ export class UpdateStudentInfoComponent implements OnInit {
 
   getStudent() {
     this.student = JSON.parse(sessionStorage.getItem('student'));
+    this.getPaymentConceptsByStage();
     this.getSexList();
+  }
+
+  getConceptsByStudent(){
+    this.spService.getConceptsByStudent(this.student.id).subscribe(
+      (Response)=>{
+        this.conceptsByStudent = ConceptStudent.fromJsonList(Response);
+        this.opcionalPaymentConcepts.forEach(pc => {
+          let stay = false;
+          this.conceptsByStudent.forEach(spc => {
+            if (pc.id === spc.conceptId) {
+              stay=true;
+            }
+          });
+          if (!stay) {
+            this.opcionalPaymentConceptsToPrint.push(pc);
+          }
+        });
+      }
+    )
+  }
+
+
+  getPaymentConceptsByStage(){
+    this.spService.getPaymentConceptList(this.student.stageSchoolId).subscribe(
+      (Response) => {
+        this.paymentConcepts = PaymentConcept.fromJsonList(Response);
+        this.opcionalPaymentConcepts = this.paymentConcepts.filter(p => p.isOption);
+        this.getConceptsByStudent();
+      }
+    )
   }
 
   getSexList() {
@@ -291,6 +336,22 @@ export class UpdateStudentInfoComponent implements OnInit {
     this.router.navigate(['/menu']);
   }
 
+  getPaymentConcept() {
+    let paymentConceptIdsToSave = this.opcionalPaymentConceptsToPrint;
+    for (let i = 0; i < this.opcionalPaymentConceptsToPrint.length; i++) {
+      const op = this.opcionalPaymentConceptsToPrint[i];
+      for (let j = 0; j < paymentConceptIdsToSave.length; j++) {
+          if (!op.checked) {
+            paymentConceptIdsToSave.splice(j, 1);
+          }
+      }
+    }
+    return paymentConceptIdsToSave;
+  }
+  selectConcept(concept: PaymentConcept) {
+    concept.checked = !concept.checked;
+  }
+
   onSubmit(template: TemplateRef<any>) {
     this.submitted = true;
     if (this.updateStudentForm.invalid) {
@@ -301,6 +362,30 @@ export class UpdateStudentInfoComponent implements OnInit {
   }
 
   get f() { return this.updateStudentForm.controls }
+
+  AddConcepts() {
+    this.getPaymentConcept().forEach(element => {
+      let studentId = this.student.id;
+      let conceptId = element.id;
+      switch (element.title) {
+        default:
+          this.addConcepts(studentId, conceptId, null);
+          break;
+        case "Transporte":
+          this.addConcepts(studentId, conceptId, 2);
+      }
+    });
+  }
+
+  addConcepts(studentId: number, conceptId: number, modalityId: any) {
+    this.spService.addconceptsStudent(studentId, conceptId,modalityId).then(
+      (response) => {
+        console.log("Agrega conceptos");
+      }, err => {
+        alert('Falla en el método Conceptos');
+      }
+    );
+  }
 
   private saveStudent(template: TemplateRef<any>) {
     let enrollDate = new Date(this.updateStudentForm.controls.enrollDate.value);
@@ -326,10 +411,14 @@ export class UpdateStudentInfoComponent implements OnInit {
     this.student.turnId = this.updateStudentForm.controls.turnSchoolControl.value.id;
     this.student.gradeId = this.updateStudentForm.controls.gradeSchoolControl.value.id;
     this.student.groupId = this.updateStudentForm.controls.groupSchoolControl.value.id;
+<<<<<<< HEAD
     this.pendingStudentDocuments.forEach(element => {
       let validitySave = this.updateStudentForm.controls["pendingDocumentDate" + element.id].value;
       this.pendingStudentDocumentsBySave.push(new PendingStudentDocument(element.id, validitySave, element.file));
     });
+=======
+    this.AddConcepts();
+>>>>>>> d003a167176ce3b19a4bf9dc99b4ea52b03bc66c
     this.spService.updateStudentInfo(this.student).then(
       (response) => {
         this.deleteDocuments(),
