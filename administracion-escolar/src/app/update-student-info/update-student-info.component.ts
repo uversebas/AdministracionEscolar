@@ -11,16 +11,13 @@ import { SPService } from '../services/sp.service';
 import { Router } from '@angular/router';
 import { Group } from '../dtos/group';
 import { States } from '../dtos/states';
-<<<<<<< HEAD
 import { StudentDocument } from '../dtos/studentDocument';
 import { SavedStudentDocument } from '../dtos/savedStudentDocument';
 import { PendingStudentDocument } from '../dtos/pendingStudenDocument';
 
-=======
 import { PaymentConcept } from '../dtos/paymentConcept';
 import { StudentPayment } from '../dtos/studentPayment';
 import { ConceptStudent } from '../dtos/conceptStudent';
->>>>>>> d003a167176ce3b19a4bf9dc99b4ea52b03bc66c
 
 @Component({
   selector: 'app-update-student-info',
@@ -47,7 +44,6 @@ export class UpdateStudentInfoComponent implements OnInit {
   selectedGradeSchool: Grade;
   selectedGroupSchool: Group;
   student: Student;
-<<<<<<< HEAD
   savedStudentDocuments: SavedStudentDocument[] = [];
   deleteSavedStudentDocuments: SavedStudentDocument[] = [];
   pendingStudentDocuments: PendingStudentDocument[] = [];
@@ -58,13 +54,11 @@ export class UpdateStudentInfoComponent implements OnInit {
   selectedTab: number;
   studentDocuments: StudentDocument[] = [];
 
-=======
   paymentConcepts: PaymentConcept[] = [];
   studentPayments:StudentPayment[]=[];
   opcionalPaymentConcepts: PaymentConcept[] = [];
   opcionalPaymentConceptsToPrint : PaymentConcept[] = [];
   conceptsByStudent:ConceptStudent[]=[];
->>>>>>> d003a167176ce3b19a4bf9dc99b4ea52b03bc66c
   public loading:boolean;
 
   public successUpdateStudentModal: BsModalRef;
@@ -411,14 +405,11 @@ export class UpdateStudentInfoComponent implements OnInit {
     this.student.turnId = this.updateStudentForm.controls.turnSchoolControl.value.id;
     this.student.gradeId = this.updateStudentForm.controls.gradeSchoolControl.value.id;
     this.student.groupId = this.updateStudentForm.controls.groupSchoolControl.value.id;
-<<<<<<< HEAD
     this.pendingStudentDocuments.forEach(element => {
       let validitySave = this.updateStudentForm.controls["pendingDocumentDate" + element.id].value;
       this.pendingStudentDocumentsBySave.push(new PendingStudentDocument(element.id, validitySave, element.file));
     });
-=======
     this.AddConcepts();
->>>>>>> d003a167176ce3b19a4bf9dc99b4ea52b03bc66c
     this.spService.updateStudentInfo(this.student).then(
       (response) => {
         this.deleteDocuments(),
