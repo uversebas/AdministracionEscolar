@@ -8,6 +8,8 @@ import { StudentByDivision } from '../dtos/studentByDivision';
 import { SummaryPayment } from '../dtos/summaryPayment';
 import { AppSettings } from '../shared/appSettings';
 import { StageSchool } from '../dtos/stageSchool';
+import { PaymentConcept } from '../dtos/paymentConcept';
+import { Month } from '../dtos/month';
 
 @Component({
   selector: 'app-students-with-debt',
@@ -24,6 +26,9 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
   students: StudentByDivision[]= [];
   selectedStageSchool: StageSchool;
   stagesSchool: StageSchool[] = [];
+  paymentConcepts: PaymentConcept[] = [];
+  selectedMonth:Month;
+  months:Month[]=[];
   public loading:boolean;
 
   constructor(private spService: SPService) {
@@ -32,7 +37,8 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
 
   ngOnInit() {
     this.configDataTable();
-    //this.getStageSchool();
+    this.getStageSchool();
+    this.getMonths();
     this.getAllStudents();
   }
 
@@ -44,16 +50,34 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
     this.spService.getStageShoolList().subscribe(
       (Response) => {
         this.stagesSchool = StageSchool.fromJsonList(Response);
-        //this.selectStage();
       }
     )
   }
 
+  getMonths(){
+    this.spService.getMonthsList().subscribe(
+      (Response)=>{
+        this.months=Month.fromJsonList(Response);
+      }
+    )
+  }
+
+  selectConcept(concept){
+
+  }
+
+  selectecMonth(){
+
+  }
+
   selectStage() {
-    this.studentswithdebtByDivision = [];
-    this.studentswithdebtByDivision = this.studentswithdebt.filter(s=>s.divisionId === this.selectedStageSchool.id);
-    this.getStudentsDebt();
-    //this.dtTrigger.next();
+    this.loading=true;
+    this.spService.getPaymentConceptList(this.selectedStageSchool.id).subscribe(
+      (Response) => {
+        this.paymentConcepts = PaymentConcept.fromJsonList(Response);
+        this.loading=false;
+      }
+    )
   }
 
   getAllStudents(){
