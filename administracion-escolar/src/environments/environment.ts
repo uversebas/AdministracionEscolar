@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  web:'https://vincicloud.sharepoint.com/sites/SistemadeAdministracionEscolardev/Desarrollo',
-  relativeweb: '/sites/SistemadeAdministracionEscolardev/Desarrollo/',
+  web:'https://vincicloud.sharepoint.com/sites/SistemadeAdministracionEscolardev',
+  relativeweb: '/sites/SistemadeAdministracionEscolardev/',
   menuList:'MenuAdministracionEscolar',
   sexList:'Sexo',
   studentStatusList:'EstatusAlumno',

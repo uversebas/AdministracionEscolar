@@ -1,55 +1,57 @@
 <div class="container">
-    <div class="loading" *ngIf='loading'>
-        <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif" alt="loading...">
+  <div class="loading" *ngIf='loading'>
+    <img class="img-logo" src="/sites/SistemadeAdministracionEscolardev/SiteAssets/administracion-estudiantes/resources/images/loading.gif"
+      alt="loading...">
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="title-page">
+        <h3>Alumnos con adeudos</h3>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5">
+      <div class="row">
+        <div class="col-md-12">
+          <fieldset class="scheduler-border">
+            <label>División </label>
+            <mat-select [(value)]='selectedStageSchool' (selectionChange)='selectStage()' class="form-control"
+              [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+              <mat-option *ngFor="let stage of stagesSchool" [value]="stage">
+                {{stage.title}}
+              </mat-option>
+            </mat-select>
+            <div class="conceptos" *ngIf='selectedStageSchool'>
+              <label>Seleccione el concepto que desea consultar: </label>
+              <div *ngFor='let concept of paymentConcepts'>
+                <mat-checkbox [checked]="concept.checked" (change)='selectConcept(concept)'>{{concept.title}}</mat-checkbox>
+              </div>
+            </div>
+            <div class="meses" *ngIf='selectedStageSchool'>
+              <label>Mes del pago: </label>
+              <mat-select [(value)]='selectedMonth' (selectionChange)='selectecMonth()' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentMonthControl.errors }">
+                <mat-option *ngFor="let month of months" [value]="month">
+                  {{month.title}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </fieldset>
+        </div>
       </div>
       <div class="row">
-          <div class="col-md-12">
-            <div class="title-page">
-              <h3>Alumnos con adeudos</h3>
-            </div>
-          </div>
+        <div class="col-md-12">
+          <fieldset class="scheduler-border">
+            <label>Seleccione lo que desea ver: </label>
+            <mat-checkbox>Alumnos que no han pagado</mat-checkbox>
+            <mat-checkbox>Alumnos que han pagado parcialmente</mat-checkbox>
+            <mat-checkbox>Alumnos que ya pagaron</mat-checkbox>
+          </fieldset>
         </div>
-        <div class="row">
-          <div class="col-md-5">
-            <div class="row">
-              <div class="col-md-12">
-                <fieldset class="scheduler-border">
-                    <label>División </label>
-                    <mat-select [(value)]='selectedStageSchool' (selectionChange)='selectStage()' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
-                      <mat-option *ngFor="let stage of stagesSchool" [value]="stage">
-                        {{stage.title}}
-                      </mat-option>
-                    </mat-select>
-                    <div class="conceptos" *ngIf='selectedStageSchool'>
-                      <label>Seleccione el concepto que desea consultar: </label>
-                      <div *ngFor='let concept of paymentConcepts'>
-                          <mat-checkbox [checked]="concept.checked" (change)='selectConcept(concept)'>{{concept.title}}</mat-checkbox>
-                      </div>
-                    </div>
-                    <div class="meses" *ngIf='selectedStageSchool'>
-                      <label>Mes del pago: </label>
-                      <mat-select [(value)]='selectedMonth' (selectionChange)='selectecMonth()' class="form-control" [ngClass]="{ 'is-invalid': submitted && f.paymentMonthControl.errors }">
-                        <mat-option *ngFor="let month of months" [value]="month">
-                            {{month.title}}
-                        </mat-option>
-                      </mat-select>
-                    </div>
-                </fieldset>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <fieldset class="scheduler-border">
-                  <label>Seleccione lo que desea ver: </label>
-                    <mat-checkbox>Alumnos que no han pagado</mat-checkbox>
-                    <mat-checkbox>Alumnos que han pagado parcialmente</mat-checkbox>
-                    <mat-checkbox>Alumnos que ya pagaron</mat-checkbox>
-                </fieldset>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-7">
-              <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
+      </div>
+    </div>
+    <div class="col-md-7">
+      <!--table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
                   <thead>
                       <tr>
                         <th></th>
@@ -78,8 +80,34 @@
                             <td>{{student.colegiatura | currency}}</td>
                     </tr>
                   </tbody>
-                </table>
-          </div>
-        </div>
-</div>
+                </table-->
 
+      <table  datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Nombre</th>
+            <th>Estatus</th>
+            <th>División</th>
+            <th>Grado</th>
+            <th>Grupo</th>
+            <th>Concepto</th>
+            <th>Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor='let student of studentsFilter'>
+            <td>{{ student.key }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{student.status}}</td>
+            <td>{{student.division}}</td>
+            <td>{{student.grade}}</td>
+            <td>{{student.group}}</td>
+            <td>{{student.concept}}</td>
+            <td>{{student.amount | currency}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -21,28 +21,31 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
   dtTrigger: Subject<any> = new Subject();
   studentswithdebt: StudentWithDebt[]= [];
   studentswithdebtByDivision: StudentWithDebt[]= [];
+  studentsFilter: StudentWithDebt[] = [];
   conceptsByStudent:ConceptStudent[]=[];
   studentPayments:StudentPayment[]=[];
   students: StudentByDivision[]= [];
   selectedStageSchool: StageSchool;
   stagesSchool: StageSchool[] = [];
+  selectedPaymentConcepts: PaymentConcept[] = [];
   paymentConcepts: PaymentConcept[] = [];
   selectedMonth:Month;
   months:Month[]=[];
   public loading:boolean;
+  showTable: boolean = false;
 
   constructor(private spService: SPService) {
     this.loading=true;
    }
 
   ngOnInit() {
-    this.configDataTable();
     this.getStageSchool();
     this.getMonths();
-    this.getAllStudents();
+    this.getStudentPaymentList();
   }
 
   private configDataTable() {
+    this.dtOptions = null;
     this.dtOptions = AppSettings.getDataTableConfiguration();
   }
 
@@ -62,12 +65,26 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
     )
   }
 
-  selectConcept(concept){
-
+  selectConcept(concept:PaymentConcept){
+    concept.checked = !concept.checked;
+    this.getFilterStudent();
   }
 
   selectecMonth(){
+    this.getFilterStudent();
+  }
 
+  getFilterStudent(){
+    this.loading=true;
+    this.configDataTable();
+    this.dtOptions
+    this.studentsFilter = StudentWithDebt.getStudentDebtFilter(this.studentswithdebt,this.paymentConcepts.filter(p=>p.checked),this.selectedMonth,null,this.studentPayments);
+    
+    setTimeout(() => {
+      this.dtTrigger.next();
+    }, 7000);
+    this.loading=false;
+    
   }
 
   selectStage() {
@@ -75,17 +92,16 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
     this.spService.getPaymentConceptList(this.selectedStageSchool.id).subscribe(
       (Response) => {
         this.paymentConcepts = PaymentConcept.fromJsonList(Response);
+        this.getStudentByDivision();
         this.loading=false;
       }
     )
   }
 
-  getAllStudents(){
-    this.spService.getAllStudentList().subscribe(
+  getStudentByDivision(){
+    this.spService.getStudentsByDivisionList(this.selectedStageSchool.id).subscribe(
       (Response)=>{
         this.studentswithdebt = StudentWithDebt.fromJsonList(Response);
-        this.loading=false;
-        this.getStudentsDebt();
       }
     )
   }
@@ -93,6 +109,17 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
   getSummaryPayment(conceptsByStudent, studentPayments){
     return SummaryPayment.getSummaryPaymentList(conceptsByStudent,studentPayments);
     
+  }
+
+  getStudentPaymentList(){
+    this.spService.getStudenPaymentList().subscribe(
+      (Response)=>{
+        this.studentPayments = StudentPayment.fromJsonListExpan(Response);
+        this.loading=false;
+      },err=>{
+        console.log('error obteniendo lista de pagos')
+      }
+    )
   }
 
   private getConcepts(student:StudentWithDebt){
@@ -108,6 +135,8 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
     }
     });
 }
+
+
 
   getStudentsDebt(){
     for (let index = 0; index < this.studentswithdebt.length; index++) {
