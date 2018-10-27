@@ -13,7 +13,7 @@ export class StudentPayment{
     }
 
     public static fromJsonExpand(element: any){
-        return new StudentPayment(element.AlumnoId,element.Concepto.ID,element.Monto,element.Pagado,element.Id,element.Mes.ID,element.FechaPago,element.Ciclo.Title, element.Concepto.ConceptoCalculado, element.Mes.Title);
+        return new StudentPayment(element.AlumnoId,element.Concepto.ID,element.Monto,element.Pagado,element.Id,element.Mes.Id,element.FechaPago,element.Ciclo.Title, element.Concepto.ConceptoCalculado, element.Mes.Title);
     }
     public static fromJsonListExpan(elements:any){
         var list=[];

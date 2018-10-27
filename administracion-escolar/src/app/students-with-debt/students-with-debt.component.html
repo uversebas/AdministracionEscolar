@@ -11,13 +11,10 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-5">
-      <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <fieldset class="scheduler-border">
             <label>División </label>
-            <mat-select [(value)]='selectedStageSchool' (selectionChange)='selectStage()' class="form-control"
-              [ngClass]="{ 'is-invalid': submitted && f.stageSchool.errors }">
+            <mat-select [(value)]='selectedStageSchool' (selectionChange)='selectStage()' class="form-control">
               <mat-option *ngFor="let stage of stagesSchool" [value]="stage">
                 {{stage.title}}
               </mat-option>
@@ -38,76 +35,43 @@
             </div>
           </fieldset>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <fieldset class="scheduler-border">
-            <label>Seleccione lo que desea ver: </label>
-            <mat-checkbox>Alumnos que no han pagado</mat-checkbox>
-            <mat-checkbox>Alumnos que han pagado parcialmente</mat-checkbox>
-            <mat-checkbox>Alumnos que ya pagaron</mat-checkbox>
+            <label>Seleccione lo que desea ver: </label><br>
+            <mat-checkbox [checked]="completedPayment" (change)='selectCompletedPayment()'>Alumnos que ya pagaron</mat-checkbox>
+            <mat-checkbox [checked]="partialPayment" (change)='selectPartialPayment()'>Alumnos que han pagado parcialmente</mat-checkbox>
+            <mat-checkbox [checked]="noPayment" (change)='selectNoPayment()'>Alumnos que no han pagado</mat-checkbox>
           </fieldset>
         </div>
+  </div>
+    <div class="row">
+      <div class="col-md-12">
+        <table  datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
+          <thead>
+            <tr>
+              <th>Clave</th>
+              <th>Nombre</th>
+              <th>Estatus</th>
+              <th>División</th>
+              <th>Grado</th>
+              <th>Grupo</th>
+              <th>Concepto</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor='let student of studentsFilter' [ngClass]="{'pending-concepet-payment':student.paymentStatus === 'No ha pagado', 'ready-concepet-payment':student.paymentStatus === 'Pagado', 'partial-concepet-payment':student.paymentStatus === 'Pago parcial'}">
+              <td>{{ student.key }}</td>
+              <td>{{ student.name }}</td>
+              <td>{{student.status}}</td>
+              <td>{{student.division}}</td>
+              <td>{{student.grade}}</td>
+              <td>{{student.group}}</td>
+              <td>{{student.concept}}</td>
+              <td>{{student.amount | currency}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-    <div class="col-md-7">
-      <!--table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
-                  <thead>
-                      <tr>
-                        <th></th>
-                        <th>Clave</th>
-                        <th>Nombre</th>
-                        <th>Estatus</th>
-                        <th>División</th>
-                        <th>Grado</th>
-                        <th>Grupo</th>
-                        <th>Inscripción</th>
-                        <th>Credencial</th>
-                        <th>Colegiatura</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor='let student of studentswithdebt'>
-                        <td></td>    
-                        <td>{{ student.key }}</td>
-                            <td>{{ student.name }}</td>
-                            <td>{{student.status}}</td>
-                            <td>{{student.division}}</td>
-                            <td>{{student.grade}}</td>
-                            <td>{{student.group}}</td>
-                            <td>{{student.inscripcion | currency}}</td>
-                            <td>{{student.credencial | currency}}</td>
-                            <td>{{student.colegiatura | currency}}</td>
-                    </tr>
-                  </tbody>
-                </table-->
-
-      <table  datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-responsive table-hover">
-        <thead>
-          <tr>
-            <th>Clave</th>
-            <th>Nombre</th>
-            <th>Estatus</th>
-            <th>División</th>
-            <th>Grado</th>
-            <th>Grupo</th>
-            <th>Concepto</th>
-            <th>Monto</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor='let student of studentsFilter'>
-            <td>{{ student.key }}</td>
-            <td>{{ student.name }}</td>
-            <td>{{student.status}}</td>
-            <td>{{student.division}}</td>
-            <td>{{student.grade}}</td>
-            <td>{{student.group}}</td>
-            <td>{{student.concept}}</td>
-            <td>{{student.amount | currency}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </div>

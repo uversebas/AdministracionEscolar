@@ -30,7 +30,7 @@ export class StudentWithDebt{
     }
 
     public static getStudentDebtFilter(students:StudentWithDebt[], paymentConcepts:PaymentConcept[],
-        selectedMonth:Month, selectedStatus:string[], studentPayments:StudentPayment[]) {
+        selectedMonth:Month, studentPayments:StudentPayment[], completedPayment:boolean, partialPayment:boolean, noPayment: boolean) {
         let studentsFilter: StudentWithDebt[] = new Array();
         paymentConcepts.forEach(concept => {
             if (concept.dues) {
@@ -41,7 +41,7 @@ export class StudentWithDebt{
                         let notPayment = false;
                         studentPayments.forEach(payment => {
                             if (student.id === payment.studentId && concept.id === payment.conceptId && payment.monthId === selectedMonth.id) {
-                                amount += concept.amount;
+                                amount += payment.amount;
                                 notPayment = true;
                                 paymentComplete = payment.isPayment;
                             }
@@ -65,7 +65,7 @@ export class StudentWithDebt{
                     let notPayment = false;
                     studentPayments.forEach(payment => {
                         if (student.id === payment.studentId && concept.id === payment.conceptId) {
-                            amount += concept.amount;
+                            amount += payment.amount;
                             notPayment = true;
                             paymentComplete = payment.isPayment;
                         }
@@ -83,7 +83,22 @@ export class StudentWithDebt{
                 });
             }
         });
-        return studentsFilter;
-
+        if ((completedPayment && partialPayment && noPayment) || (!completedPayment && !partialPayment && !noPayment)) {
+            return studentsFilter;
+        }else{
+            let completedPaymentStudentList = new Array();
+            let partialPaymentStudentList = new Array();
+            let noPaymentStudentList = new Array();
+            if (completedPayment) {
+                completedPaymentStudentList = studentsFilter.filter(s=>s.paymentStatus === 'Pagado');
+            }
+            if (partialPayment) {
+                partialPaymentStudentList = studentsFilter.filter(s=>s.paymentStatus === 'Pago parcial');
+            }
+            if (noPayment) {
+                noPaymentStudentList = studentsFilter.filter(s=>s.paymentStatus === 'No ha pagado');
+            }
+            return completedPaymentStudentList.concat(partialPaymentStudentList).concat(noPaymentStudentList);
+        }
     }
 }

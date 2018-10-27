@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { SPService } from '../services/sp.service';
 import { Subject } from 'rxjs';
 import { StudentWithDebt } from '../dtos/StudentWithDebt';
@@ -10,6 +10,7 @@ import { AppSettings } from '../shared/appSettings';
 import { StageSchool } from '../dtos/stageSchool';
 import { PaymentConcept } from '../dtos/paymentConcept';
 import { Month } from '../dtos/month';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-students-with-debt',
@@ -17,6 +18,8 @@ import { Month } from '../dtos/month';
   styleUrls: ['./students-with-debt.component.css']
 })
 export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
   studentswithdebt: StudentWithDebt[]= [];
@@ -34,18 +37,22 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
   public loading:boolean;
   showTable: boolean = false;
 
+  completedPayment = false;
+  partialPayment = false;
+  noPayment = false;
+
   constructor(private spService: SPService) {
     this.loading=true;
    }
 
   ngOnInit() {
+    this.configDataTable();
     this.getStageSchool();
     this.getMonths();
     this.getStudentPaymentList();
   }
 
   private configDataTable() {
-    this.dtOptions = null;
     this.dtOptions = AppSettings.getDataTableConfiguration();
   }
 
@@ -67,24 +74,54 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
 
   selectConcept(concept:PaymentConcept){
     concept.checked = !concept.checked;
-    this.getFilterStudent();
+    if (this.paymentConcepts.filter(p=>p.checked).length>0) {
+      this.getFilterStudent();
+    }
   }
 
   selectecMonth(){
     this.getFilterStudent();
   }
 
+  selectCompletedPayment(){
+    this.completedPayment= !this.completedPayment;
+    this.getFilterStudent();
+  }
+
+  selectPartialPayment(){
+    this.partialPayment = !this.partialPayment
+    this.getFilterStudent();
+  }
+
+  selectNoPayment(){
+    this.noPayment = !this.noPayment
+    this.getFilterStudent();
+  }
+
+  
+
   getFilterStudent(){
     this.loading=true;
-    this.configDataTable();
-    this.dtOptions
-    this.studentsFilter = StudentWithDebt.getStudentDebtFilter(this.studentswithdebt,this.paymentConcepts.filter(p=>p.checked),this.selectedMonth,null,this.studentPayments);
-    
-    setTimeout(() => {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api)=>{
+      dtInstance.destroy();
+      this.studentsFilter = StudentWithDebt.getStudentDebtFilter(this.studentswithdebt,this.paymentConcepts.filter(p=>p.checked),this.selectedMonth,this.studentPayments, this.completedPayment, this.partialPayment, this.noPayment);
       this.dtTrigger.next();
-    }, 7000);
-    this.loading=false;
-    
+      this.loading=false;
+    });    
+  }
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+
+  clearFilters(){
+    this.completedPayment=this.partialPayment=this.noPayment=false;
+    this.loading=true;
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api)=>{
+      dtInstance.destroy();
+      this.studentsFilter = [];
+      this.dtTrigger.next();
+      this.loading=false;
+    }); 
   }
 
   selectStage() {
@@ -93,6 +130,7 @@ export class StudentsWithDebtComponent implements OnDestroy, OnInit  {
       (Response) => {
         this.paymentConcepts = PaymentConcept.fromJsonList(Response);
         this.getStudentByDivision();
+        this.clearFilters();
         this.loading=false;
       }
     )
