@@ -41,6 +41,7 @@ export class StudentWithDebt{
                         let notPayment = false;
                         studentPayments.forEach(payment => {
                             if (student.id === payment.studentId && concept.id === payment.conceptId && payment.monthId === selectedMonth.id) {
+                                
                                 amount += payment.amount;
                                 notPayment = true;
                                 paymentComplete = payment.isPayment;

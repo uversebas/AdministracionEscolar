@@ -120,12 +120,12 @@ export class SPService {
   }
 
   getStudentList(){
-      let data = from(this.getConfig().web.lists.getByTitle(environment.studentList).items.getAll());
+      let data = from(this.getConfig().web.lists.getByTitle(environment.studentList).items.top(100000).getAll());
       return data;
   }
 
   getAllStudentList(){
-    let data =from(this.getConfig().web.lists.getByTitle(environment.studentList).items.select("Title","Id", "ClaveAlumno", "EstatusAlumno/Title", "Division/Title", "Division/ID", "Grado/Title", "Grupo/Title").expand("EstatusAlumno","Division","Grado","Grupo").get());
+    let data =from(this.getConfig().web.lists.getByTitle(environment.studentList).items.select("Title","Id", "ClaveAlumno", "EstatusAlumno/Title", "Division/Title", "Division/ID", "Grado/Title", "Grupo/Title").expand("EstatusAlumno","Division","Grado","Grupo").top(100000).get());
     return data;
   }
 
@@ -135,42 +135,42 @@ getPaymentModalityList(){
 }
 
 getPaymentConceptList(stageSchoolId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.paymentConcept).items.filter("DivisionId eq "+ stageSchoolId+" and Estado eq 'Activo'").get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.paymentConcept).items.filter("DivisionId eq "+ stageSchoolId+" and Estado eq 'Activo'").top(100000).get());
     return data;
 }
 
 getStudentPaymentList(studentId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.filter("AlumnoId eq " + studentId).get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.filter("AlumnoId eq " + studentId).top(100000).get());
     return data;
 }
 
 getStudentPaymentExpandList(studentId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.select("AlumnoId", "Id", "Concepto/ID", "Concepto/ConceptoCalculado", "Mes/Id", "Mes/Title", "Monto", "Pagado", "Ciclo/Title", "FechaPago").expand("Concepto, Mes, Ciclo").filter("AlumnoId eq " + studentId).get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.select("AlumnoId", "Id", "Concepto/ID", "Concepto/ConceptoCalculado", "Mes/Id", "Mes/Title", "Monto", "Pagado", "Ciclo/Title", "FechaPago").expand("Concepto, Mes, Ciclo").filter("AlumnoId eq " + studentId).top(100000).get());
     return data;
 }
 
 getStudenPaymentList(){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.select("AlumnoId", "Id", "Concepto/ID", "Concepto/ConceptoCalculado", "Mes/Id", "Mes/Title", "Monto", "Pagado", "Ciclo/Title", "FechaPago").expand("Concepto, Mes, Ciclo").get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.studentPaymentList).items.select("AlumnoId", "Id", "Concepto/ID", "Concepto/ConceptoCalculado", "Mes/Id", "Mes/Title", "Monto", "Pagado", "Ciclo/Title", "FechaPago").expand("Concepto, Mes, Ciclo").top(100000).get());
     return data;
 }
 
 getStudentsByDivisionList(divisionId:number){
-    let data =from(this.getConfig().web.lists.getByTitle(environment.studentList).items.select("Title", "ClaveAlumno", "EstatusAlumno/Title", "Division/Title", "Division/ID", "Grado/Title", "Grupo/Title", "Id").expand("EstatusAlumno","Division","Grado","Grupo").filter("Division/ID eq " + divisionId).get());
+    let data =from(this.getConfig().web.lists.getByTitle(environment.studentList).items.select("Title", "ClaveAlumno", "EstatusAlumno/Title", "Division/Title", "Division/ID", "Grado/Title", "Grupo/Title", "Id").expand("EstatusAlumno","Division","Grado","Grupo").filter("Division/ID eq " + divisionId).top(100000).get());
     return data;
 }
 
 getConceptsByStudent(studentId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.select("AlumnoId", "ConceptoId", "Id", "ModalidadId", "Concepto/ConceptoCalculado", "Concepto/Monto").expand("Concepto").filter("AlumnoId eq "+ studentId).get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.select("AlumnoId", "ConceptoId", "Id", "ModalidadId", "Concepto/ConceptoCalculado", "Concepto/Monto").expand("Concepto").filter("AlumnoId eq "+ studentId).top(100000).get());
     return data;
 }
 
 getAllConceptsByStudent(){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.select("AlumnoId","Alumno/Title", "ConceptoId", "Id", "ModalidadId", "Concepto/ConceptoCalculado").expand("Concepto", "Alumno").get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.conceptStudentList).items.select("AlumnoId","Alumno/Title", "ConceptoId", "Id", "ModalidadId", "Concepto/ConceptoCalculado").expand("Concepto", "Alumno").top(100000).get());
     return data;
 }
 
 getScholarshipList(studentId:number){
-    let data = from(this.getConfig().web.lists.getByTitle(environment.scholarshipList).items.select("AlumnoId", "Concepto/ID", "Concepto/ConceptoCalculado", "Monto", "Porcentaje", "EstatusId", "PagoOportuno", "Concepto/Monto", "Id").expand("Concepto").filter("AlumnoId eq " + studentId).get());
+    let data = from(this.getConfig().web.lists.getByTitle(environment.scholarshipList).items.select("AlumnoId", "Concepto/ID", "Concepto/ConceptoCalculado", "Monto", "Porcentaje", "EstatusId", "PagoOportuno", "Concepto/Monto", "Id").expand("Concepto").filter("AlumnoId eq " + studentId).top(100000).get());
     return data;
 }
 
