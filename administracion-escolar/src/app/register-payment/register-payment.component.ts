@@ -555,7 +555,16 @@ export class RegisterPaymentComponent implements OnInit {
     this.successCreateRegisterPaymentModal = this.modalService.show(template, {backdrop: 'static', keyboard: false});
   }
 
+  private changeMonthsOrder(){
+    const selectedMonthIndex = this.remainingPaymentMonths.indexOf(this.selectedPaymentMonth);
+    let AfterMonths = this.remainingPaymentMonths.slice(0,selectedMonthIndex);
+    let beforeMonths = this.remainingPaymentMonths.slice(selectedMonthIndex,this.remainingPaymentMonths.length);
+    let allMonths = beforeMonths.concat(AfterMonths);
+    return allMonths;
+  }
+
   private inprovePayment(restAmount: number, quantityToPay: any, paymentDate, registerDate, receivedPersonId, paymentWayId, reference, paymentAgreement, observation) {
+    this.remainingPaymentMonths = this.changeMonthsOrder();
     this.remainingPaymentMonths.forEach(month => {
       if (restAmount > 0) {
           let newAmount = restAmount;
